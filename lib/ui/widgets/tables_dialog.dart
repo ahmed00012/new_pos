@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shormeh_pos_new_28_11_2022/data_controller/tables_controller.dart';
 
-import '../../constants.dart';
+import '../../constants/colors.dart';
 import '../../data_controller/cart_controller.dart';
 import '../../data_controller/home_controller.dart';
 import 'num_of_guests.dart';
@@ -81,7 +81,7 @@ class TablesDialog extends ConsumerWidget {
                                         size.width));
                               }).then((value) {
                                tablesController.reserveTable( index,tablesController.departments[
-                               index].tables![i], value, context, true);
+                               index].tables![i], value, context, true,cartController.orderDetails);
 
                           });
                         }

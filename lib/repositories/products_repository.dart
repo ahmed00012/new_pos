@@ -1,190 +1,100 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:shormeh_pos_new_28_11_2022/constants/api.dart';
 
-import '../constants.dart';
+import '../constants/colors.dart';
+import '../constants/utils.dart';
 import '../local_storage.dart';
 
 
 class ProductsRepo {
 
-  //String branchID, String token
-  // Future getAllCategories(int branchID, String token,String language) async {
-  //
-  //   var response = await http.get(
-  //     Uri.parse("${LocalStorage.getData(key: 'baseUrl')}branch/$branchID/categories"),
-  //   headers:  {'AUTHORIZATION':'Bearer $token','Language':language},
-  //   );
-  //
-  //   if(response.statusCode==200){
-  //     var data = json.decode(response.body);
-  //     return data;
-  //   }
-  //   else return false;
-  //
-  // }
 
-  // Future getCustomers(String token, String language) async {
-  //   var response = await http.get(
-  //       Uri.parse("${LocalStorage.getData(key: 'baseUrl')}paymentCustomers"),
-  //       headers: {'AUTHORIZATION': 'Bearer $token', 'Language': language});
-  //   if (response.statusCode == 200) {
-  //     var data = json.decode(response.body);
-  //     return data['data'];
-  //   } else {
-  //     return false;
-  //   }
-  // }
-
-  // Future getAllProducts(int branchID,String category, String token,String language) async {
-  //   var response = await http.get(
-  //     Uri.parse("${LocalStorage.getData(key: 'baseUrl')}branch/$branchID/category/$category/products"),
-  //     headers:  {'AUTHORIZATION':'Bearer $token','Language':language},
-  //   );
-  //   if(response.statusCode==200){
-  //     var data = json.decode(response.body);
-  //     return data['data'];
-  //   }
-  //   else return false;
-  // }
-
-
-  // Future getDetails(int id,String token,String language) async {
-  //   var response = await http.get(
-  //     Uri.parse("${Constants.baseURL}product/$id/details"),
-  //     headers:  {'AUTHORIZATION':'Bearer $token','Language': language},
-  //   );
-  //   if(response.statusCode==200){
-  //     var data = json.decode(response.body);
-  //     return data['data'];
-  //   }
-  //   else return false;
-  // }
-
-
-  // Future getNotes(String token,String language) async {
-  //   var response = await http.get(
-  //     Uri.parse("${LocalStorage.getData(key: 'baseUrl')}notes"),
-  //     headers:  {'AUTHORIZATION':'Bearer $token','Language': language},
-  //   );
-  //   if(response.statusCode==200){
-  //     var data = json.decode(response.body);
-  //     return data['data'];
-  //   }
-  //   else return false;
-  // }
-
-  Future deleteFromOrder(String token,String language,int itemId) async {
-    print(token);
-    var response = await http.post(
-      Uri.parse("${Constants.baseURL}pos/order/deleteDetails/$itemId"),
-      headers:  {'AUTHORIZATION':'Bearer $token','Language': language},
-    );
-
-    if(response.statusCode==200){
+  Future deleteFromOrder(int itemId) async {
+    try{
+      var response = await http.post(
+        Uri.parse("${ApiEndPoints.DeleteItemOrder}$itemId"),
+        headers: ApiEndPoints.headerWithToken,
+      );
       var data = json.decode(response.body);
       return data;
     }
-    else return false;
-
+    catch(e){
+      return e.toString();
+    }
   }
 
 
-  Future expense(String token,String language,Map data) async {
-    var response = await http.post(
-      Uri.parse("${Constants.baseURL}expense"),
-      body: jsonEncode(data),
-      headers:  {'AUTHORIZATION':'Bearer $token','Language': language,
-        "Accept": "application/json",
-        'Content-type': 'application/json'},
-    );
-    print(response.body);
-    if(response.statusCode==200){
+  Future expense(String title , double price) async {
+    try{
+      var response = await http.post(
+        Uri.parse(ApiEndPoints.Expense),
+        body: jsonEncode({
+          'title': title,
+          'price': price,
+          'branch_id': getBranch()
+        }),
+        headers: ApiEndPoints.headerWithToken,
+      );
       var data = json.decode(response.body);
       return data;
     }
-    else return false;
+    catch(e){
+      return e;
+    }
   }
 
 
-  Future searchClient(String token,String query) async {
-    // String pattern
-    // ?query=$pattern
-    var response = await http.get(
-      Uri.parse("${Constants.baseURL}clients/all?query=$query"),
-      headers:  {'AUTHORIZATION':'Bearer $token',
-      'Accept':'application/json'},
-    );
-    print(response.body);
-    if(response.statusCode==200){
+  Future searchClient(String query) async {
+
+    try{
+      var response = await http.get(
+        Uri.parse("${ApiEndPoints.SearchClient}$query"),
+        headers: ApiEndPoints.headerWithToken,
+      );
       var data = json.decode(response.body);
-      return data['data'];
+      return data;
     }
-    else return false;
+    catch(e){
+      return e.toString();
+    }
   }
 
-  Future getNewMobileOrders(String token,) async {
-    // String pattern
-    // ?query=$pattern
-    var response = await http.get(
-      Uri.parse("${Constants.baseURL}pos/cashierMobileOrdersCount"),
-      headers:  {'AUTHORIZATION':'Bearer $token',
-        'Language': LocalStorage.getData(key: 'language'),
-        'Accept':'application/json'},
-    );
-    print(response.body);
-    if(response.statusCode==200){
+  Future getNewMobileOrdersCount() async {
+    try {
+      var response = await http.get(
+        Uri.parse(ApiEndPoints.MobileOrdersCount),
+        headers: ApiEndPoints.headerWithToken,
+      );
       var data = json.decode(response.body);
-      return data['data'];
+      if (response.statusCode == 200) {
+        return data;
+      }
+    } catch (e) {
+      return e.toString();
     }
-    else return false;
   }
 
   Future getSecondScreenPicture() async {
-    // String pattern
-    // ?query=$pattern
-    var response = await http.get(
-      Uri.parse("${Constants.baseURL}branch-screen-images?screen_number=1"),
-      headers:  {'AUTHORIZATION':'Bearer ${LocalStorage.getData(key: 'token')}',
-        'Language': LocalStorage.getData(key: 'language'),
-        'Accept':'application/json'},
-    );
-    print(response.body);
-    if(response.statusCode==200){
+  try  {
+      var response = await http.get(
+        Uri.parse(ApiEndPoints.ScreenImages),
+        headers: ApiEndPoints.headerWithToken,
+      );
       var data = json.decode(response.body);
-      return data['data'];
+      return data;
     }
-    else return false;
+    catch(e){
+    return e.toString();
+    }
   }
 
-  // Future getReasons(String token, String language) async {
-  //   var response = await http.get(
-  //       Uri.parse("${LocalStorage.getData(key: 'baseUrl')}complainReasons"),
-  //       headers: {'AUTHORIZATION': 'Bearer $token', 'Language': language});
-  //   if (response.statusCode == 200) {
-  //     var data = json.decode(response.body);
-  //     return data['data'];
-  //   } else {
-  //     return false;
-  //   }
-  // }
 
-
-  Future syncOrders()async{
-    var response =
-   await http.get(Uri.parse('http://192.168.1.11:8000/api/sync'));
-    print(response.body.toString());
-  }
-
-  // Future getOrderStatus(String token, String language) async {
-  //   var response = await http.get(Uri.parse("${LocalStorage.getData(key: 'baseUrl')}orderStatus"),
-  //       headers: {'AUTHORIZATION': 'Bearer $token', 'Language': language});
-  //   if (response.statusCode == 200) {
-  //     var data = json.decode(response.body);
-  //     return data['data'];
-  //   } else {
-  //     return false;
-  //   }
+  // Future syncOrders()async{
+  //   var response =
+  //  await http.get(Uri.parse('http://192.168.1.11:8000/api/sync'));
+  //   print(response.body.toString());
   // }
 
 }

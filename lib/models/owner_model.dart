@@ -3,8 +3,8 @@ class OwnerModel{
   String? title;
   String? titleAr;
   String? titleEn;
-  bool ?chosen;
-  OwnerModel({this.id,this.title,this.chosen});
+  bool chosen = false;
+  OwnerModel({this.id,this.title,this.chosen = false});
   OwnerModel.fromJson(Map<String, dynamic> json){
     id = json['id'];
     title = json['title'];

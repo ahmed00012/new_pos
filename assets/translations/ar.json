@@ -166,7 +166,9 @@
   "totalOrdersCount": "عدد الطلبات",
   "totalDiscount": "اجمالي التخفيض",
   "totalTax": "اجمالي الضريبة",
-  "totalAllOrders": "اجمالي الطلبات"
+  "totalAllOrders": "اجمالي الطلبات",
+  "required": "الحقل مطلوب"
+
 
 
 

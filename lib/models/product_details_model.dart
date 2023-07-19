@@ -117,7 +117,7 @@ class Attributes {
   String? createdAt;
   String? updatedAt;
   ProductTitle? title;
-  List<Values>? values;
+  List<AttributeItem>? values;
   int? overridePrice;
 
 
@@ -148,9 +148,9 @@ class Attributes {
     overridePrice = json['override_price'];
     title = json['title'] != null ? new ProductTitle.fromJson(json['title']) : null;
     if (json['values'] != null) {
-      values = <Values>[];
+      values = <AttributeItem>[];
       json['values'].forEach((v) {
-        values!.add(new Values.fromJson(v));
+        values!.add(new AttributeItem.fromJson(v));
       });
     }
   }
@@ -173,7 +173,7 @@ class Attributes {
   }
 }
 
-class Values {
+class AttributeItem {
   int? id;
   int? productAttributeId;
   ProductTitle? attributeValue;
@@ -186,7 +186,7 @@ class Values {
   bool? chosen;
 
 
-  Values(
+  AttributeItem(
       {this.id,
         this.productAttributeId,
         this.attributeValue,
@@ -199,7 +199,7 @@ class Values {
         this.customerPrice
       });
 
-  Values.fromJson(Map<String, dynamic> json) {
+  AttributeItem.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     productAttributeId = json['product_attribute_id'];
     attributeValue = json['attribute_value'] != null ? new ProductTitle.fromJson(json['attribute_value']) : null;

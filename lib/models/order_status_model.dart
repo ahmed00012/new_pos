@@ -4,7 +4,7 @@ class OrderStatusModel {
   int? id;
   StatusTitle? title;
   String? createdAt;
-  bool? chosen;
+  bool chosen = false;
 
   OrderStatusModel({this.id, this.title, this.createdAt,this.chosen = false});
 

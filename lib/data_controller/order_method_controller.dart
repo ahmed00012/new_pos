@@ -14,7 +14,7 @@ import 'package:overlay_support/overlay_support.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:shormeh_pos_new_28_11_2022/models/coupon_model.dart';
 import 'package:image/image.dart' as img;
-import '../constants.dart';
+import '../constants/colors.dart';
 import '../local_storage.dart';
 import '../models/cart_model.dart';
 import '../models/client_model.dart';
@@ -23,11 +23,11 @@ import '../models/order_method_model.dart';
 import '../models/printers_model.dart';
 import '../models/tables_model.dart';
 import '../repositories/new_order_repository.dart';
-import '../ui/screens/home.dart';
+import '../ui/screens/home/home.dart';
 import 'home_controller.dart';
 
-final orderMethodFuture = ChangeNotifierProvider.autoDispose<OrderMethodController>(
-        (ref) => OrderMethodController());
+final orderMethodFuture = ChangeNotifierProvider.autoDispose.family<OrderMethodController,OrderDetails>(
+        (ref,order) => OrderMethodController(order));
 
 class OrderMethodController extends ChangeNotifier {
   NewOrderRepository repo = NewOrderRepository();
@@ -44,6 +44,7 @@ class OrderMethodController extends ChangeNotifier {
   String twitter ='';
   String instagram ='';
   String phone ='';
+  OrderDetails orderDetails = OrderDetails();
 
   TextEditingController customerName = TextEditingController();
   TextEditingController customerPhone = TextEditingController();
@@ -55,14 +56,16 @@ class OrderMethodController extends ChangeNotifier {
   img.Image? productsScreenshot;
 
 
-  OrderMethodController(){
+  OrderMethodController(OrderDetails order){
 
-    customerName = TextEditingController(text:  HomeController.orderDetails.clientName);
-    customerPhone = TextEditingController(text:  HomeController.orderDetails.clientPhone);
-    notes = TextEditingController(text:  HomeController.orderDetails.notes);
+    customerName = TextEditingController(text:  order.clientName);
+    customerPhone = TextEditingController(text: order.clientPhone);
+    notes = TextEditingController(text:  order.notes);
+    orderDetails = order;
     getOrderMethods();
      getTables();
      getPrinters();
+     notifyListeners();
   }
 
 
@@ -91,23 +94,16 @@ class OrderMethodController extends ChangeNotifier {
     notifyListeners();
   }
   refreshData(){
-    customerName = TextEditingController(text:  HomeController.orderDetails.clientName);
-    customerPhone = TextEditingController(text:  HomeController.orderDetails.clientPhone);
-    notes = TextEditingController(text:  HomeController.orderDetails.notes);
+    customerName = TextEditingController(text:  orderDetails.clientName);
+    customerPhone = TextEditingController(text:  orderDetails.clientPhone);
+    notes = TextEditingController(text:  orderDetails.notes);
     notifyListeners();
   }
 
 
- void setOrderMethod(OrderMethodModel orderMethod, int index) {
-    chosenOrderMethod = orderMethod;
-    orderMethods.forEach((element) {
-      element.chosen = false;
-    });
-    orderMethods[index].chosen = true;
-    // HomeController.cartItems.forEach((element) {element.orderMethod  = orderMethod.title;});
-    // HomeController.cartItems.forEach((element) {element.orderMethodId = orderMethod.id;});
-    HomeController.orderDetails.orderMethod  = orderMethod.title!.en;
-    HomeController.orderDetails.orderMethodId  = orderMethod.id;
+ void setOrderMethod(OrderMethodModel orderMethod) {
+    orderDetails.orderMethod  = orderMethod.title!.en;
+    orderDetails.orderMethodId  = orderMethod.id;
     if (orderMethod.id == 2)
       tablesWidget = true;
     else
@@ -119,7 +115,7 @@ class OrderMethodController extends ChangeNotifier {
     chosenTable = table;
     departments[i].tables!.forEach((element) {element.chosen=false;});
     table.chosen = true;
-    HomeController.orderDetails.table = table.title;
+    orderDetails.table = table.title;
     notifyListeners();
   }
 
@@ -145,83 +141,8 @@ class OrderMethodController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void checkCoupon() {
-    CouponModel couponUse = CouponModel();
-    bool inBranch = false;
-    bool valid = true;
-    coupons.forEach((element) {
-      if (element.code == coupon.text) {
-        couponUse = element;
-      }
-    });
-
-    if (couponUse.id == null) {
-      displayToastMessage('couponNotFound'.tr(), true);
-      valid = false;
-    } else {
-      couponUse.branches!.forEach((element) {
-        if (element.id == LocalStorage.getData(key: 'branch')) inBranch = true;
-      });
-    }
-    if (couponUse.isActive == 0) {
-      displayToastMessage('couponNotValid'.tr(), true);
-      valid = false;
-    }
-    if (couponUse.counter! >= couponUse.numOfUses!) {
-      displayToastMessage('couponHasEnded'.tr(), true);
-      valid = false;
-    }
-    if (!inBranch) {
-      displayToastMessage('couponNotAvailableForThisBranch'.tr(), true);
-      valid = false;
-    }
-    if (couponUse.dateFrom != null) {
-
-      if (DateTime.parse('${couponUse.dateFrom} ${couponUse.timeFrom??'00:00'}')
-          .isAfter(DateTime.now())) {
-        displayToastMessage('couponStillNotAvailable'.tr(), true);
-        valid = false;
-      }
-    }
-    if (couponUse.dateTo != null ) {
-      if (DateTime.parse('${couponUse.dateTo} ${couponUse.timeTo??'23:59'}')
-          .isBefore(DateTime.now())) {
-        displayToastMessage('couponHasEnded'.tr(), true);
-        valid = false;
-      }
-    }
-    if (valid) {
-      displayToastMessage('couponAdded'.tr(), false);
-      if (couponUse.type == 1) {
-        HomeController.orderDetails.setDiscount(false, couponUse.value!);
-      } else {
-        HomeController.orderDetails.setDiscount(true, couponUse.value!);
-      }
-    }
-    else{
-      coupon.text='';
-    }
-  }
 
 
-  suggestClient(String pattern){
-    // print(pattern+'dsfkdkf');
-    // print(clients.length.toString()+'dsfkdkf');
-    List<ClientModel> clientsFiltered = [];
-    if(pattern.isEmpty)
-      clientsFiltered = [];
-    else {
-      clients.forEach((element) {
-        // print(element.phone.toString()+'ddddd');
-        if(element.phone!.contains(pattern))
-          clientsFiltered.add(element);
-      });
-
-    }
-
-    notifyListeners();
-    return clientsFiltered;
-  }
 
 
   getClients() async {
@@ -236,23 +157,6 @@ class OrderMethodController extends ChangeNotifier {
   }
 
 
-
-  chooseClient({ClientModel? client}){
-    if(client!=null)
-    {
-      HomeController.orderDetails.clientPhone = client.phone!;
-      HomeController.orderDetails.clientName = client.name!;
-      customerPhone.text = client.phone!;
-      customerName.text = client.name!;
-    }
-    else{
-
-      HomeController.orderDetails.clientPhone = customerPhone.text;
-      HomeController.orderDetails.clientName = customerName.text;
-    }
-    clients=[];
-    notifyListeners();
-  }
 
   void getOrderMethods() async {
       orderMethods = List<OrderMethodModel>.from(json
@@ -283,7 +187,7 @@ class OrderMethodController extends ChangeNotifier {
 
     switchLoading(true);
 
-    HomeController.orderDetails.cart!.forEach((element) {
+    orderDetails.cart!.forEach((element) {
       List<int> notesId = [];
       element.extra!.forEach((element) {
         notesId.add(element.id!);
@@ -300,22 +204,22 @@ class OrderMethodController extends ChangeNotifier {
       details.add(myOrder);
     });
 
-    HomeController.orderDetails.deliveryFee = double.tryParse(deliveryFee.text);
+    orderDetails.deliveryFee = double.tryParse(deliveryFee.text);
 
 
 
-    ConfirmOrderModel2 order = ConfirmOrderModel2(
-        name: HomeController.orderDetails.clientName,
-        phone: HomeController.orderDetails.clientPhone,
-         tableId: HomeController.orderDetails.table,
-        notes: HomeController.orderDetails.notes,
+    ConfirmOrderModel order = ConfirmOrderModel(
+        name: orderDetails.clientName,
+        phone: orderDetails.clientPhone,
+         tableId: orderDetails.table,
+        notes: orderDetails.notes,
         paymentMethodId: null,
         clientsCount: guestsCount,
         paymentCustomerId:  null,
         paymentStatus:  0,
         coupon: coupon.text,
-        orderMethodId: HomeController.orderDetails.orderMethodId,
-        paidAmount: HomeController.orderDetails.getTotalAmount(),
+        orderMethodId: orderDetails.orderMethodId,
+        paidAmount: orderDetails.getTotalAmount(),
         order: details,
       deliveryFee: deliveryFee.text.isNotEmpty? double.parse(deliveryFee.text) : 0
     );
@@ -351,9 +255,9 @@ class OrderMethodController extends ChangeNotifier {
   }
 
   void closeOrder() {
-    // HomeController.cartItems = [];
+    // cartItems = [];
     tablesWidget = false;
-    HomeController.orderDetails = OrderDetails();
+    orderDetails = OrderDetails();
     coupon.text='';
     deliveryFee.text='';
     orderMethods.forEach((element) {
@@ -591,7 +495,7 @@ class OrderMethodController extends ChangeNotifier {
 
   Future testPrint({String ?orderNo}) async {
 
-    OrderDetails order= HomeController.orderDetails.copyWith();
+    OrderDetails order= orderDetails.copyWith();
     deviceReceipt(order,orderNo:orderNo);
     const PaperSize paper = PaperSize.mm80;
     final profile = await CapabilityProfile.load();

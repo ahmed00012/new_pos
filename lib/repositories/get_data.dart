@@ -1,306 +1,233 @@
 import 'dart:convert';
-import 'dart:developer';
-
-import '../constants.dart';
-import '../local_storage.dart';
+import 'package:shormeh_pos_new_28_11_2022/constants/api.dart';
+import '../constants/utils.dart';
 import 'package:http/http.dart' as http;
 
-import '../models/product_details_model.dart';
-import '../models/products_model.dart';
-
-class GetData{
-
- Future getAll()async{
-   // await   getCategories();
-   await  getNotes();
-   await  getPaymentCustomers();
-   await  getPaymentMethods();
-  await   getOwners() ;
-  await getCoupons();
-  await getOrderMethods();
-  await getReasons();
-  await  getOrderStatus();
-  await  getPrinters();
-  return await testToken();
-  }
+class GetData {
+  Future getAll() async{
+    // await   getCategories();
+    await  getNotes();
+    await  getPaymentCustomers();
+    await  getPaymentMethods();
+   await   getOwners() ;
+   await getCoupons();
+   await getOrderMethods();
+   await getReasons();
+   await  getOrderStatus();
+   await  getPrinters();
+   }
 
   Future getPaymentMethods() async {
-
-    if (LocalStorage.getData(key: 'paymentMethods') == null) {
-      int ?removeId ;
-      var response = await http.get(
-          Uri.parse("${Constants.baseURL}pos/paymentMethods"),
-          headers: {'AUTHORIZATION': 'Bearer ${LocalStorage.getData(key: 'token')}',
-            'Language': LocalStorage.getData(key: 'language')});
-      if(response.statusCode == 200)
-      {
-        var data = json.decode(response.body);
-        LocalStorage.saveData(
-            key: 'paymentMethods', value: json.encode(data['data']));
+    String data = getPaymentMethodsPrefs();
+    try {
+      if (data.isEmpty) {
+        var response = await http.get(Uri.parse(ApiEndPoints.PaymentMethods),
+            headers: ApiEndPoints.headerWithToken);
+        if (response.statusCode == 200) {
+          var data = json.decode(response.body);
+          setPaymentMethodsPrefs(json.encode(data['data']));
+        }
       }
+    } catch (e) {
+      return e.toString();
     }
   }
 
- Future getOwners() async {
-    if (LocalStorage.getData(key: 'owners') == null) {
-      var response = await http.get(
-          Uri.parse("${Constants.baseURL}pos/owners"),
-          headers: {'AUTHORIZATION': 'Bearer ${LocalStorage.getData(key: 'token')}',
-            'Language': LocalStorage.getData(key: 'language')});
-      if(response.statusCode == 200) {
-        var data = json.decode(response.body);
-        LocalStorage.saveData(key: 'owners', value: json.encode(data['data']));
+  Future getOwners() async {
+    String data = getOwnersPrefs();
+    try {
+      if (data.isEmpty) {
+        var response = await http.get(Uri.parse(ApiEndPoints.Owners),
+            headers: ApiEndPoints.headerWithToken);
+        if (response.statusCode == 200) {
+          var data = json.decode(response.body);
+          setOwnersPrefs(json.encode(data['data']));
+        }
       }
+    } catch (e) {
+      return e.toString();
     }
   }
 
- Future getCoupons() async {
-    if (LocalStorage.getData(key: 'coupons') == null) {
-      var response = await http.get(
-          Uri.parse("${Constants.baseURL}coupons"),
-          headers: {'AUTHORIZATION': 'Bearer ${LocalStorage.getData(key: 'token')}',
-            'Language': LocalStorage.getData(key: 'language')});
-      if(response.statusCode == 200) {
-        var data = json.decode(response.body);
-        LocalStorage.saveData(key: 'coupons', value: json.encode(data['data']));
+  Future getCoupons() async {
+    String data = getOwnersPrefs();
+    try {
+      if (data.isEmpty) {
+        var response = await http.get(Uri.parse(ApiEndPoints.Coupons),
+            headers: ApiEndPoints.headerWithToken);
+        if (response.statusCode == 200) {
+          var data = json.decode(response.body);
+          setCouponsPrefs(json.encode(data['data']));
+        }
       }
+    } catch (e) {
+      return e.toString();
     }
   }
 
- Future getOrderMethods() async {
-   if(LocalStorage.getData(key: 'orderMethods')==null) {
-      var response = await http.get(
-          Uri.parse(
-              "${Constants.baseURL}pos/orderMethods/${LocalStorage.getData(key: 'branch')}"),
-          headers: {
-            'AUTHORIZATION': 'Bearer ${LocalStorage.getData(key: 'token')}',
-            'Language': LocalStorage.getData(key: 'language')
-          });
-      if(response.statusCode == 200)
-      {
-        var data = json.decode(response.body);
-        List methods = List.from(data['data']);
-        // data['data'].forEach((element) {
-        //   if(element['id'] == 1 || element['id'] == 2 || element['id'] == 3 || element['id'] == 4){
-        //     methods.add(element);
-        //   }
-        // });
-
-        LocalStorage.saveData(key: 'orderMethods', value: json.encode(methods));
+  Future getOrderMethods() async {
+    String data = getOrderMethodsPrefs();
+    try {
+      if (data.isEmpty) {
+        var response = await http.get(
+            Uri.parse("${ApiEndPoints.OrderMethods}${getBranch()}"),
+            headers: ApiEndPoints.headerWithToken);
+        if (response.statusCode == 200) {
+          var data = json.decode(response.body);
+          List methods = List.from(data['data']);
+          // data['data'].forEach((element) {
+          //   if(element['id'] == 1 || element['id'] == 2 || element['id'] == 3 || element['id'] == 4){
+          //     methods.add(element);
+          //   }
+          // });
+          setOrderMethodsPrefs(json.encode(methods));
+        }
       }
+    } catch (e) {
+      return e.toString();
     }
   }
 
- Future getReasons()async{
-    if (LocalStorage.getData(key: 'reasons') == null) {
-      var response = await http.get(
-          Uri.parse("${Constants.baseURL}pos/complainReasons"),
-          headers: {'AUTHORIZATION': 'Bearer ${LocalStorage.getData(key: 'token')}',
-            'Language': LocalStorage.getData(key: 'language'),
-            'Content-Language':LocalStorage.getData(key: 'language'),});
-      if(response.statusCode == 200)
-      {
+  Future getReasons() async {
+    try {
+      String data = getComplainReasonsPrefs();
+      if (data.isEmpty) {
+        var response = await http.get(Uri.parse(ApiEndPoints.ComplainReasons),
+            headers: ApiEndPoints.headerWithToken);
         var data = json.decode(response.body);
-
-        LocalStorage.saveData(key: 'reasons', value: json.encode(data['data']));
+        setComplainReasonsPrefs(json.encode(data['data']));
       }
+    } catch (e) {
+      return e.toString();
     }
-
   }
 
- Future getOrderStatus() async {
-    if(LocalStorage.getData(key: 'orderStatus')==null) {
-      var response = await http.get(Uri.parse("${Constants.baseURL}pos/orderStatus"),
-          headers: {'AUTHORIZATION': 'Bearer ${LocalStorage.getData(key: 'token')}',
-            'Language': LocalStorage.getData(key: 'language')});
-      if(response.statusCode == 200)
-      {
+  Future getOrderStatus() async {
+    try {
+      String data = getOrderStatusPrefs();
+      if (data.isEmpty) {
+        var response = await http.get(Uri.parse(ApiEndPoints.OrderStatus),
+            headers: ApiEndPoints.headerWithToken);
         var data = json.decode(response.body);
-        LocalStorage.saveData(
-            key: 'orderStatus', value: json.encode(data['data']));
+        setOrderStatusPrefs(json.encode(data['data']));
       }
+    } catch (e) {
+      return e.toString();
     }
-
   }
 
   Future getPrinters() async {
-    if (LocalStorage.getData(key: 'printers') == null) {
-      var response = await http.get(
-          Uri.parse("${Constants.baseURL}branch/${LocalStorage.getData(key: 'branch').toString()}/printers"),
-          headers: {'AUTHORIZATION': 'Bearer ${LocalStorage.getData(key: 'token')}',
-            'Language': LocalStorage.getData(key: 'language')});
-      if(response.statusCode == 200)
-      {
+    try {
+      String data = getPrintersPrefs();
+      if (data.isEmpty) {
+        var response = await http.get(Uri.parse(ApiEndPoints.Printers),
+            headers: ApiEndPoints.headerWithToken);
         var data = json.decode(response.body);
-        LocalStorage.saveData(
-            key: 'printers', value: json.encode(data['data']));
+        setPrintersPrefs(json.encode(data['data']));
       }
+    } catch (e) {
+      return e.toString();
     }
   }
 
   Future getNotes() async {
-    if (LocalStorage.getData(key: 'options') == null) {
-        var response = await http.get(
-          Uri.parse("${Constants.baseURL}pos/notes"),
-            headers: {'AUTHORIZATION': 'Bearer ${LocalStorage.getData(key: 'token')}',
-              'Language': LocalStorage.getData(key: 'language')});
-        if(response.statusCode == 200)
-        {
+    try {
+      String data = getOptionsPrefs();
+      if (data.isEmpty) {
+        var response = await http.get(Uri.parse(ApiEndPoints.GetNotes),
+            headers: ApiEndPoints.headerWithToken);
         var data = json.decode(response.body);
-        LocalStorage.saveData(key: 'options', value: json.encode(data['data']));
+        setOptionsPrefs(json.encode(data['data']));
       }
+    } catch (e) {
+      return e.toString();
     }
   }
 
-
- Future getPaymentCustomers() async {
-    if (LocalStorage.getData(key: 'paymentCustomers') == null) {
-      var response = await http.get(
-          Uri.parse("${Constants.baseURL}pos/paymentCustomers"),
-          headers: {'AUTHORIZATION': 'Bearer ${LocalStorage.getData(key: 'token')}',
-            'Language': LocalStorage.getData(key: 'language')});
-      if(response.statusCode == 200) {
+  Future getPaymentCustomers() async {
+    try {
+      String data = getPaymentCustomersPrefs();
+      if (data.isEmpty) {
+        var response = await http.get(Uri.parse(ApiEndPoints.PaymentCustomers),
+            headers: ApiEndPoints.headerWithToken);
         var data = json.decode(response.body);
-        LocalStorage.saveData(
-            key: 'paymentCustomers', value: json.encode(data['data']));
+        setPaymentCustomersPrefs(json.encode(data['data']));
       }
+    } catch (e) {
+      return e.toString();
     }
   }
-
 
   Future getCategories() async {
-    List<String> categoriesId = [];
-
-    var response = await http.get(
-      Uri.parse("${Constants.baseURL}pos/branch/${LocalStorage.getData(key: 'branch')}/categories"),
-        headers: {'AUTHORIZATION': 'Bearer ${LocalStorage.getData(key: 'token')}',
-          'Language': LocalStorage.getData(key: 'language')});
-
-
-if(response.statusCode == 200) {
-  var data = json.decode(response.body);
-      data['data'].forEach((element) {
-        categoriesId.add(element['id'].toString());
-      });
-
-      LocalStorage.saveList(key: 'categoriesId', value: categoriesId);
-      LocalStorage.saveData(
-          key: 'allCategories', value: json.encode(data['data']));
-      categoriesId.forEach((element) async {
-        await getProducts(int.parse(element));
-      });
-      return true;
+    try {
+      String categoriesPrefs = getAllCategoriesPrefs();
+      List<String> categoriesId = getCategoriesIdPrefs();
+      var response = await http.get(Uri.parse(ApiEndPoints.GetCategories),
+          headers: ApiEndPoints.headerWithToken);
+      if (categoriesPrefs.isEmpty) {
+        var data = json.decode(response.body);
+        if (response.statusCode == 200) {
+          data['data'].forEach((element) async{
+            categoriesId.add(element['id'].toString());
+            await getProducts(element['id']);
+          });
+          setCategoriesIdPrefs(categoriesId);
+          setAllCategoriesPrefs(json.encode(data['data']));
+          return data;
+        } else if (response.statusCode == 403) {
+          return 'branchClosed';
+        } else {
+          return data;
+        }
+      }
+    } catch (e) {
+      return e.toString();
     }
-else if(response.statusCode == 403){
-  return 'branchClosed' ;
-}
-else{
-  return 'unauthorized';
-}
   }
 
-
-  // Future getProducts(int id) async {
-  //   if (LocalStorage.getData(key: 'products$id') == null) {
-  //
-  //     var response = await http.get(
-  //       Uri.parse("${Constants.baseURL}branch/${LocalStorage.getData(key: 'branch')}/category/$id/products"),
-  //         headers: {'AUTHORIZATION': 'Bearer ${LocalStorage.getData(key: 'token')}',
-  //           'Language': LocalStorage.getData(key: 'language')});
-  //     var data = json.decode(response.body);
-  //     print('dsasad'+data.toString());
-  //     LocalStorage.saveData(key: 'products$id', value: json.encode(data['data']));
-  //
-  //
-  //
-  //   }
-  // }
-
- Future getProducts(int id) async {
-// String language = LocalStorage.getData(key: 'language');
-   List<String> productsId = [];
-
-
-
-   if (LocalStorage.getData(key: 'products$id') == null) {
-     var response = await http.get(
-         Uri.parse("${Constants.baseURL}branch/${LocalStorage.getData(key: 'branch')}/category/$id/products"),
-         headers: {'AUTHORIZATION': 'Bearer ${LocalStorage.getData(key: 'token')}',
-           'Language': LocalStorage.getData(key: 'language'),
-           'Accept': 'application/json'});
-
-     if(response.statusCode == 200)
-     {
+  Future getProducts(int id) async {
+    String productPrefs = getProductsPrefs(id);
+    List productsId = getProductsIdPrefs();
+    try {
+      if (productPrefs.isEmpty) {
+        var response = await http.get(
+            Uri.parse("${ApiEndPoints.Products}$id/products"),
+            headers: ApiEndPoints.headerWithToken);
         var data = json.decode(response.body);
-
-        data['data'].forEach((element) {
+        data['data'].forEach((element) async{
           productsId.add(element['id'].toString());
+         await getProductDetails(element['id']);
         });
-        LocalStorage.saveList(key: 'productsId', value: productsId);
-
-        LocalStorage.saveData(key: 'products$id', value: json.encode(data['data']));
-        return List<ProductModel>.from(
-            data['data'].map((product) => ProductModel.fromJson(product)));
+        setProductsIdPrefs(productsId);
+        setProductsPrefs(json.encode(data['data']), id);
       }
+    } catch (e) {
+      return e.toString();
     }
-   else{
+  }
 
-
-     List<ProductModel> products = List<ProductModel>.from(json
-         .decode(LocalStorage.getData(key: 'products$id'))
-         .map((product) => ProductModel.fromJson(product)));
-
-     return products;
-   }
- }
-
-
- Future getProductDetails(int id) async {
-
-   // String language = LocalStorage.getData(key: 'language');
-
-   //
-   //  LocalStorage.removeData(key: 'productDetails$id');
-
-   if (LocalStorage.getData(key: 'productDetails$id').toString() == 'null') {
-     var response = await http.get(
-         Uri.parse("https://beta2.poss.app/api/pos/product/$id/details"),
-         headers: {'AUTHORIZATION': 'Bearer ${LocalStorage.getData(key: 'token')}',
-           'Language': LocalStorage.getData(key: 'language'),
-           'Accept': 'application/json'});
-     if(response.statusCode == 200)
-     {
+  Future getProductDetails(int id) async {
+    String data = getProductDetailsPrefs(id);
+    try {
+      if (data.isEmpty) {
+        var response = await http.get(
+            Uri.parse("${ApiEndPoints.ProductDetails}$id/details"),
+            headers: ApiEndPoints.headerWithToken);
         var data = json.decode(response.body);
-
-        LocalStorage.saveData(
-            key: 'productDetails$id',
-            value: json.encode(data['data']['attributes']));
-        List<Attributes> attributes = List.from(
-            data['data']['attributes'].map((e) => Attributes.fromJson(e)));
-        return data['data'] != null ? attributes : null;
+        setProductDetailsPrefs(json.encode(data['data']['attributes']), id);
       }
+    } catch (e) {
+      return e.toString();
     }
-   else{
+  }
 
-     List<Attributes>? attributes = List.from(jsonDecode(LocalStorage.getData(key: 'productDetails$id'))
-         .map((e)=> Attributes.fromJson(e)));
-     // Attributes.fromJson(json.decode(
-     //     LocalStorage.getData(key: 'productDetails$id')));
-     return attributes;
-   }
- }
-
- Future <bool> testToken() async{
-   var response = await http.get(
-       Uri.parse("${Constants.baseURL}pos/paymentMethods"),
-       headers: {'AUTHORIZATION': 'Bearer ${LocalStorage.getData(key: 'token')}',});
-   if(response.statusCode == 401)
-     return false;
-   else
-     return true;
- }
-
+  // Future <bool> testToken() async{
+  //   var response = await http.get(
+  //       Uri.parse("${Constants.baseURL}pos/paymentMethods"),
+  //       headers: {'AUTHORIZATION': 'Bearer ${LocalStorage.getData(key: 'token')}',});
+  //   if(response.statusCode == 401)
+  //     return false;
+  //   else
+  //     return true;
+  // }
 }
-
-
-

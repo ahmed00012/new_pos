@@ -1,13 +1,25 @@
 import 'package:easy_localization/src/public_ext.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shormeh_pos_new_28_11_2022/constants/styles.dart';
 import 'package:shormeh_pos_new_28_11_2022/data_controller/auth_controller.dart';
-import 'package:shormeh_pos_new_28_11_2022/data_controller/home_controller.dart';
-import '../../constants.dart';
+import '../../constants/colors.dart';
+import 'login.dart';
 
-class FinanceOut extends ConsumerWidget {
+class FinanceOut extends ConsumerStatefulWidget {
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  FinanceOutState createState() => FinanceOutState();
+}
+
+class FinanceOutState extends ConsumerState {
+  @override
+  void initState() {
+    // TODO: implement initState
+    ref.watch(financeFuture).getPrinters();
+    super.initState();
+  }
+  @override
+  Widget build(BuildContext context) {
     final viewModel = ref.watch(financeFuture);
     // final homeController = ref.watch(dataFuture);
     Size size = MediaQuery.of(context).size;
@@ -101,9 +113,9 @@ class FinanceOut extends ConsumerWidget {
                                 fontWeight: FontWeight.bold),
                           ),
                           Text(
-                            viewModel.cashIn.isEmpty
+                            viewModel.startShiftCash.isEmpty
                                 ? '0.0'
-                                : viewModel.cashIn.join(),
+                                : viewModel.startShiftCash.join(),
                             style: TextStyle(
                                 fontSize: size.height * 0.03,
                                 color:  Constants.mainColor,
@@ -176,7 +188,7 @@ class FinanceOut extends ConsumerWidget {
                           children: [
                             Center(
                               child: Text(
-                                viewModel.cashIn.join(),
+                                viewModel.startShiftCash.join(),
                                 style: TextStyle(fontSize: size.height * 0.025),
                               ),
                             ),
@@ -355,8 +367,19 @@ class FinanceOut extends ConsumerWidget {
               alignment: Alignment.bottomCenter,
               child: InkWell(
                 onTap: () {
-                    viewModel.doneButtonCashFinanceOut(context,true);
-                        // .then((value) {
+                  if(viewModel.endShiftCash.isEmpty)
+                    ConstantStyles.displayToastMessage('cashCanNotBeEmpty'.tr(),true);
+                  else {
+                    viewModel.endShift(true).then((value) {
+                      if (value != null && value == true) {
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(builder: (_) => Login()),
+                            (route) => false);
+                      }
+                    });
+                  }
+                  // .then((value) {
                       // homeController.synchronize(context);
                       // homeController.categories=[];
                       // homeController.products=[];

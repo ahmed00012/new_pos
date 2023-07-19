@@ -12,6 +12,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:screenshot/screenshot.dart';
+import 'package:shormeh_pos_new_28_11_2022/constants/styles.dart';
+import 'package:shormeh_pos_new_28_11_2022/constants/utils.dart';
 import 'package:shormeh_pos_new_28_11_2022/local_storage.dart';
 import 'package:shormeh_pos_new_28_11_2022/models/cart_model.dart';
 import 'package:shormeh_pos_new_28_11_2022/models/customer_model.dart';
@@ -21,14 +23,13 @@ import 'package:shormeh_pos_new_28_11_2022/models/orders_model.dart';
 import 'package:shormeh_pos_new_28_11_2022/models/payment_model.dart';
 import 'package:shormeh_pos_new_28_11_2022/repositories/new_order_repository.dart';
 import 'package:shormeh_pos_new_28_11_2022/repositories/orders_repository.dart';
-import 'package:shormeh_pos_new_28_11_2022/ui/screens/home.dart';
-import 'package:shormeh_pos_new_28_11_2022/ui/screens/payment_screen.dart';
+import 'package:shormeh_pos_new_28_11_2022/ui/screens/home/home.dart';
+import 'package:shormeh_pos_new_28_11_2022/ui/screens/payment/payment_screen.dart';
 import 'package:shormeh_pos_new_28_11_2022/ui/widgets/complain_widget.dart';
 
-import '../constants.dart';
+import '../constants/colors.dart';
 import '../main.dart';
 import '../models/complain_reasons.dart';
-import '../models/offlineOrder.dart';
 import '../models/order_status_model.dart';
 import '../models/owner_model.dart';
 import '../models/printers_model.dart';
@@ -41,16 +42,16 @@ final ordersFuture = ChangeNotifierProvider.autoDispose<OrdersController>(
     (ref) => OrdersController());
 
 class OrdersController extends ChangeNotifier {
-  // DateTime selectedDate = DateTime.now();
+
   String token = LocalStorage.getData(key: 'token');
   int branch = LocalStorage.getData(key: 'branch');
   OrdersRepository repo = OrdersRepository();
   List<OrdersModel> orders = [];
-  // List<OfflineOrderDetails> offlineOrdersList = [];
-  // List<OfflineOrderDetails> offlineOrdersListCopy = [];
   int? chosenOrder;
   String? chosenOrderNum;
-  int page = 1;
+  // int page = 1;
+  int currentPage = 1;
+  int lastPage = 1;
   RefreshController refreshController =
       RefreshController(initialRefresh: false);
   NewOrderRepository repoFilter = NewOrderRepository();
@@ -65,7 +66,7 @@ class OrdersController extends ChangeNotifier {
   int? chosenOrderStatus;
   int? chosenReason;
   // String? chosenTime;
-  int? orderNum;
+  // int? orderNum;
   // String? client;
   TextEditingController clientSearch =TextEditingController();
   List<String> images=[
@@ -101,12 +102,9 @@ class OrdersController extends ChangeNotifier {
   img.Image? productsScreenshot;
   Uint8List? productsImage;
   List<PrinterModel> printers = [];
-  String twitter ='';
-  String instagram ='';
-  String phone ='';
 
   OrdersController() {
-    getOrders();
+    getOrders(page: 1);
     getOrderMethods();
     getPaymentMethods();
     getOrderStatus();
@@ -134,263 +132,130 @@ class OrdersController extends ChangeNotifier {
         .map((e) => OwnerModel.fromJson(e)));
     notifyListeners();
   }
-
-  // orderMethodFilter(int i, int id) {
   //
-  //     orderMethods.forEach((element) {
-  //       if (element.id != id) element.chosen = false;
+  // orderStatusFilter(int i, int id) {
+  //   orderStatus.forEach((element) {
+  //     element.chosen = false;
+  //   });
+  //   orderStatus[i].chosen = true;
+  //   disposeFilters = false;
+  //   chosenOrderStatus = id;
+  //   chosenOrder = null;
+  //
+  //     orderStatus.forEach((element) {
+  //       element.chosen = false;
   //     });
-  //     orderMethods[i].chosen = !orderMethods[i].chosen!;
+  //     orderStatus[i].chosen = true;
+  //     disposeFilters = false;
+  //     orders = [];
+  //     page = 1;
+  //     chosenOrderStatus = id;
+  //     chosenOrder = null;
+  //     filterOrders(
+  //         paymentMethod: chosenPaymentMethod,
+  //         orderMethod: chosenOrderMethod,
+  //         orderStatus: id,
+  //         // date: chosenTime,
+  //         orderId: orderNum);
+  //
+  //   notifyListeners();
+  // }
+  //
+  // searchOrder(int order){
+  //   disposeFilters = false;
+  //   chosenOrder = null;
+  //
+  //     orderNum = order;
+  //     orders = [];
+  //     page = 1;
+  //     chosenOrder = null;
+  //     filterOrders(
+  //         paymentMethod: chosenPaymentMethod,
+  //         orderMethod: chosenOrderMethod,
+  //         orderStatus: chosenOrderStatus,
+  //         // date: chosenTime,
+  //         orderId: order);
+  //
+  //
+  //   notifyListeners();
+  // }
+  //
+  // searchClient(){
+  //   disposeFilters = false;
+  //   chosenOrder = null;
+  //   orderNum = null;
+  //
   //     disposeFilters = false;
   //     orders = [];
   //     page = 1;
   //     chosenOrder = null;
-  //     if (orderMethods[i].chosen!) {
-  //       chosenOrderMethod = id;
-  //       filterOrders(
-  //           orderMethod: id,
-  //           paymentMethod: chosenPaymentMethod,
-  //           orderStatus: chosenOrderStatus,
-  //           // date: chosenTime,
-  //           orderId: orderNum);
-  //     } else {
-  //       chosenOrderMethod = null;
-  //       filterOrders(
-  //           paymentMethod: chosenPaymentMethod,
-  //           orderStatus: chosenOrderStatus,
-  //           // date: chosenTime,
-  //           orderId: orderNum);
-  //     }
+  //     orderNum = null;
+  //     filterOrders(
+  //         paymentMethod: chosenPaymentMethod,
+  //         orderMethod: chosenOrderMethod,
+  //         orderStatus: chosenOrderStatus,
+  //         // date: chosenTime,
+  //         client: clientSearch.text);
+  //
+  //   // else{
+  //   //   offlineOrdersListCopy = List.from(offlineOrdersList);
+  //   //   offlineOrdersList = offlineOrdersList.where((element) => element.name!.contains(clientSearch.text)|| element.phone!.contains(clientSearch.text)).toList();
+  //   // }
   //   notifyListeners();
   // }
 
- // void paymentMethodFilter(int i, int id) {
- //    paymentMethods.forEach((element) {
- //      if(element.id!=id)
- //      element.chosen = false;
- //    });
- //    paymentMethods[i].chosen =  !paymentMethods[i].chosen!;
- //    disposeFilters = false;
- //    orders = [];
- //    page = 1;
- //    chosenOrder = null;
- //    if(paymentMethods[i].chosen!) {
- //      chosenPaymentMethod = id;
- //
- //      filterOrders(
- //          paymentMethod: id,
- //          orderMethod: chosenOrderMethod,
- //          orderStatus: chosenOrderStatus,
- //          // date: chosenTime,
- //          orderId: orderNum);
- //    }
- //    else{
- //      chosenPaymentMethod = null;
- //
- //      filterOrders(
- //          orderMethod: chosenOrderMethod,
- //          orderStatus: chosenOrderStatus,
- //          // date: chosenTime,
- //          orderId: orderNum);
- //    }
- //    notifyListeners();
- //  }
-
- // void ownerFilter(int i, int id) {
- //    owners.forEach((element) {
- //      if(element.id!=id)
- //      element.chosen = false;
- //    });
- //    owners[i].chosen =  !owners[i].chosen!;
- //    disposeFilters = false;
- //    orders = [];
- //    page = 1;
- //    chosenOrder = null;
- //    if(owners[i].chosen!) {
- //      chosenOwner = id;
- //
- //      filterOrders(
- //          paymentMethod: chosenPaymentMethod,
- //          orderMethod: chosenOrderMethod,
- //          orderStatus: chosenOrderStatus,
- //          ownerId: id,
- //          // date: chosenTime,
- //          orderId: orderNum);
- //    }
- //    else{
- //      chosenOwner = null;
- //
- //      filterOrders(
- //          orderMethod: chosenOrderMethod,
- //          orderStatus: chosenOrderStatus,
- //          // date: chosenTime,
- //          orderId: orderNum);
- //    }
- //    notifyListeners();
- //  }
-
- // void paymentCustomerFilter(int id) {
- //     int index =0;
- //     for(int i = 0 ; i <paymentMethods.length;i++){
- //       if(paymentMethods[i].id!=id) {
- //         paymentMethods[i].chosen = false;
- //       }
- //       else {
- //         index = i;
- //       }
- //     }
- //
- //     paymentMethods[index].chosen =  !paymentMethods[index].chosen!;
- //    disposeFilters = false;
- //    orders = [];
- //    page = 1;
- //    chosenOrder = null;
- //    if(paymentMethods[index].chosen!) {
- //      chosenCustomer = id;
- //
- //      filterOrders(
- //          paymentMethod: chosenPaymentMethod,
- //          orderMethod: chosenOrderMethod,
- //          orderStatus: chosenOrderStatus,
- //          // date: chosenTime,
- //          orderId: orderNum,
- //      customer: id);
- //    }
- //    else{
- //      chosenCustomer = null;
- //
- //      filterOrders(
- //          orderMethod: chosenOrderMethod,
- //          orderStatus: chosenOrderStatus,
- //          // date: chosenTime,
- //          orderId: orderNum);
- //    }
- //    notifyListeners();
- //  }
-
-  orderStatusFilter(int i, int id) {
-    orderStatus.forEach((element) {
-      element.chosen = false;
-    });
-    orderStatus[i].chosen = true;
-    disposeFilters = false;
-    chosenOrderStatus = id;
-    chosenOrder = null;
-
-      orderStatus.forEach((element) {
-        element.chosen = false;
-      });
-      orderStatus[i].chosen = true;
-      disposeFilters = false;
-      orders = [];
-      page = 1;
-      chosenOrderStatus = id;
-      chosenOrder = null;
-      filterOrders(
-          paymentMethod: chosenPaymentMethod,
-          orderMethod: chosenOrderMethod,
-          orderStatus: id,
-          // date: chosenTime,
-          orderId: orderNum);
-
-    notifyListeners();
-  }
-
-  searchOrder(int order){
-    disposeFilters = false;
-    chosenOrder = null;
-
-      orderNum = order;
-      orders = [];
-      page = 1;
-      chosenOrder = null;
-      filterOrders(
-          paymentMethod: chosenPaymentMethod,
-          orderMethod: chosenOrderMethod,
-          orderStatus: chosenOrderStatus,
-          // date: chosenTime,
-          orderId: order);
-
-
-    notifyListeners();
-  }
-
-  searchClient(){
-    disposeFilters = false;
-    chosenOrder = null;
-    orderNum = null;
-
-      disposeFilters = false;
-      orders = [];
-      page = 1;
-      chosenOrder = null;
-      orderNum = null;
-      filterOrders(
-          paymentMethod: chosenPaymentMethod,
-          orderMethod: chosenOrderMethod,
-          orderStatus: chosenOrderStatus,
-          // date: chosenTime,
-          client: clientSearch.text);
-
-    // else{
-    //   offlineOrdersListCopy = List.from(offlineOrdersList);
-    //   offlineOrdersList = offlineOrdersList.where((element) => element.name!.contains(clientSearch.text)|| element.phone!.contains(clientSearch.text)).toList();
-    // }
-    notifyListeners();
-  }
-
-  void allFilter() {
-    disposeFilters = true;
-    orderMethods.forEach((element) {
-      element.chosen = false;
-    });
-    paymentMethods.forEach((element) {
-      element.chosen = false;
-    });
-    orderStatus.forEach((element) {
-      element.chosen = false;
-    });
-    orderStatus[0].chosen = true;
-    page = 1;
-    orders = [];
-    chosenPaymentMethod = null;
-    chosenOrderMethod = null;
-    chosenOrderStatus = null;
-    // chosenTime = null;
-    chosenOrder = null;
-    orderNum = null;
-    clientSearch.text='';
-    getOrders();
-    notifyListeners();
-  }
+  // void allFilter() {
+  //   disposeFilters = true;
+  //   orderMethods.forEach((element) {
+  //     element.chosen = false;
+  //   });
+  //   paymentMethods.forEach((element) {
+  //     element.chosen = false;
+  //   });
+  //   orderStatus.forEach((element) {
+  //     element.chosen = false;
+  //   });
+  //   orderStatus[0].chosen = true;
+  //   page = 1;
+  //   orders = [];
+  //   chosenPaymentMethod = null;
+  //   chosenOrderMethod = null;
+  //   chosenOrderStatus = null;
+  //   // chosenTime = null;
+  //   chosenOrder = null;
+  //   orderNum = null;
+  //   clientSearch.text='';
+  //   getOrders();
+  //   notifyListeners();
+  // }
 
   void switchLoading(bool load){
     loading = load;
     notifyListeners();
   }
 
-  Future getOrders() async {
-    connected =true;
-
+  Future getOrders({
+    required int page, int? orderMethod, int? paymentMethod, int? orderStatus,
+    int? orderId,int? customer,String? client, int? ownerId ,
+    bool? paid , bool? notPaid}) async {
     if(page==1)
     switchLoading(true);
-    if (disposeFilters) {
-      var data = await repo.getOrders(
-          token, LocalStorage.getData(key: 'language'), page,
-          date: LocalStorage.getData(key: 'loginDate'));
-      if (data == 'unauthorized') {
-        testToken();
-      }
-      else if (data == false) {
-        displayToastMessage('Connection Error', true);
+
+      var data = await repo.getOrders(page,paymentMethod: paymentMethod,
+          orderMethod: orderMethod,
+          orderStatus: orderStatus,
+          orderId: orderId,
+          owner: ownerId,
+          customer: customer,
+          client: client);
+      if (!data['status']) {
+        ConstantStyles.displayToastMessage(data['msg'], true);
       }
 
       else {
-        if (page <= data['meta']['last_page']) {
+        if (page <= data['data']['meta']['last_page']) {
           List list = List<OrdersModel>.from(
-              data['data'].map((order) => OrdersModel.fromJson(order)));
-
-
+              data['data']['data'].map((order) => OrdersModel.fromJson(order)));
           list.forEach((element) {
             if (element.ownerId != null) {
               owners.forEach((owner) {
@@ -399,88 +264,73 @@ class OrdersController extends ChangeNotifier {
                 }
               });
             }
-
             orders.add(element);
           });
           list = [];
-
-          page++;
+          currentPage = ;
           refreshController.loadComplete();
-        } else {
-          refreshController.loadNoData();
         }
       }
-        // print(data['data'][0]['details']);
-
-      }
-    else {
-      filterOrders(
-          orderMethod: chosenOrderMethod,
-          paymentMethod: chosenPaymentMethod,
-          orderStatus: chosenOrderStatus,
-          date: LocalStorage.getData(key: 'loginDate'),
-          orderId: orderNum);
-    }
-
     switchLoading(false);
     notifyListeners();
   }
 
 
-  filterOrders({int? orderMethod, int? paymentMethod, int? orderStatus,String? date,
-    int? orderId,int? customer,String? client, int? ownerId , bool? paid , bool? notPaid}) async {
-   page = 1;
-   orders.clear();
-   chosenOrder = null;
-    switchLoading(true);
-    var data = await repo.getOrders(token, LocalStorage.getData(key: 'language'), page,
-        paymentMethod: paymentMethod,
-        orderMethod: orderMethod,
-        orderStatus: orderStatus,
-    date: LocalStorage.getData(key: 'loginDate'),
-    orderId: orderId,
-    owner: ownerId,
-    customer: customer,
-    client: client);
-    if(data == 'unauthorized'){
-      testToken();
-    }
-    else if(data ==false){
-      displayToastMessage('Connection Error', true);
-    }
-
-    else {
-      if (page <= data['meta']['last_page']) {
-        List list = List<OrdersModel>.from(
-            data['data'].map((order) => OrdersModel.fromJson(order)));
-        list.forEach((element) {
-          if (element.ownerId != null) {
-            owners.forEach((owner) {
-              if (owner.id == element.ownerId) {
-                element.ownerName = owner.titleEn;
-              }
-            });
-          }
-          orders.add(element);
-        });
-        print(list.length.toString()+'dkdkkdk');
-
-        if(paid!= null && paid)
-        orders = orders.where((element) => element.paymentStatus!= 0).toList();
-
-        if(notPaid!= null && notPaid)
-          orders = orders.where((element) => element.paymentStatus!= 1).toList();
-
-        list = [];
-        page++;
-        refreshController.loadComplete();
-      } else {
-        refreshController.loadComplete();
-      }
-    }
-    switchLoading(false);
-    notifyListeners();
-  }
+  // filterOrders({int? orderMethod, int? paymentMethod, int? orderStatus,String? date,
+  //   int? orderId,int? customer,String? client, int? ownerId ,
+  //   bool? paid , bool? notPaid}) async {
+  //  page = 1;
+  //  orders.clear();
+  //  chosenOrder = null;
+  //   switchLoading(true);
+  //   var data = await repo.getOrders(token, LocalStorage.getData(key: 'language'), page,
+  //       paymentMethod: paymentMethod,
+  //       orderMethod: orderMethod,
+  //       orderStatus: orderStatus,
+  //   date: LocalStorage.getData(key: 'loginDate'),
+  //   orderId: orderId,
+  //   owner: ownerId,
+  //   customer: customer,
+  //   client: client);
+  //   if(data == 'unauthorized'){
+  //     testToken();
+  //   }
+  //   else if(data ==false){
+  //     displayToastMessage('Connection Error', true);
+  //   }
+  //
+  //   else {
+  //     if (page <= data['meta']['last_page']) {
+  //       List list = List<OrdersModel>.from(
+  //           data['data'].map((order) => OrdersModel.fromJson(order)));
+  //       list.forEach((element) {
+  //         if (element.ownerId != null) {
+  //           owners.forEach((owner) {
+  //             if (owner.id == element.ownerId) {
+  //               element.ownerName = owner.titleEn;
+  //             }
+  //           });
+  //         }
+  //         orders.add(element);
+  //       });
+  //       print(list.length.toString()+'dkdkkdk');
+  //
+  //       if(paid!= null && paid)
+  //       orders = orders.where((element) => element.paymentStatus!= 0).toList();
+  //
+  //       if(notPaid!= null && notPaid)
+  //         orders = orders.where((element) => element.paymentStatus!= 1).toList();
+  //
+  //       list = [];
+  //       page++;
+  //       refreshController.loadComplete();
+  //     } else {
+  //       refreshController.loadComplete();
+  //     }
+  //   }
+  //   switchLoading(false);
+  //   notifyListeners();
+  // }
 
   void getOrderMethods() async {
 
@@ -495,18 +345,10 @@ class OrdersController extends ChangeNotifier {
   }
 
   void getPaymentMethods() async {
-    // if (LocalStorage.getData(key: 'paymentMethods') == null) {
-    //   var data = await repoFilter.getPaymentMethods(token,LocalStorage.getData(key: 'language'));
-    //   LocalStorage.saveData(key: 'paymentMethods', value: json.encode(data));
-    //   paymentMethods =
-    //       List<PaymentModel>.from(data.map((e) => PaymentModel.fromJson(e)));
-    // } else {
     print(LocalStorage.getData(key: 'paymentMethods').toString()+'sllqqq');
       paymentMethods = List<PaymentModel>.from(json
           .decode(LocalStorage.getData(key: 'paymentMethods'))
           .map((e) => PaymentModel.fromJson(e)));
-
-    // }
     paymentMethods.forEach((element) {
       element.chosen = false;
     });
@@ -697,30 +539,13 @@ class OrdersController extends ChangeNotifier {
 
 
   void editOrder(BuildContext context, bool navigate){
-    HomeController.orderDetails = OrderDetails();
+    // HomeController.orderDetails = OrderDetails();
+    //
+    // HomeController.orderDetails.editOrder(orders[chosenOrder!],);
 
-    HomeController.orderDetails.editOrder(orders[chosenOrder!],);
-    if(navigate) {
 
-      if (orders[chosenOrder!].orderStatusId == 4 &&
-          orders[chosenOrder!].orderMethodId != 2 &&
-          orders[chosenOrder!].paymentStatus == 0) {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (_) => PaymentScreen()));
-      }
 
-      if (orders[chosenOrder!].paymentCustomerId != null) {
-        paymentCustomer.forEach((element) {
-          if (element.id == orders[chosenOrder!].paymentCustomerId) {
-            HomeController.orderDetails.customer = CustomerModel(
-                title: element.title,
-                id: element.id,
-                image: element.image,
-                chosen: true);
-          }
-        });
-      }
-    }
+
     // selectedTab = SelectedTab.home;
 
      notifyListeners();
@@ -996,9 +821,9 @@ class OrdersController extends ChangeNotifier {
 
   }
 
-  testPrint({String ?orderNo}) async {
-    OrderDetails order = HomeController.orderDetails.copyWith();
-    HomeController.orderDetails = OrderDetails();
+  testPrint({String ?orderNo,required OrderDetails order}) async {
+    // OrderDetails order = HomeController.orderDetails.copyWith();
+    // HomeController.orderDetails = OrderDetails();
     deviceReceipt(order , orderNo:orderNo);
     const PaperSize paper = PaperSize.mm80;
     final profile = await CapabilityProfile.load();

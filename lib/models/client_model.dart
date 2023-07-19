@@ -3,17 +3,17 @@ class ClientModel{
   String ?phone;
   String? points;
   String? balance;
-  String? allowCreateOrder;
+  bool allowCreateOrder = true;
 
 
-  ClientModel({this.name,this.phone,this.points,this.allowCreateOrder,this.balance});
+  ClientModel({this.name,this.phone,this.points,this.allowCreateOrder = true,this.balance});
 
   ClientModel.fromJson(Map<String, dynamic> json){
     name = json['name'];
-    phone = json['phone'].toString();
-    balance = json['balance'].toString();
-    points = json['points'].toString();
-    allowCreateOrder = json['allow_create_order'].toString();
+    phone = json['phone'];
+    balance = json['balance'];
+    points = json['points'];
+    allowCreateOrder = json['allow_create_order'] ?? true;
   }
 
 }

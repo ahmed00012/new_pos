@@ -4,10 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shormeh_pos_new_28_11_2022/data_controller/home_controller.dart';
 import 'package:shormeh_pos_new_28_11_2022/data_controller/tables_controller.dart';
 
-import '../../constants.dart';
+import '../../constants/colors.dart';
 import '../../local_storage.dart';
 import '../../models/tables_model.dart';
-import 'home.dart';
+import 'home/home.dart';
 
 
 
@@ -536,9 +536,9 @@ class TableOrder extends ConsumerWidget {
               // homeController.editOrder(tablesController.currentOrder!.currentOrder!,
               //     department:tablesController.departments[tablesController.chosenDepartment!].title,
               // table: tablesController.chosenTable!.title);
-              tablesController.editOrder();
-              homeController.selectedTab = SelectedTab.home;
-              homeController.notifyListeners();
+              // tablesController.editOrder();
+              // homeController.selectedTab = SelectedTab.home;
+              // homeController.notifyListeners();
 
 
             },

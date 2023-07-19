@@ -1,7 +1,7 @@
 import 'package:easy_localization/src/public_ext.dart';
 import 'package:flutter/material.dart';
 import 'package:overlay_support/overlay_support.dart';
-import 'package:shormeh_pos_new_28_11_2022/constants.dart';
+import 'package:shormeh_pos_new_28_11_2022/constants/colors.dart';
 import 'package:shormeh_pos_new_28_11_2022/data_controller/order_method_controller.dart';
 
 

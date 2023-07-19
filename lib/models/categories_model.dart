@@ -8,7 +8,7 @@ class CategoriesModel {
   int? order;
   String? createdAt;
   String? updatedAt;
-  bool? chosen;
+  bool chosen = false;
 
   CategoriesModel(
       {this.id,
@@ -18,7 +18,7 @@ class CategoriesModel {
         this.order,
         this.createdAt,
         this.updatedAt,
-      this.chosen});
+      this.chosen = false});
 
   CategoriesModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];

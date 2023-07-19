@@ -4,6 +4,7 @@
 
 
 import 'package:easy_localization/easy_localization.dart';
+import 'package:shormeh_pos_new_28_11_2022/constants/utils.dart';
 import 'package:shormeh_pos_new_28_11_2022/local_storage.dart';
 
 class OrdersModel {
@@ -15,7 +16,7 @@ class OrdersModel {
   String? time;
   String? paymentMethod;
   int? paymentMethodId;
-  List<PaymentMethods>? paymentMethods;
+  List<OrderPaymentMethods>? paymentMethods;
   String? orderMethod;
   int? orderMethodId;
   String? orderStatus;
@@ -30,7 +31,7 @@ class OrdersModel {
   String? table;
   String? subTotal;
   String? tax;
-  String? discount;
+  double discount = 0.0;
   String? notes;
   String? department;
   int? ownerId;
@@ -44,7 +45,7 @@ class OrdersModel {
   String? couponId;
   String? discountId;
   int? clientsCount;
-  double? deliveryFee;
+  double deliveryFee = 0.0;
   Car? car;
 
 
@@ -65,12 +66,13 @@ class OrdersModel {
       this.clientPhone,
       this.clientName,this.paymentCustomer,
         this.paymentCustomerId,
-      this.subTotal,this.tax,this.discount,
+      this.subTotal,this.tax,
+        this.discount = 0.0,
       this.notes,this.paymentCustomerImage,this.ownerId,this.department,this.coupon,
       this.amount,this.paymentMethodId,this.paidAmount,
       this.tableId,this.clientsCount,this.couponId,
       this.discountId,this.finished,this.updatedAt,this.ownerName,
-        this.deliveryFee,
+        this.deliveryFee = 0.0,
         this.car
      });
 
@@ -98,12 +100,12 @@ class OrdersModel {
     quantity = json['quantity'];
     createdAt = json['created_at']!=null ? checkCurrentTimeZone(json['created_at']) : null;
     time = json['time'];
-    paymentMethod =LocalStorage.getData(key: 'language') =='en'?
+    paymentMethod = getLanguage() =='en'?
     json['payment_method_en']:json['payment_method_ar'];
-    deliveryFee = json['delivery_fee'].toDouble();
-    orderMethod = LocalStorage.getData(key: 'language') =='en'?
+    deliveryFee = json['delivery_fee']!=null? double.parse(json['delivery_fee'].toString()) : 0.0;
+    orderMethod = getLanguage()  =='en'?
     json['order_method_en']:json['order_method_ar'];
-    orderStatus = LocalStorage.getData(key: 'language') =='en'?
+    orderStatus = getLanguage()  =='en'?
     json['order_status_en']:json['order_status_ar'];
     paymentStatus = json['payment_status'];
     orderStatusId = json['order_status_id'];
@@ -112,7 +114,7 @@ class OrdersModel {
     paymentCustomer=  json['payment_customer'];
     paymentCustomerId=  json['payment_customer_id'];
     paymentCustomerImage=  json['payment_customer_image'];
-    discount =json['discount'].toString();
+    discount = json['discount']!=null? double.parse(json['discount'].toString()) : 0.0;
     subTotal =json['subtotal'].toString();
     tax =  json['tax'].toString();
     table = json['table'].toString();
@@ -133,9 +135,9 @@ class OrdersModel {
     car =json['car']!=null? Car.fromJson(json['car']):null;
 
     if (json['payment_methods']!=null && json['payment_methods'].isNotEmpty) {
-      paymentMethods = <PaymentMethods>[];
+      paymentMethods = <OrderPaymentMethods>[];
       json['payment_methods'].forEach((v) {
-        paymentMethods!.add(new PaymentMethods.fromJson(v));
+        paymentMethods!.add(new OrderPaymentMethods.fromJson(v));
       });
     }
 
@@ -163,7 +165,7 @@ class OrdersModel {
     data['payment_method'] = this.paymentMethod;
     if (this.paymentMethods != null) {
       data['payment_methods'] =
-          this.paymentMethods!.map((v) => v.toJson2()).toList();
+          this.paymentMethods!.map((v) => v.toJson()).toList();
     }
     data['order_method'] = this.orderMethod;
     data['order_method_id'] = this.orderMethodId;
@@ -280,13 +282,13 @@ class OrdersDetails {
 
 
 
-class PaymentMethods{
+class OrderPaymentMethods{
   int? id;
   String? title;
   String? value;
-  PaymentMethods({this.id,this.title,this.value});
+  OrderPaymentMethods({this.id,this.title,this.value});
 
-  PaymentMethods.fromJson(Map<String, dynamic> json) {
+  OrderPaymentMethods.fromJson(Map<String, dynamic> json) {
     title = json['title'];
     value = json['value'].toString();
     id = json['id'];
@@ -294,14 +296,16 @@ class PaymentMethods{
   }
 
 
+  // Map<String, dynamic> toJson() {
+  //   final Map<String, dynamic> data = new Map<String, dynamic>();
+  //  data['title'] = this.title;
+  //  data['value'] = this.value;
+  //  data['id']=this.id;
+  //   return data;
+  // }
+  //
+
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-   data['title'] = this.title;
-   data['value'] = this.value;
-   data['id']=this.id;
-    return data;
-  }
-  Map<String, dynamic> toJson2() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['payment_method_id'] = this.id;
     data['value'] = this.value;

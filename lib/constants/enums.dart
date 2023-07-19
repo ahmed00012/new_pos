@@ -1,0 +1,1 @@
+enum SelectedTab { orders, home, mobileOrders, tables }

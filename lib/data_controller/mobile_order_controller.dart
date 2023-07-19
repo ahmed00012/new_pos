@@ -16,6 +16,7 @@ import 'package:overlay_support/overlay_support.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:pusher_client/pusher_client.dart';
 import 'package:screenshot/screenshot.dart';
+import 'package:shormeh_pos_new_28_11_2022/constants/constant_keys.dart';
 import 'package:shormeh_pos_new_28_11_2022/local_storage.dart';
 import 'package:shormeh_pos_new_28_11_2022/models/customer_model.dart';
 import 'package:shormeh_pos_new_28_11_2022/models/order_method_model.dart';
@@ -25,7 +26,7 @@ import 'package:shormeh_pos_new_28_11_2022/models/payment_model.dart';
 import 'package:shormeh_pos_new_28_11_2022/ui/widgets/complain_widget.dart';
 import 'package:soundpool/soundpool.dart';
 
-import '../constants.dart';
+import '../constants/colors.dart';
 import '../main.dart';
 import '../models/cart_model.dart';
 import '../models/complain_reasons.dart';
@@ -35,7 +36,7 @@ import '../models/owner_model.dart';
 import '../models/printers_model.dart';
 import '../repositories/mobile_orders_repository.dart';
 import '../ui/screens/login.dart';
-import '../ui/screens/payment_screen.dart';
+import '../ui/screens/payment/payment_screen.dart';
 import '../ui/widgets/mobile_complain.dart';
 import 'home_controller.dart';
 import 'package:image/image.dart' as img;
@@ -324,14 +325,14 @@ class MobileOrdersController extends ChangeNotifier {
 
   removeOrderPusher() {
     PusherOptions options = PusherOptions(
-      cluster: "us2",
+      cluster: pusherCluster,
     );
-    pusher = new PusherClient("084bdc917e1b8a627bc8", options,
+    pusher = new PusherClient(pusherAppKey, options,
         autoConnect: true, enableLogging: true);
 
     pusher!.connect().then((value) {
-      pusherChannel = pusher!.subscribe("accept_cancel_order_$branch");
-      pusherChannel!.bind("Modules\\Order\\Events\\AcceptCancelMobileOrder",
+      pusherChannel = pusher!.subscribe(pusherAcceptCancelOrderChannel);
+      pusherChannel!.bind(pusherAcceptCancelEvent,
           (PusherEvent? event) {
         String data = event!.data!;
 
@@ -974,9 +975,9 @@ class MobileOrdersController extends ChangeNotifier {
 
   }
 
-  testPrint({String ?orderNo}) async {
-    OrderDetails order = HomeController.orderDetails.copyWith();
-    HomeController.orderDetails = OrderDetails();
+  testPrint({String ?orderNo ,required OrderDetails order}) async {
+    // OrderDetails order = HomeController.orderDetails.copyWith();
+    // HomeController.orderDetails = OrderDetails();
     deviceReceipt(order,orderNo:orderNo);
     const PaperSize paper = PaperSize.mm80;
     final profile = await CapabilityProfile.load();

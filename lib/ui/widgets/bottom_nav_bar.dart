@@ -6,9 +6,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shormeh_pos_new_28_11_2022/data_controller/home_controller.dart';
 
-import 'package:shormeh_pos_new_28_11_2022/ui/screens/home.dart';
+import 'package:shormeh_pos_new_28_11_2022/ui/screens/home/home.dart';
 
-import '../../constants.dart';
+import '../../constants/colors.dart';
+import '../../constants/enums.dart';
 import '../../local_storage.dart';
 
 class BottomNavBar extends ConsumerWidget {

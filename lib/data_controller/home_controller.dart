@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:pusher_client/pusher_client.dart';
+import 'package:shormeh_pos_new_28_11_2022/constants/styles.dart';
 import 'package:shormeh_pos_new_28_11_2022/repositories/get_data.dart';
 import 'package:shormeh_pos_new_28_11_2022/models/client_model.dart';
 import 'package:shormeh_pos_new_28_11_2022/models/customer_model.dart';
@@ -15,22 +16,25 @@ import 'package:shormeh_pos_new_28_11_2022/models/notes_model.dart';
 import 'package:shormeh_pos_new_28_11_2022/models/products_model.dart';
 import 'package:shormeh_pos_new_28_11_2022/ui/screens/login.dart';
 import 'package:shormeh_pos_new_28_11_2022/ui/screens/mobile_orders.dart';
-import 'package:shormeh_pos_new_28_11_2022/ui/screens/order_method.dart';
-import 'package:shormeh_pos_new_28_11_2022/ui/screens/payment_screen.dart';
+import 'package:shormeh_pos_new_28_11_2022/ui/screens/order_method/order_method_screen.dart';
+import 'package:shormeh_pos_new_28_11_2022/ui/screens/payment/payment_screen.dart';
 import 'package:soundpool/soundpool.dart';
-import '../constants.dart';
+import '../constants/colors.dart';
+import '../constants/constant_keys.dart';
+import '../constants/enums.dart';
+import '../constants/utils.dart';
 import '../local_storage.dart';
 import '../main.dart';
 import '../models/cart_model.dart';
 import '../models/categories_model.dart';
 import '../models/product_details_model.dart';
 import '../repositories/products_repository.dart';
-import '../ui/screens/home.dart';
-import '../ui/screens/orders.dart';
+import '../ui/screens/home/home.dart';
+import '../ui/screens/orders/order_screen.dart';
 import '../ui/screens/tables.dart';
 
 
-const MethodChannel channel = MethodChannel('com.imin.printersdk');
+
 final dataFuture = ChangeNotifierProvider.autoDispose<HomeController>(
     (ref) => HomeController());
 
@@ -47,30 +51,28 @@ class HomeController extends ChangeNotifier {
   List<ProductModel> products = [];
   List<NotesModel> optionsList = [];
   bool loading = true;
-  bool clientsLoading = false;
+
 
   TextEditingController customerName = TextEditingController();
   TextEditingController customerPhone = TextEditingController();
   TextEditingController expenseDescription = TextEditingController();
   TextEditingController cashOutAmount = TextEditingController();
   TextEditingController anotherOption = TextEditingController();
-  String lan = 'en';
-  List<ClientModel> clients = [];
-  List<ClientModel> searchResultClients = [];
+  // String lan = 'en';
+
   List<CustomerModel> paymentCustomers = [];
-  PusherClient ?pusher;
-  Channel? pusherChannel;
-  static int ordersCount = 0;
-  ProductDetailsModel productDetails = ProductDetailsModel();
+  // PusherClient ?pusher;
+  // Channel? pusherChannel;
+  // static int ordersCount = 0;
+  // ProductDetailsModel productDetails = ProductDetailsModel();
   List<Attributes> attributes = [];
   bool changed = false;
-  String url = 'https://beta2.poss.app/api/';
+  // String url = 'https://beta2.poss.app/api/';
   GetData allData = GetData();
   bool branchClosed = false;
   Timer ? pusherTimer;
   Timer ?baseUrlTimer;
   Timer ?branchImagesTimer;
-  bool disposed = false;
   List<String> branchScreenImages = [];
   int secondScreenDuration = 0;
 
@@ -83,7 +85,7 @@ class HomeController extends ChangeNotifier {
   ];
 
   HomeController() {
-    getLanguage();
+    // getLanguage();
     getAllData();
     // refreshBaseUrl();
     initPusher( );
@@ -146,11 +148,11 @@ class HomeController extends ChangeNotifier {
   // }
 
 
- Future syncServer()async{
-    if(changed)
-   await productsRepo.syncOrders();
-
-  }
+ // Future syncServer()async{
+ //    if(changed)
+ //   await productsRepo.syncOrders();
+ //
+ //  }
 
 
   @override
@@ -161,44 +163,46 @@ class HomeController extends ChangeNotifier {
       pusherTimer!.cancel();
     if(branchImagesTimer!=null)
       branchImagesTimer!.cancel();
-    disposed = true;
     super.dispose();
   }
 
   void initPusher( ) {
-
     if(Platform.isWindows) {
      pusherTimer = Timer.periodic(Duration(seconds: 30), (timer) {
         getNewMobileOrders();
       });
     }
-    // else{
-    //   PusherOptions options = PusherOptions(
-    //     cluster: "us2",
-    //   );
-    //   pusher = new PusherClient("084bdc917e1b8a627bc8", options,
-    //       autoConnect: true,enableLogging: true);
-    //
-    //   pusher!.connect().then((value) {
-    //     channel = pusher!.subscribe("create_order_from_phone_${LocalStorage.getData(key: 'branch')}");
-    //     getMobileOrder();
-    //   });
-    // }
-    notifyListeners();
+    else{
+      // PusherOptions options = PusherOptions(
+      //   cluster: pusherCluster,
+      // );
+      // pusher =  PusherClient(pusherAppKey, options,
+      //     autoConnect: true,enableLogging: true);
+      //
+      // pusher!.connect().then((value) {
+      //   channel = pusher!.subscribe(pusherGetOrderCountChannel);
+      //  getMobileOrder();
+      // });
+
+      initializePusher(channel: pusherGetOrderCountChannel,
+          event: pusherGetOrderCountEvent,
+          function: getNewMobileOrders());
+    }
+
 
   }
 
 
-  refreshList() {
-    notifyListeners();
-  }
+  // refreshList() {
+  //   notifyListeners();
+  // }
 
-  testToken()async{
-    LocalStorage.removeData(key: 'token');
-    LocalStorage.removeData(key: 'branch');
-    LocalStorage.removeData(key: 'coupons');
-    navigatorKey.currentState!.pushAndRemoveUntil(MaterialPageRoute(builder: (_)=>Login()), (route) => false);
-  }
+  // testToken()async{
+  //   LocalStorage.removeData(key: 'token');
+  //   LocalStorage.removeData(key: 'branch');
+  //   LocalStorage.removeData(key: 'coupons');
+  //   navigatorKey.currentState!.pushAndRemoveUntil(MaterialPageRoute(builder: (_)=>Login()), (route) => false);
+  // }
 
   // void getMobileOrder() async{
   //
@@ -225,7 +229,7 @@ class HomeController extends ChangeNotifier {
 
   void getPaymentCustomers() async {
       paymentCustomers = List<CustomerModel>.from(json
-          .decode(LocalStorage.getData(key: 'paymentCustomers'))
+          .decode(getPaymentCustomersPrefs())
           .map((e) => CustomerModel.fromJson(e)));
     paymentCustomers.forEach((element) {
       element.chosen = false;
@@ -292,22 +296,19 @@ class HomeController extends ChangeNotifier {
   }
 
   Future getCategories() async {
-
-  var data = await  allData.getCategories();
-  if(data  == true) {
-      categories = List<CategoriesModel>.from(json
-          .decode(LocalStorage.getData(key: 'allCategories'))
-          .map((e) => CategoriesModel.fromJson(e)));
-      // categories.forEach((element) {
-      //   getProducts (element.id!);
-      // });
-
-      getProducts(categories[0].id!,false);
-      categories[0].chosen = true;
-      branchClosed = false;
-    }
-  else if(data == 'branchClosed'){
+  var data = await allData.getCategories();
+  if(data == 'branchClosed'){
    branchClosed = true;
+  }
+  else{
+    categories = List<CategoriesModel>.from(json.decode(getAllCategoriesPrefs())
+        .map((e) => CategoriesModel.fromJson(e)));
+    // categories.forEach((element) {
+    //   getProducts (element.id!);
+    // });
+    getProducts(categories[0].id!);
+    categories[0].chosen = true;
+    branchClosed = false;
   }
 
 
@@ -330,18 +331,15 @@ class HomeController extends ChangeNotifier {
   // }
 
   void chooseCategory(int i) {
+    categories.forEach((element) {
+      element.chosen = false;
+    });
     if (i == 0) {
-      categories.forEach((element) {
-        element.chosen = false;
-      });
       options = true;
     } else {
       options = false;
-      categories.forEach((element) {
-        element.chosen = false;
-      });
       categories[i - 1].chosen = true;
-      getProducts(categories[i - 1].id!,false);
+      getProducts(categories[i - 1].id!);
     }
     notifyListeners();
   }
@@ -367,177 +365,66 @@ class HomeController extends ChangeNotifier {
   //   notifyListeners();
   // }
 
-  void synchronize(BuildContext context) {
+  void synchronize() {
+    categories = [];
+    products = [];
+    optionsList = [];
+    attributes = [];
     switchLoading(true);
-    // bool synchronized = false;
-    // if(LocalStorage.getData(key: 'baseUrl') == 'https://poss.app/api/'){
-    //   synchronized = true;
-    //   syncServer().then((value) {
-    //
-    //     getAllData();
-    //   });
-    //
-    // }
-
-
-    if (LocalStorage.getList(key: 'categoriesId') != null) {
-      List cats = LocalStorage.getList(key: 'categoriesId');
-      cats.forEach((element){
-        LocalStorage.removeData(key: 'products$element');
-      });
-
-      categories = [];
-      products = [];
-      optionsList = [];
-    }
-    if(LocalStorage.getList(key: 'productsId') != null){
-      List productsID = LocalStorage.getList(key: 'productsId');
-      LocalStorage.removeData(key: 'productsId');
-      productsID.forEach((element) {
-        LocalStorage.removeData(key: 'productDetails$element');
-      });
-
-    }
-    if (LocalStorage.getData(key: 'orderMethods') != null)
-      LocalStorage.removeData(key: 'orderMethods');
-    if (LocalStorage.getData(key: 'options') != null) {
-      LocalStorage.removeData(key: 'options');
-    }
-    if (LocalStorage.getData(key: 'categoriesId') != null)
-      LocalStorage.removeData(key: 'categoriesId');
-    if (LocalStorage.getData(key: 'paymentMethods') != null) {
-      LocalStorage.removeData(key: 'paymentMethods');
-
-    }
-    if (LocalStorage.getData(key: 'orderStatus') != null) {
-      LocalStorage.removeData(key: 'orderStatus');
-
-    }
-    if (LocalStorage.getData(key: 'paymentCustomers') != null) {
-      LocalStorage.removeData(key: 'paymentCustomers');
-    }
-    if (LocalStorage.getData(key: 'coupons') != null)
-      LocalStorage.removeData(key: 'coupons');
-    if (LocalStorage.getData(key: 'printers') != null) {
-      LocalStorage.removeData(key: 'printers');
-    }
-    if (LocalStorage.getData(key: 'owners') != null) {
-      LocalStorage.removeData(key: 'owners');
-    }
-    if (LocalStorage.getData(key: 'reasons') != null) {
-      LocalStorage.removeData(key: 'reasons');
-    }
-     // allData.getAll().then((value) {
-     //   getCategories();
-     //   getNotes();
-     //   getPaymentCustomers();
-     //   // switchLoading(false);
-     //   // displayToastMessage("refreshCompleted".tr(), false);
-     // });
-
+    syncAppData();
     getSecondScreenImages();
-    // if(!synchronized)
     getAllData();
-    notifyListeners();
+
   }
 
- Future getAllData()async{
-    if(!disposed) {
+  getAllData(){
       allData.getAll().then((value) {
         getCategories();
         getNotes();
         getPaymentCustomers();
         switchLoading(false);
-        if (!value) {
-          testToken();
-        }
       });
-    }
+
   }
 
-  String getLanguage() {
-    lan = LocalStorage.getData(key: 'language');
-    notifyListeners();
-    return lan;
-  }
+  // String getLanguage() {
+  //   String  language = LocalStorage.getData(key: 'language') ?? 'en';
+  //   return language;
+  // }
 
   changeLanguage(BuildContext context,String language) {
-  if(language != lan) {
+  if(language != getLanguage()) {
       language == 'en'
           ? context.setLocale(Locale('en'))
           : context.setLocale(Locale('ar'));
       language = context.locale.languageCode;
-      lan = language;
-      LocalStorage.saveData(key: 'language', value: language);
-      categories = [];
-      products = [];
-      optionsList = [];
-      synchronize(context);
+      setLanguage(language);
+      synchronize();
     }
 
     notifyListeners();
   }
 
-  chooseClient({ required OrderDetails orderDetails ,ClientModel? client}){
-
-    if(client!=null)
-    {
-      orderDetails.clientPhone = client.phone!;
-      orderDetails.clientName = client.name!;
-      customerPhone.text = client.phone!;
-      customerName.text = client.name!;
-
-    }
-    else{
-
-      orderDetails.clientPhone = customerPhone.text;
-      orderDetails.clientName = customerName.text;
-    }
-    clients = [];
-    if(client!=null)
-    clients.add(client);
-    else
-      clients.add(ClientModel(
-        name: customerName.text,
-        phone: customerPhone.text,
-        balance: '0',
-          points: '0',
-        allowCreateOrder: 'true'
-      ));
 
 
-    notifyListeners();
-  }
 
 
-  onSearchTextChanged(String text) async {
 
-    clientsLoading = true;
-    final data = await productsRepo.searchClient(
-        LocalStorage.getData(key: 'token'),text);
-    clients = List<ClientModel>.from(
-        data.map((client) => ClientModel.fromJson(client)));
-    clientsLoading = false;
-  notifyListeners();
-
-}
-
-  Future getProducts(int id, bool clear) async {
-
-
+  Future getProducts(int id) async {
+    // , bool clear
     products = [];
-    products = await allData.getProducts(id);
-
-    if(clear) {
-
-      products.forEach((element2) {
-        if (LocalStorage.getData(key: 'productDetails${element2.id}')
-            .toString() != 'null')
-          LocalStorage.removeData(key: 'productDetails${element2.id}');
-      });
-      LocalStorage.removeData(key: 'products${id}');
-      products.clear();
-    }
+    var data = await allData.getProducts(id);
+    products = List<ProductModel>.from(json.decode(getProductsPrefs(id))
+        .map((e) => ProductModel.fromJson(e)));
+    // if(clear) {
+    //   products.forEach((element) {
+    //     if (getProductDetailsPrefs(id).isNotEmpty) {
+    //       setProductDetailsPrefs('', id);
+    //     }
+    //   });
+    //   setProductsPrefs('', id);
+    //   products.clear();
+    // }
 
     // products.forEach((element) {
     //    getProductDetails(int.parse(element.id!),element);
@@ -545,27 +432,24 @@ class HomeController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future getProductDetails({required int index , required bool customerPrice}) async {
-     attributes = await allData.getProductDetails(products[index].id!);
-     int numberOfRequiredElements = 0;
+  Future getProductDetails({required int productID , required bool customerPrice}) async {
+    int numberOfRequiredElements = 0;
+     var data = await allData.getProductDetails(productID);
+    attributes = List<Attributes>.from(json.decode(getProductDetailsPrefs(productID))
+        .map((e) => Attributes.fromJson(e)));
     attributes.forEach((element) {
 
       if(element.required == 1) {
         numberOfRequiredElements += 1;
-        print(numberOfRequiredElements);
+        debugPrint(numberOfRequiredElements.toString());
       }
-      element.values!.forEach((element2) {element2.chosen = false;
+      element.values!.forEach((element) {
+        element.chosen = false;
       if(customerPrice)
-        element2.realPrice = element2.customerPrice;
+        element.realPrice = element.customerPrice;
       else
-        element2.realPrice = element2.price;
+        element.realPrice = element.price;
       });
-
-    // if(element.required == 1 && orderDetails.cart![productCartIndex].attributes!.length< numberOfRequiredElements){
-      // editAttributes(orderDetails: orderDetails ,valueIndex:0,attributeIndex: attributes.indexOf(element) ,
-      //     productIndex :productCartIndex,
-      //     update: !orderDetails.cart![productCartIndex].newInCart!);
-    // }
     });
 
      notifyListeners();
@@ -589,12 +473,10 @@ class HomeController extends ChangeNotifier {
        branchScreenImages.add(e['image']);
      });
    }
-
      else {
        branchScreenImages = ['assets/images/2.png'];
    }
     changeBranchImage();
-
    notifyListeners();
   }
 
@@ -602,7 +484,7 @@ class HomeController extends ChangeNotifier {
   changeBranchImage(){
     if(branchScreenImages.isNotEmpty) {
       branchImagesTimer = Timer.periodic(Duration(seconds: secondScreenDuration), (timer) {
-        channel.invokeMethod("showImage",
+        channel.invokeMethod(iminShowImage,
             [branchScreenImages[Random().nextInt(branchScreenImages.length)]]);
       });
     }
@@ -611,20 +493,14 @@ class HomeController extends ChangeNotifier {
 
 
 
-  Future expense() async {
-    var data = productsRepo.expense(LocalStorage.getData(key: 'token'),
-        LocalStorage.getData(key: 'language'), {
-      'title': expenseDescription.text,
-      'price': int.parse(cashOutAmount.text),
-      'branch_id': LocalStorage.getData(key: 'branch')
-    });
-    if (data != false) {
-      expenseDescription.text = '';
-      cashOutAmount.text = '';
-      displayToastMessage('Expense Created Successfully', false);
+  Future expense(String description , String price) async {
+    try{
+      var data = await productsRepo.expense(description, double.parse(price));
+      ConstantStyles.displayToastMessage(data['msg'], data['status']);
     }
-
-    notifyListeners();
+    catch(e){
+      ConstantStyles.displayToastMessage(e.toString(), true);
+    }
   }
 
 
@@ -636,24 +512,24 @@ class HomeController extends ChangeNotifier {
   // }
 
 
-  updateAttributes( {required OrderDetails orderDetails,
-    required int attributeIndex }){
-    deleteFromOrder(orderDetails.cart![chosenItem!].rowId!);
-    orderDetails.cart![chosenItem!].rowId = null;
-
-    orderDetails.cart![chosenItem!].updated = true;
-    int removeAt = 0;
-    orderDetails.cart![chosenItem!].attributes!.removeWhere((element) =>
-    attributes[attributeIndex].title!.en == element.title!.en );
-    orderDetails.cart![chosenItem!].allAttributesID!.forEach((element) {
-      attributes[attributeIndex].values!.forEach((element2) {
-        if(element == element2.id)
-          removeAt = orderDetails.cart![chosenItem!].allAttributesID!.indexOf(element);
-      });
-    });
-    orderDetails.cart![chosenItem!].allAttributesID!.removeAt(removeAt);
-    notifyListeners();
-  }
+  // updateAttributes( {required OrderDetails orderDetails,
+  //   required int attributeIndex }){
+  //   deleteFromOrder(orderDetails.cart![chosenItem!].rowId!);
+  //   orderDetails.cart![chosenItem!].rowId = null;
+  //
+  //   orderDetails.cart![chosenItem!].updated = true;
+  //   int removeAt = 0;
+  //   orderDetails.cart![chosenItem!].attributes!.removeWhere((element) =>
+  //   attributes[attributeIndex].title!.en == element.title!.en );
+  //   orderDetails.cart![chosenItem!].allAttributesID!.forEach((element) {
+  //     attributes[attributeIndex].values!.forEach((element2) {
+  //       if(element == element2.id)
+  //         removeAt = orderDetails.cart![chosenItem!].allAttributesID!.indexOf(element);
+  //     });
+  //   });
+  //   orderDetails.cart![chosenItem!].allAttributesID!.removeAt(removeAt);
+  //   notifyListeners();
+  // }
 
 
   // void editAttributes(
@@ -682,9 +558,10 @@ class HomeController extends ChangeNotifier {
 
 
   getNewMobileOrders() async{
-      var data = await productsRepo.getNewMobileOrders(LocalStorage.getData(key: 'token'));
+      var data = await productsRepo.getNewMobileOrdersCount();
       if(data!=false && data!=0){
-        ordersCount = data;
+        // ordersCount = data;
+        setMobileOrdersCount(data);
         playSound();
       }
       notifyListeners();
@@ -692,27 +569,4 @@ class HomeController extends ChangeNotifier {
 
 
 
-
-
-  void displayToastMessage(var toastMessage, bool alert) {
-    showSimpleNotification(
-        Container(
-          height: 50,
-          child: Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: Center(
-              child: Text(
-                toastMessage,
-                style: TextStyle(
-                    color: alert ? Colors.white : Constants.mainColor,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500),
-              ),
-            ),
-          ),
-        ),
-        duration: Duration(seconds: 3),
-        elevation: 2,
-        background: alert ? Colors.red[500] : Constants.secondryColor);
-  }
 }

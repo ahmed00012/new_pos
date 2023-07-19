@@ -7,11 +7,13 @@ import 'package:shormeh_pos_new_28_11_2022/data_controller/orders_controller.dar
 import 'package:shormeh_pos_new_28_11_2022/local_storage.dart';
 import 'package:shormeh_pos_new_28_11_2022/models/cart_model.dart';
 import 'package:shormeh_pos_new_28_11_2022/models/details_model.dart';
+import 'package:shormeh_pos_new_28_11_2022/ui/screens/payment/payment_screen.dart';
 
-import '../../constants.dart';
-import '../../models/orders_model.dart';
-import '../widgets/receipt.dart';
-import 'home.dart';
+import '../../../../constants/colors.dart';
+import '../../../../data_controller/cart_controller.dart';
+import '../../../../models/orders_model.dart';
+import '../../reciept/receipt_screen.dart';
+import '../../home/home.dart';
 
 class OrderItems extends ConsumerStatefulWidget {
   @override
@@ -21,10 +23,11 @@ class OrderItems extends ConsumerStatefulWidget {
 class OrderItemsState extends ConsumerState {
   ScreenshotController screenshotController = ScreenshotController();
 
+
   @override
   Widget build(BuildContext context) {
     final viewModel = ref.watch(ordersFuture);
-    final homeController = ref.watch(dataFuture);
+    final cartController = ref.watch(cartFuture);
     Size size = MediaQuery.of(context).size;
     return Container(
       child: viewModel.chosenOrder != null
@@ -34,7 +37,8 @@ class OrderItemsState extends ConsumerState {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(20),
                   child: Receipt(screenshotController: screenshotController,
-                      onScreenShot: (){}),
+                      onScreenShot: (){},
+                    order: cartController.orderDetails,),
                 ),
                 Container(
                   color: Colors.white,
@@ -43,11 +47,11 @@ class OrderItemsState extends ConsumerState {
                     padding: const EdgeInsets.all(8.0),
                     child: InkWell(
                         onTap: (){
-                          viewModel.editOrder(context, false);
+                          // viewModel.editOrder(context, false);
                           viewModel.imageProductsPrinter(screenshotController);
                           Future.delayed(Duration(milliseconds: 500),(){
-
-                           viewModel.testPrint();
+                           viewModel.testPrint(order: cartController.orderDetails,
+                           orderNo: viewModel.orders[viewModel.chosenOrder!].uuid);
 
                           });
                         },
@@ -640,9 +644,15 @@ class OrderItemsState extends ConsumerState {
                             Flexible(
                               child: InkWell(
                                 onTap: () {
-                                  viewModel.editOrder(context,true);
-                                  homeController.selectedTab = SelectedTab.home;
-                                  homeController.notifyListeners();
+                                    Navigator.pushAndRemoveUntil(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => Home(
+                                                  order: viewModel.orders[
+                                                      viewModel.chosenOrder!],
+                                                )),
+                                        (route) => false);
+
                                 },
                                 child: Container(
                                   color: Constants.mainColor,

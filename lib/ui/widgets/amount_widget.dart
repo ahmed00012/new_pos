@@ -1,7 +1,7 @@
 import 'package:easy_localization/src/public_ext.dart';
 import 'package:flutter/material.dart';
 
-import '../../constants.dart';
+import '../../constants/colors.dart';
 
 class AmountWidget extends StatefulWidget {
  String? predict1;
@@ -28,24 +28,11 @@ bool predict4Chosen=false;
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return  AlertDialog(
-      // backgroundColor:
-      // Constants
-      //     .scaffoldColor,
-      title: Center(
-        child: Text(
-          'amount'.tr(),
-          style: TextStyle(
-              fontSize:
-              size.height *
-                  0.02),
-        ),
-      ),
-      content: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if(widget.predict1.toString()!='null')
+    return  SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if(widget.predict1.toString()!='null')
             InkWell(
               onTap: (){
                 setState(() {
@@ -74,8 +61,8 @@ bool predict4Chosen=false;
                   Text(
                     widget.predict1!,
                     style: TextStyle(
-                        fontSize:
-                        size.height * 0.02,
+                      fontSize:
+                      size.height * 0.02,
                       color: predict1Chosen?Colors
                           .white:Colors
                           .black,),
@@ -83,11 +70,11 @@ bool predict4Chosen=false;
                 ),
               ),
             ),
-            if(widget.predict1.toString()!='null')
+          if(widget.predict1.toString()!='null')
             SizedBox(
               height: 20,
             ),
-            if(widget.predict2.toString()!='null')
+          if(widget.predict2.toString()!='null')
             InkWell(
               onTap: (){
                 setState(() {
@@ -123,11 +110,11 @@ bool predict4Chosen=false;
                 ),
               ),
             ),
-            if(widget.predict2.toString()!='null')
+          if(widget.predict2.toString()!='null')
             SizedBox(
               height: 20,
             ),
-            if(widget.predict3.toString()!='null')
+          if(widget.predict3.toString()!='null')
             InkWell(
               onTap: (){
                 setState(() {
@@ -164,11 +151,11 @@ bool predict4Chosen=false;
               ),
             ),
 
-            if(widget.predict3.toString()!='null')
-              SizedBox(
+          if(widget.predict3.toString()!='null')
+            SizedBox(
               height: 20,
             ),
-            if(widget.predict4.toString()!='null')
+          if(widget.predict4.toString()!='null')
             InkWell(
               onTap: (){
                 setState(() {
@@ -204,19 +191,19 @@ bool predict4Chosen=false;
                 ),
               ),
             ),
-            if(widget.predict4.toString()!='null')
+          if(widget.predict4.toString()!='null')
             SizedBox(
               height: 20,
             ),
-            if(widget.showTextField!)
+          if(widget.showTextField!)
             Container(
               height: size.height*0.08,
               width: 250,
               decoration: BoxDecoration(
-                  color: Colors
-                      .white,
-                  borderRadius:
-                  BorderRadius.circular(10),
+                color: Colors
+                    .white,
+                borderRadius:
+                BorderRadius.circular(10),
               ),
               child:
               Center(
@@ -245,79 +232,78 @@ bool predict4Chosen=false;
                 ),
               ),
             ),
-            if(widget.remainingAmount!=null)
-              Container(
-                height: 70,
-                width: 250,
-                decoration: BoxDecoration(
-                    color: Constants.mainColor,
-                    borderRadius:
-                    BorderRadius.circular(10)),
+          if(widget.remainingAmount!=null)
+            Container(
+              height: 70,
+              width: 250,
+              decoration: BoxDecoration(
+                  color: Constants.mainColor,
+                  borderRadius:
+                  BorderRadius.circular(10)),
+              child:
+              Center(
                 child:
-                Center(
-                  child:
-                  Text(
-                    widget.remainingAmount!,
-                    style: TextStyle(
+                Text(
+                  widget.remainingAmount!,
+                  style: TextStyle(
                       fontSize:
                       size.height * 0.02,
                       color: Colors.white),
-                  ),
                 ),
               ),
-            SizedBox(
-              height: 20,
             ),
-            InkWell(
-              onTap: (){
+          SizedBox(
+            height: 20,
+          ),
+          InkWell(
+            onTap: (){
 
-                if(predict1Chosen && widget.remainingAmount==null) {
+              if(predict1Chosen && widget.remainingAmount==null) {
 
-                  Navigator.pop(context, widget.predict1);
-                }
-                if(predict2Chosen) {
-                  Navigator.pop(context, widget.predict2);
-                }
-                if(predict3Chosen) {
+                Navigator.pop(context, widget.predict1);
+              }
+              if(predict2Chosen) {
+                Navigator.pop(context, widget.predict2);
+              }
+              if(predict3Chosen) {
 
-                  Navigator.pop(context, widget.predict3);
-                }
-                if(predict4Chosen) {
+                Navigator.pop(context, widget.predict3);
+              }
+              if(predict4Chosen) {
 
-                  Navigator.pop(context, widget.predict4);
-                }
-                if(amount.text.isNotEmpty) {
-                  Navigator.pop(context, amount.text);
-                }
-                if(widget.remainingAmount!=null) {
+                Navigator.pop(context, widget.predict4);
+              }
+              if(amount.text.isNotEmpty) {
+                Navigator.pop(context, amount.text);
+              }
+              if(widget.remainingAmount!=null) {
 
-                  Navigator.pop(context, widget.remainingAmount);
-                  amount.text ='';
-                }
-              },
-              child: Container(
-                height: size.height*0.08,
-                width: 150,
+                Navigator.pop(context, widget.remainingAmount);
+                amount.text ='';
+              }
+            },
+            child: Container(
+              height: size.height*0.08,
+              width: 150,
 
-                decoration: BoxDecoration(
-                    color: Constants.mainColor,
-                    borderRadius:
-                    BorderRadius.circular(10)),
-                child:
-                Center(
-                  child: Text(
-                      'ok'.tr(),
-                    style: TextStyle(
+              decoration: BoxDecoration(
+                  color: Constants.mainColor,
+                  borderRadius:
+                  BorderRadius.circular(10)),
+              child:
+              Center(
+                child: Text(
+                  'ok'.tr(),
+                  style: TextStyle(
                       color: Colors.white,
                       fontSize: size.height*0.025
-                    ),
-
                   ),
+
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

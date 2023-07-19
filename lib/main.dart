@@ -12,9 +12,9 @@ import 'package:overlay_support/overlay_support.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shormeh_pos_new_28_11_2022/repositories/get_data.dart';
 
-import 'package:shormeh_pos_new_28_11_2022/ui/screens/home.dart';
+import 'package:shormeh_pos_new_28_11_2022/ui/screens/home/home.dart';
 import 'package:shormeh_pos_new_28_11_2022/ui/screens/login.dart';
-import 'constants.dart';
+import 'constants/colors.dart';
 import 'local_storage.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;

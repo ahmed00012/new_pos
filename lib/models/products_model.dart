@@ -7,12 +7,12 @@ import '../local_storage.dart';
 class ProductModel {
   int? id;
   String? departmentId;
-  String? price;
+  double? price;
   // String? newPrice;
   ProductTitle? title;
   String? titleMix;
   String? description;
-  String? customerPrice;
+  double? customerPrice;
   String? itemCode;
   String? itemName;
   bool? onHover;
@@ -37,12 +37,13 @@ class ProductModel {
   ProductModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     departmentId = json['department_id'].toString() ;
-    price = json['new_price'] == 0 ?json['price'].toString() :json['new_price'].toString();
+    price = json['new_price'] == 0 ?double.parse(json['price'].toString())
+        : double.parse(json['new_price'].toString());
     // newPrice = json['new_price'].toString() ;
     title = json['title'] != null ? new ProductTitle.fromJson(json['title']) : null;
     titleMix = json['title_mix'].toString() ;
     description = json['description'].toString()  ;
-    customerPrice = json['customer_price'].toString()  ;
+    customerPrice = double.parse(json['customer_price'].toString()) ;
     itemCode = json['item_code'].toString()  ;
     itemName = json['item_name'].toString()  ;
     image = json['last_image'] != null ? new LastImage.fromJson(json['last_image']) : null;

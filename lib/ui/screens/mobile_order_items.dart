@@ -5,15 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:shormeh_pos_new_28_11_2022/data_controller/home_controller.dart';
-
-import '../../constants.dart';
+import '../../constants/colors.dart';
 import '../../data_controller/cart_controller.dart';
 import '../../data_controller/mobile_order_controller.dart';
-import '../../data_controller/new_order_controller.dart';
 import '../../local_storage.dart';
 import '../../models/orders_model.dart';
-import '../widgets/receipt.dart';
-import 'home.dart';
+import 'reciept/receipt_screen.dart';
 
 
 class MobileOrderItems extends ConsumerStatefulWidget {
@@ -58,7 +55,10 @@ class MobileOrderItemsState extends ConsumerState {
             ClipRRect(
               borderRadius: BorderRadius.circular(20),
               child: Receipt(screenshotController: screenshotController,
-                  onScreenShot: (){}),
+                  onScreenShot: (){},
+                order: cartController.orderDetails,
+
+              ),
             ),
             Container(
               color: Colors.white,
@@ -70,8 +70,7 @@ class MobileOrderItemsState extends ConsumerState {
               cartController.editOrder(viewModel.orders[viewModel.chosenOrder!]);
               viewModel.imageProductsPrinter(screenshotController);
               Future.delayed(Duration(milliseconds: 500),(){
-
-              viewModel.testPrint();
+              viewModel.testPrint(order: cartController.orderDetails);
 
               });
               },

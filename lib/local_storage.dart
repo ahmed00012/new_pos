@@ -51,4 +51,10 @@ class LocalStorage {
   }) async {
     return await sharedPreferences.remove(key);
   }
+
+  static Future<bool> clearStorage() async {
+    return await sharedPreferences.clear();
+  }
+
+
 }

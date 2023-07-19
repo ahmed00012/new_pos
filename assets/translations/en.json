@@ -164,5 +164,6 @@
   "totalOrdersCount": "Total Orders Count",
   "totalDiscount": "Total Discount",
   "totalTax": "Total Tax",
-  "totalAllOrders": "Total All Orders"
+  "totalAllOrders": "Total All Orders",
+  "required": "Field Required"
 }

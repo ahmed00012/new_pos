@@ -10,6 +10,7 @@ class PaymentModel {
   String? createdAt;
   bool ?chosen;
 
+
   PaymentModel(
       {this.id, this.title, this.isActive, this.image, this.createdAt,this.chosen=false});
 

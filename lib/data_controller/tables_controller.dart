@@ -14,9 +14,9 @@ import 'package:overlay_support/overlay_support.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:shormeh_pos_new_28_11_2022/models/details_model.dart';
 import 'package:shormeh_pos_new_28_11_2022/models/notes_model.dart';
-import 'package:shormeh_pos_new_28_11_2022/ui/screens/home.dart';
+import 'package:shormeh_pos_new_28_11_2022/ui/screens/home/home.dart';
 import 'package:image/image.dart' as img;
-import '../constants.dart';
+import '../constants/colors.dart';
 import '../local_storage.dart';
 import '../main.dart';
 import '../models/cart_model.dart';
@@ -43,7 +43,7 @@ class TablesController extends ChangeNotifier {
   List<Department> departments = [];
   bool loading = false;
   // List<PrinterModel> printers = [];
-  List<CardModel> cardItemsCopy = [];
+  List<CartModel> cardItemsCopy = [];
   int? chosenOrder;
   int? chosenDepartment;
   String? chosenDepartmentTitle;
@@ -83,25 +83,27 @@ class TablesController extends ChangeNotifier {
 
 
 
- Future<void>  reserveTable(int i, Tables table, int count,BuildContext context,
-     bool homeDialog) async{
+ Future<void>  reserveTable(
+     int i, Tables table, int count,BuildContext context,
+     bool homeDialog,
+     OrderDetails order) async{
 
     chosenTable = table;
     departments[i].tables!.forEach((element) {element.chosen=false;});
     table.chosen = true;
 
-    HomeController.orderDetails.table = table.id.toString();
-    HomeController.orderDetails.tableTitle = table.title;
-    HomeController.orderDetails.department = departments[i].title;
-    HomeController.orderDetails.orderMethod = 'restaurant';
-    HomeController.orderDetails.orderMethodId = 2;
-    HomeController.orderDetails.customer = null;
-    HomeController.orderDetails.paymentId = null;
-    HomeController.orderDetails.cancelPayment();
+    order.table = table.id.toString();
+    order.tableTitle = table.title;
+    order.department = departments[i].title;
+    order.orderMethod = 'restaurant';
+    order.orderMethodId = 2;
+    order.customer = null;
+    order.paymentId = null;
+    order.cancelPayment();
 
 
     if(!homeDialog)
-    await confirmOrder(count,context);
+    await confirmOrder(count,context , order);
     else
       Navigator.pop(context,count);
 
@@ -196,9 +198,9 @@ class TablesController extends ChangeNotifier {
 
 
 
-  Future confirmOrder(int guestsCount, BuildContext context) async {
+  Future confirmOrder(int guestsCount, BuildContext context , OrderDetails order) async {
     List<Order> details = [];
-    HomeController.orderDetails.cart!.forEach((element) {
+    order.cart!.forEach((element) {
       List<int> notesId = [];
       element.extra!.forEach((element) {
         notesId.add(element.id!);
@@ -215,12 +217,12 @@ class TablesController extends ChangeNotifier {
     });
 
 
-    ConfirmOrderModel2 order = ConfirmOrderModel2(
-        name: HomeController.orderDetails.clientName,
-        phone: HomeController.orderDetails.clientPhone,
+    ConfirmOrderModel confirmOrderModel = ConfirmOrderModel(
+        name: order.clientName,
+        phone: order.clientPhone,
         hold: 0,
-        tableId: HomeController.orderDetails.table,
-        notes: HomeController.orderDetails.notes,
+        tableId: order.table,
+        notes: order.notes,
         // clientsCount:  HomeController.orderDetails.co,
         paymentStatus:  0,
         orderMethodId: 2,
@@ -229,7 +231,7 @@ class TablesController extends ChangeNotifier {
 
 
     var responseValue = await repo.confirmOrder(LocalStorage.getData(key: 'token'),
-        LocalStorage.getData(key: 'language'), order.toJson());
+        LocalStorage.getData(key: 'language'), confirmOrderModel.toJson());
 
     if(responseValue == 'unauthorized'){
       testToken();
@@ -239,14 +241,14 @@ class TablesController extends ChangeNotifier {
     }
 
     else {
-
-      OrderDetails newOrder = HomeController.orderDetails.copyWith();
-      testPrint(newOrder, responseValue['uuid']).then((value) {
-        deviceReceipt(newOrder, responseValue['uuid']);
+      //
+      // OrderDetails newOrder = HomeController.orderDetails.copyWith();
+      testPrint(order, responseValue['uuid']).then((value) {
+        deviceReceipt(order, responseValue['uuid']);
         displayToastMessage(
             ' ${'order'.tr()} ${responseValue['uuid']}  ${'createdSuccessfully'.tr()}',
             false);
-        closeOrder();
+        // closeOrder();
         Navigator.pushAndRemoveUntil(context,
             MaterialPageRoute(builder: (_)=>Home()), (route) => false);
       });
@@ -256,21 +258,21 @@ class TablesController extends ChangeNotifier {
     loading = false;
     notifyListeners();
   }
-  void editOrder(){
-    HomeController.orderDetails = OrderDetails();
-    HomeController.orderDetails.editOrderTable(departments[chosenDepartment!] , chosenOrder!);
-    // selectedTab = SelectedTab.home;
+  // void editOrder(){
+  //   HomeController.orderDetails = OrderDetails();
+  //   HomeController.orderDetails.editOrderTable(departments[chosenDepartment!] , chosenOrder!);
+  //   // selectedTab = SelectedTab.home;
+  //
+  //   notifyListeners();
+  // }
 
-    notifyListeners();
-  }
-
-  void closeOrder() {
-    HomeController.orderDetails = OrderDetails();
-    departments.forEach((element) {element.tables!.forEach((element) {element.chosen=false;});});
-    chosenTable = null;
-    switchLoading(false);
-    notifyListeners();
-  }
+  // void closeOrder() {
+  //   HomeController.orderDetails = OrderDetails();
+  //   departments.forEach((element) {element.tables!.forEach((element) {element.chosen=false;});});
+  //   chosenTable = null;
+  //   switchLoading(false);
+  //   notifyListeners();
+  // }
 
 
   imageProductsPrinter(ScreenshotController screenshotController)  {

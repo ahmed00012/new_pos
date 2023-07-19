@@ -5,20 +5,25 @@ import 'package:flutter/painting.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:shormeh_pos_new_28_11_2022/constants.dart';
-import 'package:shormeh_pos_new_28_11_2022/ui/screens/payment_screen.dart';
-import 'package:shormeh_pos_new_28_11_2022/ui/screens/single_item.dart';
+import 'package:shormeh_pos_new_28_11_2022/constants/colors.dart';
+import 'package:shormeh_pos_new_28_11_2022/data_controller/cart_controller.dart';
+import 'package:shormeh_pos_new_28_11_2022/models/cart_model.dart';
+import 'package:shormeh_pos_new_28_11_2022/ui/screens/payment/payment_screen.dart';
+import 'package:shormeh_pos_new_28_11_2022/ui/screens/home/widgets/single_item.dart';
 import 'package:shormeh_pos_new_28_11_2022/ui/widgets/bottom_nav_bar.dart';
-import '../../data_controller/home_controller.dart';
-import '../../local_storage.dart';
-import 'cart.dart';
+import '../../../constants/enums.dart';
+import '../../../data_controller/home_controller.dart';
+import '../../../local_storage.dart';
+import '../../../models/orders_model.dart';
+import '../cart/cart_screen.dart';
 import 'new_home.dart';
-import 'order_method.dart';
+import '../order_method/order_method_screen.dart';
 
 
 
 class Home extends ConsumerStatefulWidget {
-  const Home({Key? key}): super(key: key);
+  final OrdersModel? order ;
+  const Home({Key? key , this.order}): super(key: key);
 
   @override
   HomeState createState() => HomeState();
@@ -31,6 +36,21 @@ class HomeState extends ConsumerState<Home> {
   @override
   void initState() {
     // TODO: implement initState
+    if(widget.order!=null){
+      ref.watch(cartFuture).editOrder(widget.order!);
+      if(widget.order!.paymentCustomerId!=null) {
+        ref.watch(dataFuture).paymentCustomers.forEach((element) {
+          if (element.id == widget.order!.paymentCustomerId)
+            element.chosen = true;
+        });
+        if ( widget.order!.orderStatusId == 4 &&
+            widget.order!.orderMethodId != 2 &&
+            widget.order!.paymentStatus == 0) {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (_) => PaymentScreen(order:  ref.watch(cartFuture).orderDetails,)));
+        }
+      }
+    }
 
     super.initState();
   }
@@ -57,19 +77,9 @@ class HomeState extends ConsumerState<Home> {
                 if (viewModel.selectedTab == SelectedTab.home)
                   Padding(
                     padding: const EdgeInsets.fromLTRB(10, 0, 4, 5),
-                            child: Cart(navigate: true,page: 'home',),
+                            child: Cart(navigate: true),
                   ),
-                // viewModel.paymentWidget
-                //     ? Expanded(child: PaymentScreen())
-                //     : viewModel.itemWidget
-                //         /////////////////////////////////single item screen///////////////////
-                //         ? Expanded(child: SingleItem())
-                //         : viewModel.orderMethod
-                //             ? Expanded(child: OrderMethod())
-                //             :
-
-                ///////////////categories screen//////////////////// ////////////////////
-                viewModel.itemWidget ? Expanded(child: SingleItem()):
+                // viewModel.itemWidget ? Expanded(child: SingleItem()):
                 Expanded(
                   child: Container(
                     child: Column(
@@ -79,9 +89,7 @@ class HomeState extends ConsumerState<Home> {
                             children: [
                               viewModel.selectedTab ==
                                   SelectedTab.home
-                                  ?
-                              // viewModel.newHome?
-                              ProductsScreen()
+                                  ? ProductsScreen()
                                   : viewModel.current,
 
                               ///////////////////////////////// bottom nav bar//////////////////////

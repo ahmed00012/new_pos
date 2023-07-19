@@ -6,13 +6,13 @@ import 'package:screenshot/screenshot.dart';
 import 'package:shormeh_pos_new_28_11_2022/data_controller/home_controller.dart';
 import 'package:shormeh_pos_new_28_11_2022/data_controller/printer_controller.dart';
 import 'package:shormeh_pos_new_28_11_2022/data_controller/tables_controller.dart';
-import 'package:shormeh_pos_new_28_11_2022/ui/screens/home.dart';
+import 'package:shormeh_pos_new_28_11_2022/ui/screens/home/home.dart';
 import 'package:shormeh_pos_new_28_11_2022/ui/screens/table_order.dart';
-import '../../constants.dart';
+import '../../constants/colors.dart';
 import '../../data_controller/cart_controller.dart';
 import '../widgets/num_of_guests.dart';
-import '../widgets/receipt.dart';
-import 'cart.dart';
+import 'reciept/receipt_screen.dart';
+import 'cart/cart_screen.dart';
 
 class TablesScreen extends ConsumerWidget {
   ScreenshotController screenshotController = ScreenshotController();
@@ -46,7 +46,9 @@ class TablesScreen extends ConsumerWidget {
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Container(
                           width: size.width * 0.3,
-                          child: Receipt(screenshotController: screenshotController,onScreenShot: (){}),
+                          child: Receipt(screenshotController: screenshotController,
+                              order: cartController.orderDetails,
+                              onScreenShot: (){}),
                         ),
                       ),
                     Padding(
@@ -139,7 +141,8 @@ class TablesScreen extends ConsumerWidget {
                                                                       index]
                                                                   .tables![i],
                                                               value,
-                                                              context,false)
+                                                              context,false,
+                                                          cartController.orderDetails)
                                                           .then((value) {
                                                         homeController.selectedTab =
                                                             SelectedTab.home;

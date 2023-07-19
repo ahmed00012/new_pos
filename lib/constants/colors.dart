@@ -2,10 +2,10 @@
 
 import 'dart:ui';
 
-import 'local_storage.dart';
+import '../local_storage.dart';
 
 
-enum SelectedTab { orders, home, mobileOrders, tables }
+
 
 class Constants{
   //40976C
@@ -27,6 +27,6 @@ class Constants{
 
   // http://192.168.1.11:8000/api/
 
-  static String baseURL =  'https://beta2.poss.app/api/';
+
 
 }

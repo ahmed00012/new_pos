@@ -2,7 +2,9 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shormeh_pos_new_28_11_2022/data_controller/auth_controller.dart';
-import '../../constants.dart';
+import '../../constants/colors.dart';
+import '../../constants/styles.dart';
+import 'home/home.dart';
 
 class Finance extends ConsumerWidget {
   @override
@@ -47,7 +49,7 @@ class Finance extends ConsumerWidget {
                           children: [
                             Center(
                               child: Text(
-                                viewModel.cashInInit.join(),
+                                viewModel.endShiftCash.join(),
                                 style: TextStyle(fontSize: size.height * 0.025),
                               ),
                             ),
@@ -193,7 +195,22 @@ class Finance extends ConsumerWidget {
                           padding: const EdgeInsets.all(5.0),
                           child: InkWell(
                             onTap: () {
-                              viewModel.doneButtonCashFinanceIn(context);
+                              // viewModel.setStartShiftCash(context).then((value){
+                              //   Navigator.push(
+                              //       context, MaterialPageRoute(builder: (context) => Home()));
+                              // });
+                              if(viewModel.startShiftCash.isEmpty)
+                                ConstantStyles.displayToastMessage('cashCanNotBeEmpty'.tr(),true);
+                              else {
+                                viewModel.setStartShiftCash().then((value) {
+                                  if (value != null && value == true) {
+                                    Navigator.pushAndRemoveUntil(
+                                        context,
+                                        MaterialPageRoute(builder: (_) => Home()),
+                                            (route) => false);
+                                  }
+                                });
+                              }
                             },
                             child: Container(
                               height: 80,
