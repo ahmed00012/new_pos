@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:shormeh_pos_new_28_11_2022/constants/styles.dart';
-import 'package:shormeh_pos_new_28_11_2022/constants/utils.dart';
+import 'package:shormeh_pos_new_28_11_2022/constants/prefs_utils.dart';
 import 'package:shormeh_pos_new_28_11_2022/local_storage.dart';
 import 'package:shormeh_pos_new_28_11_2022/models/payment_details_model.dart';
 import 'package:shormeh_pos_new_28_11_2022/models/printers_model.dart';

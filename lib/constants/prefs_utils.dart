@@ -39,12 +39,12 @@ getBranch() {
 setMobileOrdersCount(int count) {
   LocalStorage.saveData(
     key: kMobileOrdersCount,
-    value: count.toString(),
+    value: count,
   );
 }
 
 getMobileOrdersCount() {
-  return LocalStorage.getData(key: kMobileOrdersCount) ?? '';
+  return LocalStorage.getData(key: kMobileOrdersCount) ?? 0;
 }
 
 setPaymentMethodsPrefs(String paymentMethods) {
@@ -200,7 +200,7 @@ getUserName() {
 }
 
 getShowMobileOrders() {
-  return LocalStorage.getData(key: kShowMobileOrders) ?? '';
+  return LocalStorage.getData(key: kShowMobileOrders) ?? false;
 }
 
 getBranchCode() {

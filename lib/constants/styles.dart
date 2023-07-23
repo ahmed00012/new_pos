@@ -1,7 +1,12 @@
 import 'package:esc_pos_utils/esc_pos_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:shormeh_pos_new_28_11_2022/constants/colors.dart';
+import 'package:shormeh_pos_new_28_11_2022/constants/prefs_utils.dart';
+import 'package:shormeh_pos_new_28_11_2022/models/integration_model.dart';
+
+import '../models/cart_model.dart';
 
 class ConstantStyles {
 
@@ -139,6 +144,23 @@ class ConstantStyles {
         duration: const Duration(seconds: 3),
         elevation: 2,
         background: alert? Colors.red[500] : Constants.secondryColor);
+  }
+
+
+
+  static Widget circularLoading (){
+    return   Container(
+      height: double.infinity,
+      width: double.infinity,
+      color: Colors.white.withOpacity(0.8),
+      child: Center(
+        child:
+        LoadingAnimationWidget.inkDrop(
+          color: Constants.mainColor,
+          size: 100,
+        ),
+      ),
+    );
   }
 
 }

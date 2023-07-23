@@ -3,7 +3,7 @@
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
-import 'package:shormeh_pos_new_28_11_2022/constants/utils.dart';
+import 'package:shormeh_pos_new_28_11_2022/constants/prefs_utils.dart';
 
 const String kLanguage ='language';
 const String kToken ='token';
@@ -50,7 +50,7 @@ const String pusherAppKey ='084bdc917e1b8a627bc8';
 String pusherGetOrderCountChannel ='create_order_from_phone_${getBranch()}';
  String pusherAcceptCancelOrderChannel ='accept_cancel_order_${getBranch()}';
 const String pusherAcceptCancelEvent ='Modules\\Order\\Events\\AcceptCancelMobileOrder';
-const String pusherGetOrderCountEvent ='Modules\\Order\\Events\\AcceptCancelMobileOrder';
+const String pusherGetOrderCountEvent ='Modules\\Order\\Events\\CreateOrderFromPhone';
 
 
 

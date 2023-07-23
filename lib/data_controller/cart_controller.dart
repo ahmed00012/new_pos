@@ -6,7 +6,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shormeh_pos_new_28_11_2022/constants/styles.dart';
-import 'package:shormeh_pos_new_28_11_2022/constants/utils.dart';
+import 'package:shormeh_pos_new_28_11_2022/constants/prefs_utils.dart';
 
 import '../local_storage.dart';
 import '../models/cart_model.dart';
@@ -310,7 +310,7 @@ class CartController extends ChangeNotifier {
 
   }
 
-  void editOrder(OrdersModel order) {
+  OrderDetails editOrder(OrdersModel order) {
     orderDetails.orderUpdatedId = order.id;
     orderDetails. total = order.total!;
     orderDetails.tax = orderDetails.total * getTax() / 100;
@@ -333,7 +333,7 @@ class CartController extends ChangeNotifier {
       }
 
 
-     orderDetails.cart!.add(
+     orderDetails.cart.add(
         CartModel(
           id: element.productId,
           rowId: element.id,
@@ -356,8 +356,8 @@ class CartController extends ChangeNotifier {
       );
 
       element.attributes!.forEach((element2) {
-       orderDetails.cart!.last.allAttributesID!.add(element2.id!);
-       orderDetails.cart!.last.attributes!.add(
+       orderDetails.cart.last.allAttributesID!.add(element2.id!);
+       orderDetails.cart.last.attributes!.add(
             Attributes(
                 title: ProductTitle(
                     en: element2.attribute!
@@ -412,6 +412,8 @@ class CartController extends ChangeNotifier {
       orderDetails.amount2 = double.parse(order.paymentMethods![1].value!);
 
     }
+
+    return orderDetails;
   }
 
 

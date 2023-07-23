@@ -22,7 +22,7 @@ import 'package:soundpool/soundpool.dart';
 import '../constants/colors.dart';
 import '../constants/constant_keys.dart';
 import '../constants/enums.dart';
-import '../constants/utils.dart';
+import '../constants/prefs_utils.dart';
 import '../local_storage.dart';
 import '../main.dart';
 import '../models/cart_model.dart';
@@ -42,8 +42,8 @@ class HomeController extends ChangeNotifier {
   ProductsRepo productsRepo = ProductsRepo();
   List<CategoriesModel> categories = [];
   // static OrderDetails orderDetails= OrderDetails();
-  var selectedTab = SelectedTab.home;
-  Widget current = Home();
+  // var selectedTab = SelectedTab.home;
+
   int? chosenItem;
   bool itemWidget = false;
   bool options = false;
@@ -77,12 +77,12 @@ class HomeController extends ChangeNotifier {
   int secondScreenDuration = 0;
 
 
-  List<Widget> pages = [
-    Orders(),
-    Home(),
-    MobileOrders(),
-    TablesScreen(),
-  ];
+  // List<Widget> pages = [
+  //   OrdersScreen(mobileOrders: false),
+  //   Home(),
+  //   OrdersScreen(mobileOrders: true),
+  //   TablesScreen(),
+  // ];
 
   HomeController() {
     // getLanguage();
@@ -344,11 +344,11 @@ class HomeController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void handleIndexChanged(int i) {
-    selectedTab = SelectedTab.values[i];
-    current = pages[i];
-    notifyListeners();
-  }
+  // void handleIndexChanged(int i) {
+  //   selectedTab = SelectedTab.values[i];
+  //   current = pages[i];
+  //   notifyListeners();
+  // }
 
  // void insertCart({required OrderDetails orderDetails , required int i}){
  //      orderDetails.insertIntoCart(products[i]);

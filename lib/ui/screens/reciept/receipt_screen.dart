@@ -8,7 +8,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:screenshot/screenshot.dart';
-import 'package:shormeh_pos_new_28_11_2022/constants/utils.dart';
+import 'package:shormeh_pos_new_28_11_2022/constants/prefs_utils.dart';
 import 'package:shormeh_pos_new_28_11_2022/data_controller/home_controller.dart';
 import 'package:shormeh_pos_new_28_11_2022/data_controller/new_order_controller.dart';
 import 'package:shormeh_pos_new_28_11_2022/models/cart_model.dart';
@@ -16,6 +16,7 @@ import 'package:shormeh_pos_new_28_11_2022/ui/screens/reciept/widgets/payment_su
 import 'package:shormeh_pos_new_28_11_2022/ui/screens/reciept/widgets/products_table.dart';
 import 'package:shormeh_pos_new_28_11_2022/ui/screens/reciept/widgets/table_header.dart';
 
+import '../../../constants/printing_services/invoice_widget.dart';
 import '../../../data_controller/cart_controller.dart';
 
 
@@ -99,93 +100,14 @@ class Receipt extends ConsumerWidget{
                   const  SizedBox(
                     height: 20,
                   ),
-                  RepaintBoundary(
-                    key: scr,
-                    child: Screenshot(
-                      controller: screenshotController,
-                      child: Column(
-                        children: [
-                          const TableHeader(),
-                          ProductsTable(cart: order.cart),
-                          const  SizedBox(
-                            height: 40,
-                          ),
-                          PaymentSummaryTable(
-                            tax: order.tax,
-                            total: order.total,
-                            deliveryFee: order.deliveryFee,
-                            discount: order.discount,
-                            paidAmount: order.total,
-                            remainingAmount: 0,
-                          ),
-
-                         const SizedBox(
-                            height: 20,
-                          ),
-
-                          Text(
-                            'contactUs'.tr(),
-                            style: TextStyle(
-                                fontSize: 24, fontWeight: FontWeight.w500),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 5),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Image.asset(
-                                  'assets/images/twitter.png',
-                                  width: 35,
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Text(
-                                  getTwitter(),
-                                  style: TextStyle(fontSize: size.height*0.022),
-                                ),
-                                Spacer(),
-                                Image.asset(
-                                  'assets/images/instagram.png',
-                                  width: 35,
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Text(
-                                 getInstagram(),
-                                  style: TextStyle(fontSize: size.height*0.022),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Image.asset(
-                                'assets/images/call.png',
-                                width: 35,
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Text(
-                                getPhone(),
-                                style: TextStyle(fontSize: size.height*0.022),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                  InvoiceWidget.invoiceProducts(order),
+                  // RepaintBoundary(
+                  //   key: scr,
+                  //   child: Screenshot(
+                  //     controller: screenshotController,
+                  //     child: InvoiceWidget().invoiceProducts(order),
+                  //   ),
+                  // ),
                 ],
               ),
             ),

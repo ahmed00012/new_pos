@@ -2,7 +2,7 @@
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:shormeh_pos_new_28_11_2022/constants/utils.dart';
+import 'package:shormeh_pos_new_28_11_2022/constants/prefs_utils.dart';
 import '../../../../constants/colors.dart';
 
 class CartUpperRow extends StatelessWidget {

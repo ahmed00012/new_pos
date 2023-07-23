@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shormeh_pos_new_28_11_2022/constants/colors.dart';
-import 'package:shormeh_pos_new_28_11_2022/constants/utils.dart';
+import 'package:shormeh_pos_new_28_11_2022/constants/prefs_utils.dart';
 import 'package:shormeh_pos_new_28_11_2022/data_controller/auth_controller.dart';
 import '../widgets/custom_progress_indicator.dart';
 import 'cash_login.dart';
 import 'home/home.dart';
+import 'home/new_home.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});

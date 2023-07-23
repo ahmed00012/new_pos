@@ -8,7 +8,7 @@ class PaymentModel {
   int? isActive;
   String? image;
   String? createdAt;
-  bool ?chosen;
+  bool ?chosen = false;
 
 
   PaymentModel(

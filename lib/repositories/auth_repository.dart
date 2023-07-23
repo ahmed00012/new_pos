@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shormeh_pos_new_28_11_2022/constants/api.dart';
 import 'package:shormeh_pos_new_28_11_2022/constants/colors.dart';
-import 'package:shormeh_pos_new_28_11_2022/constants/utils.dart';
+import 'package:shormeh_pos_new_28_11_2022/constants/prefs_utils.dart';
 
 import '../local_storage.dart';
 

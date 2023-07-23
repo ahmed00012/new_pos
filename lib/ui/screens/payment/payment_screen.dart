@@ -8,7 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:shormeh_pos_new_28_11_2022/constants/styles.dart';
-import 'package:shormeh_pos_new_28_11_2022/constants/utils.dart';
+import 'package:shormeh_pos_new_28_11_2022/constants/prefs_utils.dart';
 
 import 'package:shormeh_pos_new_28_11_2022/data_controller/home_controller.dart';
 import 'package:shormeh_pos_new_28_11_2022/data_controller/new_order_controller.dart';
@@ -27,6 +27,8 @@ import '../../widgets/amount_widget.dart';
 import '../cart/cart_screen.dart';
 import '../home/home.dart';
 import 'package:image/image.dart' as img;
+
+import '../home/new_home.dart';
 
 
 

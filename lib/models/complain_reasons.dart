@@ -1,7 +1,7 @@
 class ComplainReasons {
   int? id;
   String? title;
-  bool? chosen;
+  bool chosen = false;
 
   ComplainReasons({this.id, this.title,this.chosen = false});
 

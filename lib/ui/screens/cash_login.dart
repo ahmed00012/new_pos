@@ -5,6 +5,7 @@ import 'package:shormeh_pos_new_28_11_2022/data_controller/auth_controller.dart'
 import '../../constants/colors.dart';
 import '../../constants/styles.dart';
 import 'home/home.dart';
+import 'home/new_home.dart';
 
 class Finance extends ConsumerWidget {
   @override

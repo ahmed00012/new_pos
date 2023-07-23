@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:shormeh_pos_new_28_11_2022/constants/api.dart';
-import '../constants/utils.dart';
+import '../constants/prefs_utils.dart';
 import 'package:http/http.dart' as http;
 
 class GetData {

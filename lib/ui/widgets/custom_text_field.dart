@@ -7,6 +7,7 @@ class CustomTextField extends StatelessWidget {
   final String? hint;
   final String? Function(String?)?validator;
   final bool numerical;
+
   CustomTextField(
       {Key? key, required this.controller, required this.label, this.hint,this.validator,
       this.numerical = false})

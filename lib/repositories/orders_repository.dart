@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:http/http.dart' as http;
 import 'package:shormeh_pos_new_28_11_2022/constants/api.dart';
-import 'package:shormeh_pos_new_28_11_2022/constants/utils.dart';
+import 'package:shormeh_pos_new_28_11_2022/constants/prefs_utils.dart';
 
 class OrdersRepository {
   Future getOrders(int page,
@@ -12,11 +12,14 @@ class OrdersRepository {
       int? orderId,
       int? customer,
       String? client,
-      int? owner}) async {
+      int? owner,
+      required bool mobileOrders}) async {
     try {
+      String uri = mobileOrders? ApiEndPoints.MobileOrders : ApiEndPoints.CashierOrders;
+
       var response = await http.get(
           Uri.parse(
-              "${ApiEndPoints.CashierOrders}?paginate=15&page=$page&order_method_id=${orderMethod ?? ''}&"
+              "$uri?paginate=15&page=$page&order_method_id=${orderMethod ?? ''}&"
               "payment_method_id=${paymentMethod ?? ''}&order_pos_status_id=${orderStatus ?? ''}&date=${getLoginDate()}"
               "&query=${orderId ?? ''}&payment_customer_id=${customer ?? ''}&owner_id=${owner ?? ''}&client=$client"),
           headers: ApiEndPoints.headerWithToken);
@@ -29,8 +32,11 @@ class OrdersRepository {
     }
   }
 
-  Future cancelOrder(int orderID, String notes, String secretId,
-      String secretCode, String branchId) async {
+  Future cancelOrder(
+      {required int orderID,
+        required String notes,
+        required  String secretId,
+        required  String secretCode,}) async {
     try {
       var response = await http.post(Uri.parse(ApiEndPoints.CancelOrder),
           body: {
@@ -38,7 +44,7 @@ class OrdersRepository {
             'notes': notes,
             'secret_id': secretId,
             'secret_code': secretCode,
-            'branch_id': branchId
+            'branch_id': getBranch()
           },
           headers: ApiEndPoints.headerWithToken);
       var data = json.decode(response.body);
@@ -48,11 +54,24 @@ class OrdersRepository {
     }
   }
 
-  Future complainOrder(int orderID, Map body) async {
+  Future complainOrder({
+    required int orderID,
+    required String secretId,
+    required String secretCode,
+    String? reason,
+    required int reasonId,
+    String? mobile,
+  }) async {
     try {
       var response = await http.post(
           Uri.parse("${ApiEndPoints.ComplainOrder}$orderID/complain"),
-          body: jsonEncode(body),
+          body: {
+            'notes': reason,
+            'secret_id': secretId,
+            'secret_code': secretCode,
+            'complain_reason_id': reasonId,
+            'phone': mobile
+          },
           headers: ApiEndPoints.headerWithToken);
       var data = json.decode(response.body);
       return data;
@@ -60,4 +79,61 @@ class OrdersRepository {
       return e.toString();
     }
   }
+
+  Future getNewMobileOrdersCount() async {
+    try {
+      var response = await http.get(
+        Uri.parse(ApiEndPoints.MobileOrdersCount),
+        headers: ApiEndPoints.headerWithToken,
+      );
+      var data = json.decode(response.body);
+      if (response.statusCode == 200) {
+        return data;
+      }
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
+
+  Future cancelOrderMobile(
+      {required int orderID,
+      String? notes,
+        required String secretId,
+        required String secretCode,
+     }) async {
+    try {
+      var response = await http.post(Uri.parse(ApiEndPoints.CancelMobileOrder),
+          body: {
+            'order_id': orderID.toString(),
+            'notes': notes,
+            'secret_id': secretId,
+            'secret_code': secretCode,
+            'branch_id': getBranch()
+          },
+          headers: ApiEndPoints.headerWithToken);
+      var data = json.decode(response.body);
+
+      return data;
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
+  Future acceptOrder(int orderID) async {
+    try {
+      var response = await http.post(Uri.parse(ApiEndPoints.AcceptMobileOrder),
+          body: {
+            'order_id': orderID.toString(),
+          },
+          headers: ApiEndPoints.headerWithToken);
+
+      var data = json.decode(response.body);
+
+      return data;
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
 }
