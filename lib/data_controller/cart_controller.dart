@@ -29,7 +29,7 @@ final cartFuture = ChangeNotifierProvider.autoDispose<CartController>(
 class CartController extends ChangeNotifier {
 
   ProductsRepo productsRepo = ProductsRepo();
-   OrderDetails orderDetails= OrderDetails();
+   OrderDetails orderDetails= OrderDetails(cart: []);
   bool clientsLoading = false;
   List<ClientModel> clients = [];
   List<CouponModel> coupons = [];
@@ -38,9 +38,16 @@ class CartController extends ChangeNotifier {
   double getTotal(){
     orderDetails.total = 0;
 
-    orderDetails.cart!.forEach((element) {
+    orderDetails.cart.forEach((element) {
       orderDetails.total = orderDetails.total + element.total;
     });
+
+    // print(orderDetails.total+5 );
+    // print(orderDetails.total.toString()+'dsfdskjfn' );
+    // print(orderDetails.tax+5 );
+    // print(orderDetails.tax.toString()+'dsfdskjfn' );
+    // print(getTax()+5 );
+    // print(getTax()+'dsfdskjfn' );
     orderDetails.tax = orderDetails.total * getTax() / 100;
       orderDetails.total = orderDetails.total + orderDetails.deliveryFee;
 
@@ -499,18 +506,18 @@ class CartController extends ChangeNotifier {
 
 
    emptyCardList(){
-    orderDetails = OrderDetails();
+    orderDetails = OrderDetails(cart: []);
     notifyListeners();
    }
 
    void removeCartItem({required int index}) {
-    if(orderDetails.cart!.length > 1 ) {
+    if(orderDetails.cart.length > 1 ) {
       if (orderDetails.orderUpdatedId != null &&
-          orderDetails.cart![index].rowId != null) {
-        deleteFromOrder(orderDetails.cart![index].rowId!);
+          orderDetails.cart[index].rowId != null) {
+        deleteFromOrder(orderDetails.cart[index].rowId!);
       }
-      orderDetails.cart!.removeAt(index);
-      if (orderDetails.cart!.isEmpty) orderDetails.orderUpdatedId = null;
+      orderDetails.cart.removeAt(index);
+      if (orderDetails.cart.isEmpty) orderDetails.orderUpdatedId = null;
 
       getTotal();
     }
@@ -531,8 +538,7 @@ class CartController extends ChangeNotifier {
   void insertCart(ProductModel product){
        // orderDetails.insertIntoCart(product);
        orderDetails.departmentId = product.departmentId;
-       orderDetails.cart ??= [];
-       orderDetails.cart!.add(
+       orderDetails.cart.add(
            CartModel(
            id: product.id!,
            price: orderDetails.customer==null? product.price!: product.customerPrice!,

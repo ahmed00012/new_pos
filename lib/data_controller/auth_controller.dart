@@ -22,7 +22,7 @@ final financeFuture = ChangeNotifierProvider.autoDispose<FinanceController>(
     (ref) => FinanceController());
 
 class FinanceController extends ChangeNotifier {
-  List<String> startShiftCash = [];
+
   List<String> endShiftCash = [];
   // double cash = 0.0;
   bool loading = false;
@@ -54,20 +54,14 @@ class FinanceController extends ChangeNotifier {
     notifyListeners();
   }
 
-  addNumFinanceIn(String e) {
-    startShiftCash.add(e);
-    notifyListeners();
-  }
+
 
   removeNumberFinanceOut() {
     endShiftCash.remove(endShiftCash.last);
     notifyListeners();
   }
 
-  removeNumberFinanceIn() {
-    startShiftCash.remove(startShiftCash.last);
-    notifyListeners();
-  }
+
   List<dynamic> iminPrintTextChannel({required String text, String? fontSize, String? alignment}){
     return [text, fontSize ?? '30',alignment ?? '1'];
   }
@@ -76,13 +70,12 @@ class FinanceController extends ChangeNotifier {
     channel.invokeMethod(iminPrintText, ['_____________________________________', '30', '1']);
   }
 
-  Future setStartShiftCash() async {
-   try {
-      loadingSwitch(true);
-      if (startShiftCash.isNotEmpty) {
-        var data = await _authRepository.startShiftCash( cash: startShiftCash.join().toString());
+  Future setStartShiftCash(double cash) async {
+   // try {
+   //    loadingSwitch(true);
+
+        var data = await _authRepository.startShiftCash(cash: cash.toString());
         if (data['status']) {
-          startShiftCash = [];
           loadingSwitch(false);
           return true;
         }
@@ -90,11 +83,10 @@ class FinanceController extends ChangeNotifier {
           ConstantStyles.displayToastMessage(data['msg'],true);
           return false;
         }
-      }
-    }
-    catch(e){
-      ConstantStyles.displayToastMessage(e.toString(),true);
-    }
+      // }
+    // catch(e){
+    //   ConstantStyles.displayToastMessage(e.toString(),true);
+    // }
     notifyListeners();
   }
 
@@ -116,7 +108,6 @@ class FinanceController extends ChangeNotifier {
 
   clearData(){
     LocalStorage.clearStorage();
-    startShiftCash = [];
     actualTotalOrders = 0.0;
     totalTax = 0.0;
     totalDiscount = 0.0;
@@ -138,8 +129,8 @@ class FinanceController extends ChangeNotifier {
     try {
       loadingSwitch(true);
       var data = await _authRepository.loginCashier(email:email, password: password);
-      UserModel user =UserModel.fromJson(data['data']);
       if (data['status']) {
+        UserModel user = UserModel.fromJson(data['data']);
         setUserData(user);
         onSuccess();
       } else {
@@ -185,37 +176,37 @@ class FinanceController extends ChangeNotifier {
     if (getLanguage() == 'en') {
       data['payment_methods_details'].entries.map((entry) {
         paymentDetails.add(PaymentDetailsModel(
-            title: entry.collapseKey,
+            title: entry.key,
             keys: List<KeyValue>.from(entry.value.entries
-                .map((e) => KeyValue(key: e.collapseKey, value: e.value)))));
+                .map((e) => KeyValue(key: e.key, value: e.value)))));
       }).toList();
 
       data['select_customer_details'].entries.map((entry) {
         customerDetails.add(PaymentDetailsModel(
-            title: entry.collapseKey,
+            title: entry.key,
             keys: List<KeyValue>.from(entry.value.entries
-                .map((e) => KeyValue(key: e.collapseKey, value: e.value)))));
+                .map((e) => KeyValue(key: e.key, value: e.value)))));
       }).toList();
     } else {
       data['تفاصيل طرق الدفع'].entries.map((entry) {
         paymentDetails.add(PaymentDetailsModel(
-            title: entry.collapseKey,
+            title: entry.key,
             keys: List<KeyValue>.from(entry.value.entries
-                .map((e) => KeyValue(key: e.collapseKey, value: e.value)))));
+                .map((e) => KeyValue(key: e.key, value: e.value)))));
       }).toList();
 
       data['تفاصيل اختيار عميل'].entries.map((entry) {
         customerDetails.add(PaymentDetailsModel(
-            title: entry.collapseKey,
+            title: entry.key,
             keys: List<KeyValue>.from(entry.value.entries
-                .map((e) => KeyValue(key: e.collapseKey, value: e.value)))));
+                .map((e) => KeyValue(key: e.key, value: e.value)))));
       }).toList();
     }
   }
 
   Future endShift(bool logoutEmployee) async {
-    loadingSwitch(true);
-    try{
+    // loadingSwitch(true);
+    // try{
       var data = await _authRepository.endShiftCash(
           cash: endShiftCash.join().toString());
       if (!data['status']) {
@@ -228,8 +219,8 @@ class FinanceController extends ChangeNotifier {
         if (getLanguage() == 'en') {
           testPrint(
            time: DateTime.now().toString(),
-           employeeCash: data['data']['employee_cash'].toStringAsFixed(2),
-           startCash: data['data']['start_cash'].toStringAsFixed(2),
+           employeeCash: data['data']['employee_cash'],
+           startCash: data['data']['start_cash'].toString(),
            expenses: data['data']['expenses'].toStringAsFixed(2),
            complains: data['data']['complains'].toStringAsFixed(2),
            cancelled: data['data']['cancel_orders_count'].toString(),
@@ -257,10 +248,10 @@ class FinanceController extends ChangeNotifier {
         }
         return true;
       }
-    }
-    catch(e){
-      ConstantStyles.displayToastMessage(e.toString(),true);
-    }
+    // }
+    // catch(e){
+    //   ConstantStyles.displayToastMessage(e.toString(),true);
+    // }
     loadingSwitch(false);
   }
 

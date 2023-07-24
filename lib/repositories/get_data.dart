@@ -159,11 +159,12 @@ class GetData {
   }
 
   Future getCategories() async {
-    try {
+    // try {
       String categoriesPrefs = getAllCategoriesPrefs();
-      List<String> categoriesId = getCategoriesIdPrefs();
+      List categoriesId = getCategoriesIdPrefs();
       var response = await http.get(Uri.parse(ApiEndPoints.GetCategories),
           headers: ApiEndPoints.headerWithToken);
+      print('sdfdsf'+response.body);
       if (categoriesPrefs.isEmpty) {
         var data = json.decode(response.body);
         if (response.statusCode == 200) {
@@ -180,9 +181,9 @@ class GetData {
           return data;
         }
       }
-    } catch (e) {
-      return e.toString();
-    }
+    // } catch (e) {
+    //   return e.toString();
+    // }
   }
 
   Future getProducts(int id) async {

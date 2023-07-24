@@ -117,7 +117,7 @@ class OrderDetails {
     this.time,
     this.table,
     this.discountValue,
-    this.cart = const [],
+    required this.cart,
     this.tax = 0.0,
     this.total = 0.0,
     this.departmentId,

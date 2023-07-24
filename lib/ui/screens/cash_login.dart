@@ -4,13 +4,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shormeh_pos_new_28_11_2022/data_controller/auth_controller.dart';
 import '../../constants/colors.dart';
 import '../../constants/styles.dart';
-import 'home/home.dart';
-import 'home/new_home.dart';
+import 'home/home_screen.dart';
 
-class Finance extends ConsumerWidget {
+class Finance extends StatefulWidget {
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final viewModel = ref.watch(financeFuture);
+  State<Finance> createState() => _FinanceState();
+}
+
+class _FinanceState extends State<Finance> {
+  List<String> shiftCash = [];
+
+  @override
+  Widget build(BuildContext context) {
+
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -50,7 +56,7 @@ class Finance extends ConsumerWidget {
                           children: [
                             Center(
                               child: Text(
-                                viewModel.endShiftCash.join(),
+                                shiftCash.join(),
                                 style: TextStyle(fontSize: size.height * 0.025),
                               ),
                             ),
@@ -58,7 +64,9 @@ class Finance extends ConsumerWidget {
                                 right: 0,
                                 child: InkWell(
                                     onTap: () {
-                                      viewModel.removeNumberFinanceIn();
+                              setState(() {
+                                shiftCash.removeLast();
+                              });
                                     },
                                     child: Container(
                                       height: 80,
@@ -76,10 +84,12 @@ class Finance extends ConsumerWidget {
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: [1, 2, 3]
+                      children: ['1', '2', '3']
                           .map((e) => InkWell(
                                 onTap: () {
-                                  viewModel.addNumFinanceIn(e.toString());
+                               setState(() {
+                                 shiftCash.add(e);
+                               });
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.all(5.0),
@@ -101,10 +111,12 @@ class Finance extends ConsumerWidget {
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: [4, 5, 6]
+                      children: ['4', '5', '6']
                           .map((e) => InkWell(
                                 onTap: () {
-                                  viewModel.addNumFinanceIn(e.toString());
+                                setState(() {
+                                  shiftCash.add(e);
+                                });
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.all(5.0),
@@ -126,10 +138,12 @@ class Finance extends ConsumerWidget {
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: [7, 8, 9]
+                      children: ['7', '8', '9']
                           .map((e) => InkWell(
                                 onTap: () {
-                                  viewModel.addNumFinanceIn(e.toString());
+                               setState(() {
+                                 shiftCash.add(e);
+                               });
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.all(5.0),
@@ -154,7 +168,9 @@ class Finance extends ConsumerWidget {
                       children: [
                         InkWell(
                           onTap: () {
-                            viewModel.addNumFinanceIn('.');
+                           setState(() {
+                             shiftCash.add('.');
+                           });
                           },
                           child: Padding(
                             padding: const EdgeInsets.all(5.0),
@@ -174,7 +190,9 @@ class Finance extends ConsumerWidget {
                         ),
                         InkWell(
                           onTap: () {
-                            viewModel.addNumFinanceIn('0');
+                           setState(() {
+                             shiftCash.add('0');
+                           });
                           },
                           child: Padding(
                             padding: const EdgeInsets.all(5.0),
@@ -192,40 +210,43 @@ class Finance extends ConsumerWidget {
                             ),
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(5.0),
-                          child: InkWell(
-                            onTap: () {
-                              // viewModel.setStartShiftCash(context).then((value){
-                              //   Navigator.push(
-                              //       context, MaterialPageRoute(builder: (context) => Home()));
-                              // });
-                              if(viewModel.startShiftCash.isEmpty)
-                                ConstantStyles.displayToastMessage('cashCanNotBeEmpty'.tr(),true);
-                              else {
-                                viewModel.setStartShiftCash().then((value) {
-                                  if (value != null && value == true) {
-                                    Navigator.pushAndRemoveUntil(
-                                        context,
-                                        MaterialPageRoute(builder: (_) => Home()),
-                                            (route) => false);
+                        Consumer(
+                          builder: (context,ref,child) {
+                            final loginController = ref.watch(financeFuture);
+                            return Padding(
+                              padding: const EdgeInsets.all(5.0),
+                              child: InkWell(
+                                onTap: () {
+                                  if(shiftCash.isEmpty)
+                                    ConstantStyles.displayToastMessage('cashCanNotBeEmpty'.tr(),true);
+                                  else {
+                                    loginController.setStartShiftCash(double.parse(shiftCash.join())).then((value) {
+                                      if (value != null && value == true) {
+                                        Navigator.pushAndRemoveUntil(
+                                            context,
+                                            MaterialPageRoute(builder: (_) => Home()),
+                                                (route) => false);
+                                      }
+                                    });
                                   }
-                                });
-                              }
-                            },
-                            child: Container(
-                              height: 80,
-                              width: 120,
-                              color: Colors.green,
-                              child: Center(
-                                child: Icon(
-                                  Icons.check,
-                                  size: size.height * 0.025,
-                                  color: Colors.white,
+                                },
+                                child: Container(
+                                  height: 80,
+                                  width: 120,
+                                  color: Colors.green,
+                                  child: Center(
+                                    child: loginController.loading?
+                                    CircularProgressIndicator(color: Colors.white,):
+                                    Icon(
+                                      Icons.check,
+                                      size: size.height * 0.025,
+                                      color: Colors.white,
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
-                          ),
+                            );
+                          }
                         ),
                       ],
                     ),
@@ -237,18 +258,6 @@ class Finance extends ConsumerWidget {
               ],
             ),
           ),
-          if (viewModel.loading)
-            Container(
-              height: size.height,
-              width: size.width,
-              color: Colors.white.withOpacity(0.7),
-              child: Center(
-                child: CircularProgressIndicator(
-                  color: Constants.mainColor,
-                  strokeWidth: 4,
-                ),
-              ),
-            ),
         ],
       ),
     );

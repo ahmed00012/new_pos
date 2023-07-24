@@ -12,9 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:screenshot/screenshot.dart';
-import 'package:shormeh_pos_new_28_11_2022/models/details_model.dart';
-import 'package:shormeh_pos_new_28_11_2022/models/notes_model.dart';
-import 'package:shormeh_pos_new_28_11_2022/ui/screens/home/home.dart';
+
 import 'package:image/image.dart' as img;
 import '../constants/colors.dart';
 import '../local_storage.dart';
@@ -83,32 +81,32 @@ class TablesController extends ChangeNotifier {
 
 
 
- Future<void>  reserveTable(
-     int i, Tables table, int count,BuildContext context,
-     bool homeDialog,
-     OrderDetails order) async{
-
-    chosenTable = table;
-    departments[i].tables!.forEach((element) {element.chosen=false;});
-    table.chosen = true;
-
-    order.table = table.id.toString();
-    order.tableTitle = table.title;
-    order.department = departments[i].title;
-    order.orderMethod = 'restaurant';
-    order.orderMethodId = 2;
-    order.customer = null;
-    order.paymentId = null;
-    order.cancelPayment();
-
-
-    if(!homeDialog)
-    await confirmOrder(count,context , order);
-    else
-      Navigator.pop(context,count);
-
-    notifyListeners();
-  }
+ // Future<void>  reserveTable(
+ //     int i, Tables table, int count,BuildContext context,
+ //     bool homeDialog,
+ //     OrderDetails order) async{
+ //
+ //    chosenTable = table;
+ //    departments[i].tables!.forEach((element) {element.chosen=false;});
+ //    table.chosen = true;
+ //
+ //    order.table = table.id.toString();
+ //    order.tableTitle = table.title;
+ //    order.department = departments[i].title;
+ //    order.orderMethod = 'restaurant';
+ //    order.orderMethodId = 2;
+ //    order.customer = null;
+ //    order.paymentId = null;
+ //    // order.cancelPayment();
+ //
+ //
+ //    if(!homeDialog)
+ //    await confirmOrder(count,context , order);
+ //    else
+ //      Navigator.pop(context,count);
+ //
+ //    notifyListeners();
+ //  }
 
 
   // editOrder(var homeController){
@@ -158,22 +156,19 @@ class TablesController extends ChangeNotifier {
   // }
 
 
-  testToken()async{
-    LocalStorage.removeData(key: 'token');
-    LocalStorage.removeData(key: 'branch');
-    LocalStorage.removeData(key: 'coupons');
-    navigatorKey.currentState!.pushAndRemoveUntil(MaterialPageRoute(builder: (_)=>Login()), (route) => false);
-  }
+  // testToken()async{
+  //   LocalStorage.removeData(key: 'token');
+  //   LocalStorage.removeData(key: 'branch');
+  //   LocalStorage.removeData(key: 'coupons');
+  //   navigatorKey.currentState!.pushAndRemoveUntil(MaterialPageRoute(builder: (_)=>Login()), (route) => false);
+  // }
 
   void getTables() async {
     switchLoading(true);
-    var data = await repo.getTables(
-        LocalStorage.getData(key: 'token'),
-        LocalStorage.getData(key: 'language'),
-        LocalStorage.getData(key: 'branch'));
+    var data = await repo.getTables();
 
     if(data == 'unauthorized'){
-      testToken();
+      // testToken();
     }
     else if(data ==false){
       displayToastMessage('Connection Error', true);
@@ -197,67 +192,67 @@ class TablesController extends ChangeNotifier {
   }
 
 
-
-  Future confirmOrder(int guestsCount, BuildContext context , OrderDetails order) async {
-    List<Order> details = [];
-    order.cart!.forEach((element) {
-      List<int> notesId = [];
-      element.extra!.forEach((element) {
-        notesId.add(element.id!);
-      });
-
-      Order myOrder = Order(
-          productId: element.id,
-          quantity: element.count,
-          note: element.extraNotes,
-          notes: notesId
-      );
-
-      details.add(myOrder);
-    });
-
-
-    ConfirmOrderModel confirmOrderModel = ConfirmOrderModel(
-        name: order.clientName,
-        phone: order.clientPhone,
-        hold: 0,
-        tableId: order.table,
-        notes: order.notes,
-        // clientsCount:  HomeController.orderDetails.co,
-        paymentStatus:  0,
-        orderMethodId: 2,
-        order: details
-    );
-
-
-    var responseValue = await repo.confirmOrder(LocalStorage.getData(key: 'token'),
-        LocalStorage.getData(key: 'language'), confirmOrderModel.toJson());
-
-    if(responseValue == 'unauthorized'){
-      testToken();
-    }
-    else if(responseValue ==false){
-      displayToastMessage('Order Failed', true);
-    }
-
-    else {
-      //
-      // OrderDetails newOrder = HomeController.orderDetails.copyWith();
-      testPrint(order, responseValue['uuid']).then((value) {
-        deviceReceipt(order, responseValue['uuid']);
-        displayToastMessage(
-            ' ${'order'.tr()} ${responseValue['uuid']}  ${'createdSuccessfully'.tr()}',
-            false);
-        // closeOrder();
-        Navigator.pushAndRemoveUntil(context,
-            MaterialPageRoute(builder: (_)=>Home()), (route) => false);
-      });
-
-
-    }
-    loading = false;
-    notifyListeners();
-  }
+  //
+  // Future confirmOrder(int guestsCount, BuildContext context , OrderDetails order) async {
+  //   List<Order> details = [];
+  //   order.cart!.forEach((element) {
+  //     List<int> notesId = [];
+  //     element.extra!.forEach((element) {
+  //       notesId.add(element.id!);
+  //     });
+  //
+  //     Order myOrder = Order(
+  //         productId: element.id,
+  //         quantity: element.count,
+  //         note: element.extraNotes,
+  //         notes: notesId
+  //     );
+  //
+  //     details.add(myOrder);
+  //   });
+  //
+  //
+  //   ConfirmOrderModel confirmOrderModel = ConfirmOrderModel(
+  //       name: order.clientName,
+  //       phone: order.clientPhone,
+  //       hold: 0,
+  //       tableId: order.table,
+  //       notes: order.notes,
+  //       // clientsCount:  HomeController.orderDetails.co,
+  //       paymentStatus:  0,
+  //       orderMethodId: 2,
+  //       order: details
+  //   );
+  //
+  //
+  //   var responseValue = await repo.confirmOrder(LocalStorage.getData(key: 'token'),
+  //       LocalStorage.getData(key: 'language'), confirmOrderModel.toJson());
+  //
+  //   if(responseValue == 'unauthorized'){
+  //     testToken();
+  //   }
+  //   else if(responseValue ==false){
+  //     displayToastMessage('Order Failed', true);
+  //   }
+  //
+  //   else {
+  //     //
+  //     // OrderDetails newOrder = HomeController.orderDetails.copyWith();
+  //     testPrint(order, responseValue['uuid']).then((value) {
+  //       deviceReceipt(order, responseValue['uuid']);
+  //       displayToastMessage(
+  //           ' ${'order'.tr()} ${responseValue['uuid']}  ${'createdSuccessfully'.tr()}',
+  //           false);
+  //       // closeOrder();
+  //       Navigator.pushAndRemoveUntil(context,
+  //           MaterialPageRoute(builder: (_)=>Home()), (route) => false);
+  //     });
+  //
+  //
+  //   }
+  //   loading = false;
+  //   notifyListeners();
+  // }
   // void editOrder(){
   //   HomeController.orderDetails = OrderDetails();
   //   HomeController.orderDetails.editOrderTable(departments[chosenDepartment!] , chosenOrder!);
@@ -441,7 +436,7 @@ class TablesController extends ChangeNotifier {
      if(!kitchen)
     printer.emptyLines(1);
      if(!kitchen)
-    printer.qrcode(_getQrCodeContent(order.getTotal().toString(),order.tax.toString())  );
+    printer.qrcode('');
      printer.emptyLines(1);
      printer.textEncoded(textEncoder('هيئة الضريبة والدخل'),
          styles: PosStyles(
@@ -454,77 +449,77 @@ class TablesController extends ChangeNotifier {
     printer.cut();
   }
 
-  deviceReceipt(OrderDetails order , String orderNo) async{
-    channel.invokeMethod("sdkInit");
-
-    channel.invokeMethod("printText", ['Order Number $orderNo','50','1']);
-    channel.invokeMethod("feed");
-
-    if(order.clientName!=null )
-      channel.invokeMethod("printText", [ 'clientName'.tr()+ ' : '+ order.clientName!,'25','1']);
-    channel.invokeMethod("printText", [ ' branch :' +  LocalStorage.getData(key: 'branchName'),'25','1']);
-
-    if(LocalStorage.getData(key: 'taxNumber')!=null)
-      channel.invokeMethod("printText", ['Tax No. : ${LocalStorage.getData(key: 'taxNumber')}','25','1']);
-    channel.invokeMethod("printText", [DateTime.now().toString().substring(0, 16),'25','1']);
-
-    if(order.orderMethod!=null)
-      channel.invokeMethod("printText", ['orderMethod'.tr()+ ' : '+ order.orderMethod!,'25','1']);
-
-
-    if (order.payment1!= null)
-      channel.invokeMethod("printText", ['paymentMethod'.tr()+ ' : '+order.payment1!.title!.en!,'25','1']);
-    if (order.payment2!= null)
-      channel.invokeMethod("printText", ['paymentMethod'.tr()+ ' : '+order.payment2!.title!.en!,'25','1']);
-    if (order.owner!= null )
-      channel.invokeMethod("printText", [ order.owner!.title!,'25','1']);
-
-
-    if (order.customer!=null)
-      channel.invokeMethod("printText", [order.customer!.title!,'25','1']);
-
-    if (order.department != null)
-      channel.invokeMethod("printText", [order.department!,'25','1']);
-    if (order.table != null)
-      channel.invokeMethod("printText", ['Table : ' +order.table!.toString(),'25','1']);
-    channel.invokeMethod("feed");
-
-    channel.invokeMethod("printBitmap", {
-      'image': productsImage,
-      'type': 'image/png',
-    });
-
-
-    channel.invokeMethod("printQr", [_getQrCodeContent(order.getTotal().toString(),order.tax.toString())]);
-    channel.invokeMethod("printText", ['هيئة الضريبة والدخل','20','1']);
-    channel.invokeMethod("feed");
-    channel.invokeMethod("feed");
-    channel.invokeMethod("feed");
-    channel.invokeMethod("paperCutter");
-    channel.invokeMethod("feed");
-
-    // channel.invokeMethod("printText", [  'orderMethod'.tr()+ ' : '+order.orderMethod!]);
-    // channel.invokeMethod("printText", [  'orderMethod'.tr()+ ' : '+order.orderMethod!]);
-    // channel.invokeMethod("printText", [  'orderMethod'.tr()+ ' : '+order.orderMethod!]);
-
-  }
-
-  Future testPrint(OrderDetails order,String orderNo) async {
-    const PaperSize paper = PaperSize.mm80;
-    final profile = await CapabilityProfile.load();
-    final printer = NetworkPrinter(paper, profile);
-    printers.forEach((element) async {
-      PosPrintResult res = await printer.connect(element.ip!, port: 9100);
-      if (res == PosPrintResult.success) {
-       await testReceipt(printer,order,orderNo,element.typeName == 'Kitchen');
-        printer.disconnect();
-      }
-
-    });
-
-
-    notifyListeners();
-  }
+  // deviceReceipt(OrderDetails order , String orderNo) async{
+  //   channel.invokeMethod("sdkInit");
+  //
+  //   channel.invokeMethod("printText", ['Order Number $orderNo','50','1']);
+  //   channel.invokeMethod("feed");
+  //
+  //   if(order.clientName!=null )
+  //     channel.invokeMethod("printText", [ 'clientName'.tr()+ ' : '+ order.clientName!,'25','1']);
+  //   channel.invokeMethod("printText", [ ' branch :' +  LocalStorage.getData(key: 'branchName'),'25','1']);
+  //
+  //   if(LocalStorage.getData(key: 'taxNumber')!=null)
+  //     channel.invokeMethod("printText", ['Tax No. : ${LocalStorage.getData(key: 'taxNumber')}','25','1']);
+  //   channel.invokeMethod("printText", [DateTime.now().toString().substring(0, 16),'25','1']);
+  //
+  //   if(order.orderMethod!=null)
+  //     channel.invokeMethod("printText", ['orderMethod'.tr()+ ' : '+ order.orderMethod!,'25','1']);
+  //
+  //
+  //   if (order.payment1!= null)
+  //     channel.invokeMethod("printText", ['paymentMethod'.tr()+ ' : '+order.payment1!.title!.en!,'25','1']);
+  //   if (order.payment2!= null)
+  //     channel.invokeMethod("printText", ['paymentMethod'.tr()+ ' : '+order.payment2!.title!.en!,'25','1']);
+  //   if (order.owner!= null )
+  //     channel.invokeMethod("printText", [ order.owner!.title!,'25','1']);
+  //
+  //
+  //   if (order.customer!=null)
+  //     channel.invokeMethod("printText", [order.customer!.title!,'25','1']);
+  //
+  //   if (order.department != null)
+  //     channel.invokeMethod("printText", [order.department!,'25','1']);
+  //   if (order.table != null)
+  //     channel.invokeMethod("printText", ['Table : ' +order.table!.toString(),'25','1']);
+  //   channel.invokeMethod("feed");
+  //
+  //   channel.invokeMethod("printBitmap", {
+  //     'image': productsImage,
+  //     'type': 'image/png',
+  //   });
+  //
+  //
+  //   channel.invokeMethod("printQr", [_getQrCodeContent(order.getTotal().toString(),order.tax.toString())]);
+  //   channel.invokeMethod("printText", ['هيئة الضريبة والدخل','20','1']);
+  //   channel.invokeMethod("feed");
+  //   channel.invokeMethod("feed");
+  //   channel.invokeMethod("feed");
+  //   channel.invokeMethod("paperCutter");
+  //   channel.invokeMethod("feed");
+  //
+  //   // channel.invokeMethod("printText", [  'orderMethod'.tr()+ ' : '+order.orderMethod!]);
+  //   // channel.invokeMethod("printText", [  'orderMethod'.tr()+ ' : '+order.orderMethod!]);
+  //   // channel.invokeMethod("printText", [  'orderMethod'.tr()+ ' : '+order.orderMethod!]);
+  //
+  // }
+  //
+  // Future testPrint(OrderDetails order,String orderNo) async {
+  //   const PaperSize paper = PaperSize.mm80;
+  //   final profile = await CapabilityProfile.load();
+  //   final printer = NetworkPrinter(paper, profile);
+  //   printers.forEach((element) async {
+  //     PosPrintResult res = await printer.connect(element.ip!, port: 9100);
+  //     if (res == PosPrintResult.success) {
+  //      await testReceipt(printer,order,orderNo,element.typeName == 'Kitchen');
+  //       printer.disconnect();
+  //     }
+  //
+  //   });
+  //
+  //
+  //   notifyListeners();
+  // }
 
   // confirmOfflineOrder(BuildContext context, var printerController, ){
   //

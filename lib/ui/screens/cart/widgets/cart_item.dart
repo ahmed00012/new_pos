@@ -5,7 +5,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import '../../../../constants/colors.dart';
 import '../../../../data_controller/cart_controller.dart';
 import '../../../../models/cart_model.dart';
-import '../../home/home.dart';
+import '../../home/home_screen.dart';
 
 class CartItem extends ConsumerWidget {
   final int index;

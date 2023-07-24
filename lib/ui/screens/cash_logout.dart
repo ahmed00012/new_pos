@@ -7,6 +7,8 @@ import '../../constants/colors.dart';
 import 'login.dart';
 
 class FinanceOut extends ConsumerStatefulWidget {
+  const FinanceOut({super.key});
+
   @override
   FinanceOutState createState() => FinanceOutState();
 }
@@ -15,7 +17,7 @@ class FinanceOutState extends ConsumerState {
   @override
   void initState() {
     // TODO: implement initState
-    ref.watch(financeFuture).getPrinters();
+    // ref.watch(financeFuture).getPrinters();
     super.initState();
   }
   @override
@@ -113,9 +115,9 @@ class FinanceOutState extends ConsumerState {
                                 fontWeight: FontWeight.bold),
                           ),
                           Text(
-                            viewModel.startShiftCash.isEmpty
+                            viewModel.endShiftCash.isEmpty
                                 ? '0.0'
-                                : viewModel.startShiftCash.join(),
+                                : viewModel.endShiftCash.join(),
                             style: TextStyle(
                                 fontSize: size.height * 0.03,
                                 color:  Constants.mainColor,
@@ -188,7 +190,7 @@ class FinanceOutState extends ConsumerState {
                           children: [
                             Center(
                               child: Text(
-                                viewModel.startShiftCash.join(),
+                                viewModel.endShiftCash.join(),
                                 style: TextStyle(fontSize: size.height * 0.025),
                               ),
                             ),

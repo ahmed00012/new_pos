@@ -4,10 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:shormeh_pos_new_28_11_2022/data_controller/home_controller.dart';
-import 'package:shormeh_pos_new_28_11_2022/data_controller/printer_controller.dart';
 import 'package:shormeh_pos_new_28_11_2022/data_controller/tables_controller.dart';
-import 'package:shormeh_pos_new_28_11_2022/ui/screens/home/home.dart';
-import 'package:shormeh_pos_new_28_11_2022/ui/screens/table_order.dart';
 import '../../constants/colors.dart';
 import '../../data_controller/cart_controller.dart';
 import '../widgets/num_of_guests.dart';
@@ -15,7 +12,7 @@ import 'reciept/receipt_screen.dart';
 import 'cart/cart_screen.dart';
 
 class TablesScreen extends ConsumerWidget {
-  ScreenshotController screenshotController = ScreenshotController();
+  // ScreenshotController screenshotController = ScreenshotController();
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tablesController = ref.watch(tablesFuture);
@@ -30,27 +27,24 @@ class TablesScreen extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
 
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: cartController.orderDetails.cart!=null
-                    ? Cart(page: 'tables',navigate: true,)
-                    : tablesController.chosenOrder != null
-                    ? TableOrder()
-                    : Container(),
+              const Padding(
+                padding: EdgeInsets.all(10.0),
+                child: Cart(navigate: true,)
+
               ),
               Expanded(
                 child:Stack(
                   children: [
-                    if(cartController.orderDetails.cart!=null)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Container(
-                          width: size.width * 0.3,
-                          child: Receipt(screenshotController: screenshotController,
-                              order: cartController.orderDetails,
-                              onScreenShot: (){}),
-                        ),
-                      ),
+                      //
+                      // Padding(
+                      //   padding: const EdgeInsets.symmetric(horizontal: 20),
+                      //   child: Container(
+                      //     width: size.width * 0.3,
+                      //     child: Receipt(screenshotController: screenshotController,
+                      //         order: cartController.orderDetails,
+                      //         onScreenShot: (){}),
+                      //   ),
+                      // ),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Container(
@@ -130,23 +124,22 @@ class TablesScreen extends ConsumerWidget {
                                                                 size.height,
                                                                 size.width));
                                                       }).then((value) {
-                                                    if (value != null && cartController.orderDetails.cart!=null) {
-                                                      tablesController.imageProductsPrinter(screenshotController);
-                                                      tablesController.imageDevicePrinter(screenshotController);
-                                                      tablesController
-                                                          .reserveTable(
-                                                              index,
-                                                              tablesController
-                                                                  .departments[
-                                                                      index]
-                                                                  .tables![i],
-                                                              value,
-                                                              context,false,
-                                                          cartController.orderDetails)
-                                                          .then((value) {
-                                                        homeController.selectedTab =
-                                                            SelectedTab.home;
-                                                      });
+                                                    if (value != null) {
+
+                                                      // tablesController
+                                                      //     .reserveTable(
+                                                      //         index,
+                                                      //         tablesController
+                                                      //             .departments[
+                                                      //                 index]
+                                                      //             .tables![i],
+                                                      //         value,
+                                                      //         context,false,
+                                                      //     cartController.orderDetails)
+                                                      //     .then((value) {
+                                                      //   // homeController.selectedTab =
+                                                      //   //     SelectedTab.home;
+                                                      // });
                                                     }
                                                   });
                                                 }

@@ -7,8 +7,7 @@ import 'package:shormeh_pos_new_28_11_2022/constants/prefs_utils.dart';
 import 'package:shormeh_pos_new_28_11_2022/data_controller/auth_controller.dart';
 import '../widgets/custom_progress_indicator.dart';
 import 'cash_login.dart';
-import 'home/home.dart';
-import 'home/new_home.dart';
+import 'home/home_screen.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});

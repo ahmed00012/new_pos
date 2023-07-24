@@ -302,7 +302,7 @@ setUserData(UserModel user) {
 initializePusher(
     {required String channel,
     required String event,
-    required VoidCallback function}) {
+    required Future function}) {
   PusherEvent? data;
   PusherOptions options = PusherOptions(
     cluster: pusherCluster,
@@ -313,7 +313,7 @@ initializePusher(
   pusher.connect().then((value) {
     Channel pusherChannel = pusher.subscribe(channel);
     pusherChannel.bind(event, (PusherEvent? event) {
-      function();
+       function;
       data = event!;
     });
   });

@@ -7,16 +7,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:overlay_support/overlay_support.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:shormeh_pos_new_28_11_2022/repositories/get_data.dart';
-
-import 'package:shormeh_pos_new_28_11_2022/ui/screens/home/home.dart';
+import 'package:shormeh_pos_new_28_11_2022/ui/screens/home/home_screen.dart';
 import 'package:shormeh_pos_new_28_11_2022/ui/screens/login.dart';
+import 'package:shormeh_pos_new_28_11_2022/ui/widgets/bottom_nav_bar.dart';
 import 'constants/colors.dart';
 import 'local_storage.dart';
-import 'package:timezone/timezone.dart' as tz;
+
 import 'package:timezone/data/latest.dart' as tz;
 
 
@@ -122,7 +119,7 @@ class _MyAppState extends State<MyApp> {
                 selectionHandleColor:Constants.mainColor,
               ),
             ),
-            home:LocalStorage.getData(key: 'token')==null? Login():Home(),
+            home:LocalStorage.getData(key: 'token')==null? Login():BottomNavBar(),
           ),
         );
 

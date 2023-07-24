@@ -15,6 +15,7 @@ import 'package:screenshot/screenshot.dart';
 import 'package:shormeh_pos_new_28_11_2022/models/coupon_model.dart';
 import 'package:image/image.dart' as img;
 import '../constants/colors.dart';
+import '../constants/constant_keys.dart';
 import '../local_storage.dart';
 import '../models/cart_model.dart';
 import '../models/client_model.dart';
@@ -23,7 +24,7 @@ import '../models/order_method_model.dart';
 import '../models/printers_model.dart';
 import '../models/tables_model.dart';
 import '../repositories/new_order_repository.dart';
-import '../ui/screens/home/home.dart';
+
 import 'home_controller.dart';
 
 final orderMethodFuture = ChangeNotifierProvider.autoDispose.family<OrderMethodController,OrderDetails>(
@@ -44,7 +45,7 @@ class OrderMethodController extends ChangeNotifier {
   String twitter ='';
   String instagram ='';
   String phone ='';
-  OrderDetails orderDetails = OrderDetails();
+  OrderDetails orderDetails = OrderDetails(cart: []);
 
   TextEditingController customerName = TextEditingController();
   TextEditingController customerPhone = TextEditingController();
@@ -120,10 +121,7 @@ class OrderMethodController extends ChangeNotifier {
   }
 
   void getTables() async {
-    var data = await repo.getTables(
-        LocalStorage.getData(key: 'token'),
-        LocalStorage.getData(key: 'language'),
-        LocalStorage.getData(key: 'branch'));
+    var data = await repo.getTables();
     departments = List<Department>.from(data.map((e) => Department.fromJson(e)));
     departments.forEach((element) {element.tables!.forEach((element) {element.chosen=false;});});
 
@@ -181,13 +179,13 @@ class OrderMethodController extends ChangeNotifier {
   }
 
 
-  Future confirmOrder(BuildContext context,{int ?guestsCount}) async {
+  Future confirmOrder(OrderDetails order,{int ?guestsCount}) async {
 
     List<Order> details = [];
 
     switchLoading(true);
 
-    orderDetails.cart!.forEach((element) {
+    orderDetails.cart.forEach((element) {
       List<int> notesId = [];
       element.extra!.forEach((element) {
         notesId.add(element.id!);
@@ -204,29 +202,10 @@ class OrderMethodController extends ChangeNotifier {
       details.add(myOrder);
     });
 
-    orderDetails.deliveryFee = double.tryParse(deliveryFee.text);
+    orderDetails.deliveryFee = double.tryParse(deliveryFee.text) ?? 0;
 
 
-
-    ConfirmOrderModel order = ConfirmOrderModel(
-        name: orderDetails.clientName,
-        phone: orderDetails.clientPhone,
-         tableId: orderDetails.table,
-        notes: orderDetails.notes,
-        paymentMethodId: null,
-        clientsCount: guestsCount,
-        paymentCustomerId:  null,
-        paymentStatus:  0,
-        coupon: coupon.text,
-        orderMethodId: orderDetails.orderMethodId,
-        paidAmount: orderDetails.getTotalAmount(),
-        order: details,
-      deliveryFee: deliveryFee.text.isNotEmpty? double.parse(deliveryFee.text) : 0
-    );
-
-
-    var responseValue = await repo.confirmOrder(LocalStorage.getData(key: 'token'),
-        LocalStorage.getData(key: 'language'), order.toJson());
+    var responseValue = await repo.confirmOrder(order.toJson());
 
     if(responseValue['data']!=null) {
 
@@ -236,9 +215,8 @@ class OrderMethodController extends ChangeNotifier {
             ' ${'order'.tr()} ${responseValue['data']['uuid']}  ${'createdSuccessfully'.tr()}',
             false);
         // Future.delayed(Duration(seconds: 2),(){
-          closeOrder();
-          Navigator.pushAndRemoveUntil(context,
-              MaterialPageRoute(builder: (_)=>Home()), (route) => false);
+        //   closeOrder();
+
         // });
 
 
@@ -257,7 +235,7 @@ class OrderMethodController extends ChangeNotifier {
   void closeOrder() {
     // cartItems = [];
     tablesWidget = false;
-    orderDetails = OrderDetails();
+    orderDetails = OrderDetails(cart: []);
     coupon.text='';
     deliveryFee.text='';
     orderMethods.forEach((element) {
@@ -418,7 +396,7 @@ class OrderMethodController extends ChangeNotifier {
       printer.emptyLines(1);
     if(!kitchen)
 
-      printer.qrcode(_getQrCodeContent(order.getTotal().toString(),order.tax.toString())  );
+      printer.qrcode('');
     printer.emptyLines(1);
     printer.textEncoded(textEncoder('هيئة الضريبة والدخل'),
         styles: PosStyles(
@@ -476,7 +454,7 @@ class OrderMethodController extends ChangeNotifier {
     });
 
 
-    channel.invokeMethod("printQr", [_getQrCodeContent(order.getTotal().toString(),order.tax.toString())]);
+    channel.invokeMethod("printQr", ['']);
     channel.invokeMethod("printText", ['هيئة الضريبة والدخل','20','1']);
     channel.invokeMethod("feed");
     channel.invokeMethod("feed");
@@ -495,17 +473,16 @@ class OrderMethodController extends ChangeNotifier {
 
   Future testPrint({String ?orderNo}) async {
 
-    OrderDetails order= orderDetails.copyWith();
-    deviceReceipt(order,orderNo:orderNo);
+    // deviceReceipt(order,orderNo:orderNo);
     const PaperSize paper = PaperSize.mm80;
     final profile = await CapabilityProfile.load();
     final printer = NetworkPrinter(paper, profile);
     printers.forEach((element) async {
       PosPrintResult res = await printer.connect(element.ip!, port: 9100);
-      if (res == PosPrintResult.success) {
-         testReceipt(productsScreenshot!,printer,order,element.typeName == 'Kitchen',orderNo: orderNo);
-        printer.disconnect();
-      }
+      // if (res == PosPrintResult.success) {
+      //    testReceipt(productsScreenshot!,printer,order,element.typeName == 'Kitchen',orderNo: orderNo);
+      //   printer.disconnect();
+      // }
 
     });
 

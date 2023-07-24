@@ -46,7 +46,7 @@ class UserModel {
         ? new WebLinks.fromJson(json['web_links'])
         : null;
     phone = json['phone'];
-    tax = json['tax'];
+    tax = int.tryParse(json['tax'].toString());
   }
 
   Map<String, dynamic> toJson() {

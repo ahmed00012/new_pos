@@ -29,9 +29,6 @@ import '../models/cart_model.dart';
 import '../models/categories_model.dart';
 import '../models/product_details_model.dart';
 import '../repositories/products_repository.dart';
-import '../ui/screens/home/home.dart';
-import '../ui/screens/orders/order_screen.dart';
-import '../ui/screens/tables.dart';
 
 
 
@@ -277,7 +274,7 @@ class HomeController extends ChangeNotifier {
 
   void emptyCardList({required OrderDetails orderDetails }) {
     itemWidget = false;
-    orderDetails = OrderDetails();
+    orderDetails = OrderDetails(cart: []);
     notifyListeners();
   }
 
@@ -297,8 +294,11 @@ class HomeController extends ChangeNotifier {
 
   Future getCategories() async {
   var data = await allData.getCategories();
+
+  print('sdfdsf'+getAllCategoriesPrefs().toString());
   if(data == 'branchClosed'){
    branchClosed = true;
+
   }
   else{
     categories = List<CategoriesModel>.from(json.decode(getAllCategoriesPrefs())
@@ -557,11 +557,10 @@ class HomeController extends ChangeNotifier {
 
 
 
-  getNewMobileOrders() async{
+  Future getNewMobileOrders() async{
       var data = await productsRepo.getNewMobileOrdersCount();
       if(data!=false && data!=0){
-        // ordersCount = data;
-        setMobileOrdersCount(data);
+        setMobileOrdersCount(data['data']);
         playSound();
       }
       notifyListeners();

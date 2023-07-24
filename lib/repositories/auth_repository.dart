@@ -14,10 +14,10 @@ class AuthRepository {
   Future loginCashier({required String email , required String password}) async {
     try{
     var response = await http.post(Uri.parse(ApiEndPoints.Login),
-        body: {'email': email, 'password': password},
+        body: jsonEncode({'email': email, 'password': password}),
         headers: ApiEndPoints.headerWithoutToken);
     var data = json.decode(response.body);
-    debugPrint(data);
+    debugPrint(data.toString());
     return data;
     }
     catch(e){
@@ -97,7 +97,7 @@ class AuthRepository {
   Future startShiftCash({required String cash}) async {
     try{
       var response = await http.post(Uri.parse(ApiEndPoints.StartCash),
-          body: {'status':  '1', 'cash': cash},
+          body: jsonEncode({'status':  '1', 'cash': cash}),
           headers: ApiEndPoints.headerWithToken);
       debugPrint(response.body);
       var data = json.decode(response.body);
@@ -111,12 +111,14 @@ class AuthRepository {
   Future endShiftCash({required String cash}) async {
     try{
       var response = await http.post(Uri.parse(ApiEndPoints.StartCash),
-          body: {'status': '2',
+          body: jsonEncode({
+            'status': '2',
             'cash': cash,
             'login_date': getLoginDate(),
-            'logout_date': DateTime.now().toUtc().toString(),},
+            'logout_date': DateTime.now().toUtc().toString(),
+          }),
           headers: ApiEndPoints.headerWithToken);
-      debugPrint(response.body);
+      debugPrint(response.body.toString()+'FDSFSDF');
       var data = json.decode(response.body);
       return data;
     }

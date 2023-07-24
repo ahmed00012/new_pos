@@ -25,10 +25,10 @@ import '../../../local_storage.dart';
 import '../../../models/cart_model.dart';
 import '../../widgets/amount_widget.dart';
 import '../cart/cart_screen.dart';
-import '../home/home.dart';
+
 import 'package:image/image.dart' as img;
 
-import '../home/new_home.dart';
+import '../home/home_screen.dart';
 
 
 

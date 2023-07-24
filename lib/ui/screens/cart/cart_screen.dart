@@ -7,13 +7,13 @@ import 'package:shormeh_pos_new_28_11_2022/constants/styles.dart';
 import 'package:shormeh_pos_new_28_11_2022/ui/screens/cart/widgets/cart_item.dart';
 import 'package:shormeh_pos_new_28_11_2022/ui/screens/cart/widgets/cart_upper_row.dart';
 import 'package:shormeh_pos_new_28_11_2022/ui/screens/cart/widgets/summary_row.dart';
-import 'package:shormeh_pos_new_28_11_2022/ui/screens/home/home.dart';
 import 'package:shormeh_pos_new_28_11_2022/ui/screens/payment/payment_screen.dart';
 
 import '../../../constants/colors.dart';
 import '../../../constants/enums.dart';
 import '../../../data_controller/cart_controller.dart';
 import '../../../models/cart_model.dart';
+import '../home/home_screen.dart';
 import 'widgets/choose_client_widget.dart';
 import '../../widgets/tables_dialog.dart';
 import '../order_method/order_method_screen.dart';

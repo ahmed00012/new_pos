@@ -80,8 +80,8 @@ class TablesDialog extends ConsumerWidget {
                                         size.height,
                                         size.width));
                               }).then((value) {
-                               tablesController.reserveTable( index,tablesController.departments[
-                               index].tables![i], value, context, true,cartController.orderDetails);
+                               // tablesController.reserveTable( index,tablesController.departments[
+                               // index].tables![i], value, context, true,cartController.orderDetails);
 
                           });
                         }
