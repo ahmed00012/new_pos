@@ -26,15 +26,15 @@ getLanguage() {
   return LocalStorage.getData(key: kLanguage) ?? 'en';
 }
 
-setBranch(String branch) {
+setBranch(int branch) {
   LocalStorage.saveData(
-    key: kLanguage,
+    key: kBranch,
     value: branch,
   );
 }
 
 getBranch() {
-  return LocalStorage.getData(key: kBranch) ?? '';
+  return LocalStorage.getData(key: kBranch) ?? 1;
 }
 setMobileOrdersCount(int count) {
   LocalStorage.saveData(
@@ -256,8 +256,9 @@ syncAppData() {
 }
 
 setUserData(UserModel user) {
+  print(user.toJson().toString());
   setUserToken(user.accessToken!);
-  setBranch(user.employee!.branchId.toString());
+  setBranch(user.employee!.branchId!);
   LocalStorage.saveData(
     key: kUserName,
     value: user.employee!.name,

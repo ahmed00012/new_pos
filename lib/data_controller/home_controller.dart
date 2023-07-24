@@ -467,7 +467,7 @@ class HomeController extends ChangeNotifier {
     branchScreenImages = [];
    var data = await productsRepo.getSecondScreenPicture();
 
-   if(data != false) {
+   if(data['status']) {
      secondScreenDuration = int.parse(data['seconds'].toString());
      data['screens'].forEach((e) {
        branchScreenImages.add(e['image']);

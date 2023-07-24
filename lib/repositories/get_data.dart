@@ -164,6 +164,7 @@ class GetData {
       List categoriesId = getCategoriesIdPrefs();
       var response = await http.get(Uri.parse(ApiEndPoints.GetCategories),
           headers: ApiEndPoints.headerWithToken);
+      print(getBranch());
       print('sdfdsf'+response.body);
       if (categoriesPrefs.isEmpty) {
         var data = json.decode(response.body);
