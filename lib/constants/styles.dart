@@ -73,6 +73,8 @@ class ConstantStyles {
     required BuildContext context,
     required Widget content,
     required String title,
+    double? height,
+    double? width,
   }) async {
     return showDialog(
       context: context,
@@ -83,40 +85,44 @@ class ConstantStyles {
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide.none,
         ),
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 30),
-          child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-                        child: Align(
-                            alignment: Alignment.topRight,
-                            child: InkWell(
-                              onTap: (){
-                                Navigator.pop(context);
-                              },
-                              child: Container(
-                                height: contextHeight(context)*0.05,
-                                width: contextHeight(context)*0.05,
-                                decoration: BoxDecoration(
-                                    color: Colors.red[400],
-                                    borderRadius: BorderRadius.circular(10)),
-                                child: const Center(
-                                  child: Icon(
-                                    Icons.clear,
-                                    color: Colors.white,
+        child: SingleChildScrollView(
+          child: Container(
+            height: height ?? contextHeight(context)*0.8,
+            width: width ?? contextWidth(context)*0.5,
+            padding: EdgeInsets.symmetric(horizontal: 30),
+            child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+                          child: Align(
+                              alignment: Alignment.topRight,
+                              child: InkWell(
+                                onTap: (){
+                                  Navigator.pop(context);
+                                },
+                                child: Container(
+                                  height: contextHeight(context)*0.05,
+                                  width: contextHeight(context)*0.05,
+                                  decoration: BoxDecoration(
+                                      color: Colors.red[400],
+                                      borderRadius: BorderRadius.circular(10)),
+                                  child: const Center(
+                                    child: Icon(
+                                      Icons.clear,
+                                      color: Colors.white,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            )),
-                      ),
-                      Text(
-                        title, style: TextStyle(fontSize: contextHeight(context) * 0.025),
-                      ),
-                      SizedBox(height: 20,),
-                      content
-                    ],
-                  ),
+                              )),
+                        ),
+                        Text(
+                          title, style: TextStyle(fontSize: contextHeight(context) * 0.025),
+                        ),
+                        SizedBox(height: 20,),
+                        Expanded(child: content)
+                      ],
+                    ),
+          ),
         ),
       ),
     );

@@ -14,7 +14,7 @@ class CategoryItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(3),
+      padding: const EdgeInsets.all(4),
       child: InkWell(
         onTap: onTap,
         child: Container(
@@ -23,10 +23,10 @@ class CategoryItem extends StatelessWidget {
           child: Row(
             children: [
               Container(
-                width: 5,
+                width: 6,
                 color: borderColor,
               ),
-              SizedBox(width: 5,),
+              SizedBox(width: 7,),
               Expanded(
                 child: Text(title,
                   overflow: TextOverflow.ellipsis,

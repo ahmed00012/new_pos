@@ -5,6 +5,7 @@ import 'package:shormeh_pos_new_28_11_2022/data_controller/home_controller.dart'
 import 'package:shormeh_pos_new_28_11_2022/ui/screens/cash_logout.dart';
 import 'package:shormeh_pos_new_28_11_2022/ui/screens/home/widgets/select_customer_dialog.dart';
 import 'package:shormeh_pos_new_28_11_2022/ui/screens/home/widgets/upper_row_cart.dart';
+import 'package:shormeh_pos_new_28_11_2022/ui/widgets/custom_text_field.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../constants/colors.dart';
 import '../../../../constants/styles.dart';
@@ -21,7 +22,8 @@ class UpperRow extends ConsumerStatefulWidget {
 }
 
 class UpperRowState extends ConsumerState {
-  String? customerImage;
+  TextEditingController notes = TextEditingController();
+
 
 
   @override
@@ -48,33 +50,31 @@ class UpperRowState extends ConsumerState {
                    ConstantStyles.showPopup(
                        context: context,
                        title: 'partners'.tr(),
+                       height: size.height*0.5,
                        content: SelectCustomerDialog(
                          paymentCustomers: homeController.paymentCustomers,
                          onSelect: (index){
                            cartController.orderDetails.customer =
                            homeController.paymentCustomers[index];
+                           setState(() {});
                          },
                          customer: cartController.orderDetails.customer,
-                       )).then((value) {
-                             if(value!=null){
-                             setState(() {
-                               customerImage =cartController.orderDetails.customer!.image;
-                             });
-                             }
-                   });
+                       ));
                  } else {
                    ConstantStyles.displayToastMessage('canNotOpen'.tr(), true);
                  }
                },
                title: 'partner'.tr(),
                icon: Icons.delivery_dining,
-               image: customerImage,),
+               image: cartController.orderDetails.customer!=null ?
+               cartController.orderDetails.customer!.image : null,),
 
             UpperRowCard(
                 onTap: (){
-              if (cartController.orderDetails.cart != null) {
+              if (cartController.orderDetails.cart.isNotEmpty) {
                 ConstantStyles.showPopup(
                         context: context,
+                        height: size.height*0.5,
                         title: 'notes'.tr(),
                         content: Container(
                           width: size.width * 0.4,
@@ -84,43 +84,17 @@ class UpperRowState extends ConsumerState {
                               SizedBox(
                                 height: 10,
                               ),
-                              Container(
-                                height: size.height * 0.22,
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    border: Border.all(
-                                        color: Colors.black12, width: 1.2),
-                                    borderRadius:
-                                    BorderRadius.circular(10)),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10),
-                                  child: TextField(
-                                    // controller: cartController.notes,
-                                    maxLines: 7,
-                                    decoration: InputDecoration(
-                                      contentPadding: EdgeInsets.all(10),
-                                      label: Text(
-                                        'notes'.tr(),
-                                        style: TextStyle(
-                                          fontSize: size.height * 0.02,
-                                          color: Colors.black45,
-                                        ),
-                                      ),
-                                      border: InputBorder.none,
-                                    ),
-                                    onChanged: (value) {
-                                      cartController.orderDetails.notes =
-                                          value;
-                                    },
-                                  ),
-                                ),
+                              CustomTextField(controller: notes,
+                                label:   'notes'.tr(),
+                              maxLines: 7,
                               ),
                               SizedBox(
                                 height: size.height * 0.04,
                               ),
                               CustomButton(
                                 onTap: () {
+                                  cartController.orderDetails.notes = notes.text;
+                                  notes.clear();
                                   Navigator.pop(context);
                                 },
                                 height: size.height * 0.07,
@@ -142,13 +116,16 @@ class UpperRowState extends ConsumerState {
 
             UpperRowCard(
               onTap: (){
-                if (cartController.orderDetails.cart != null) {
-                 ConstantStyles.showPopup(
-                          context: context,
-                          title:  'expense'.tr(),
-                          content:  ExpenseDialog()
-                      );
-                }
+                ConstantStyles.showPopup(
+                    context: context,
+                    height: size.height*0.5,
+                    title:  'expense'.tr(),
+                    content:  ExpenseDialog(
+                      onTap: (description,price){
+                        homeController.expense(description, price);
+                      },
+                    )
+                );
               },
               title: 'expense'.tr(),
               icon: Icons.call_made_sharp,

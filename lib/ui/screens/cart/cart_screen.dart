@@ -93,6 +93,7 @@ class CartState extends ConsumerState<Cart> {
                 children: [
                   //////////////////cancel order button////////////////////////
 
+                  if(cartController.orderDetails.cart.isNotEmpty)
                     InkWell(
                       onTap: () {
                         cartController.emptyCardList();
@@ -125,7 +126,7 @@ class CartState extends ConsumerState<Cart> {
                       // height: size.height * 0.55,
 
                       child: ListView.builder(
-                        itemCount: cartController.orderDetails.cart!.length,
+                        itemCount: cartController.orderDetails.cart.length,
                         shrinkWrap: true,
                         itemBuilder: (context, index) {
                           return CartItem(index: index,closeEdit: widget.closeEdit ?? false,);
@@ -135,8 +136,9 @@ class CartState extends ConsumerState<Cart> {
                   // Spacer(),
 
                   ////////////////////////////////////summary////////////////////////////////////////
+                  if(cartController.orderDetails.cart.isNotEmpty)
                   const Divider(),
-
+                  if(cartController.orderDetails.cart.isNotEmpty)
                     Column(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
@@ -158,6 +160,7 @@ class CartState extends ConsumerState<Cart> {
                     ),
 
 ////////////////////////////////////////////checkout button////////////////////////////////
+                  if(cartController.orderDetails.cart.isNotEmpty)
                     Align(
                       alignment: Alignment.bottomCenter,
                       child: InkWell(

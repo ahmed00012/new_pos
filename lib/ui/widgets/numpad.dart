@@ -23,8 +23,18 @@ class _NumpadState extends State<Numpad> {
             padding: const EdgeInsets.only(bottom: 5),
             child: Container(
               height: size.height*0.09,
-              width: size.width*0.3,
-              color: Colors.white,
+              width: size.width*0.29,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 1,
+                    blurRadius: 2,
+                    offset: Offset(0, 3), // changes position of shadow
+                  ),
+                ],
+              ),
               child: Center(
                 child: Text(countText.join(),
                     style: TextStyle(fontSize: size.height * 0.025)),
@@ -46,7 +56,18 @@ class _NumpadState extends State<Numpad> {
                       child: Container(
                         height: size.height*0.09,
                         width: size.width*0.09,
-                        color: Colors.white,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 1,
+                              blurRadius: 2,
+                              offset: Offset(0, 3), // changes position of shadow
+                            ),
+                          ],
+                        ),
+
                         child: Center(
                           child: Text(
                             e.toString(),
@@ -74,7 +95,17 @@ class _NumpadState extends State<Numpad> {
                       child: Container(
                         height: size.height*0.09,
                         width: size.width*0.09,
-                        color: Colors.white,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 1,
+                              blurRadius: 2,
+                              offset: Offset(0, 3), // changes position of shadow
+                            ),
+                          ],
+                        ),
                         child: Center(
                           child: Text(
                             e.toString(),
@@ -101,7 +132,17 @@ class _NumpadState extends State<Numpad> {
                       child: Container(
                         height: size.height*0.09,
                         width: size.width*0.09,
-                        color: Colors.white,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 1,
+                              blurRadius: 2,
+                              offset: Offset(0, 3), // changes position of shadow
+                            ),
+                          ],
+                        ),
                         child: Center(
                           child: Text(
                             e.toString(),
@@ -128,7 +169,18 @@ class _NumpadState extends State<Numpad> {
                 child: Container(
                   height: size.height*0.09,
                   width: size.width*0.09,
-                  color: Colors.red[500],
+                  decoration: BoxDecoration(
+                    color: Colors.red[500],
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        spreadRadius: 1,
+                        blurRadius: 2,
+                        offset: Offset(0, 3), // changes position of shadow
+                      ),
+                    ],
+                  ),
+
                   child: Center(
                     child: Icon(
                       Icons.backspace_outlined,
@@ -151,7 +203,17 @@ class _NumpadState extends State<Numpad> {
                 child: Container(
                   height: size.height*0.09,
                   width: size.width*0.09,
-                  color: Colors.white,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        spreadRadius: 1,
+                        blurRadius: 2,
+                        offset: Offset(0, 3), // changes position of shadow
+                      ),
+                    ],
+                  ),
                   child: Center(
                     child: Text(
                       '0',
@@ -181,9 +243,20 @@ class _NumpadState extends State<Numpad> {
 
                 },
                 child: Container(
-                  height: size.height*0.08,
+                  height: size.height*0.09,
                   width: size.width*0.09,
-                  color: Colors.green,
+                  decoration: BoxDecoration(
+                    color: Colors.green,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        spreadRadius: 1,
+                        blurRadius: 2,
+                        offset: Offset(0, 3), // changes position of shadow
+                      ),
+                    ],
+                  ),
+
                   child: Center(
                     child: Icon(
                       Icons.check,

@@ -82,6 +82,7 @@ class ProductsRepo {
         Uri.parse(ApiEndPoints.ScreenImages),
         headers: ApiEndPoints.headerWithToken,
       );
+      print(response.body.toString()+'sdfljdhf');
       var data = json.decode(response.body);
       return data;
     }

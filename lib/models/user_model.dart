@@ -81,7 +81,7 @@ class Employee {
   String? image;
   int? departmentId;
   int? branchId;
-  Null? loginTime;
+  String? loginTime;
   String? createdAt;
   String? updatedAt;
   int? showMobileOrders;

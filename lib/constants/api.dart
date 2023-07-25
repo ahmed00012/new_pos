@@ -5,7 +5,8 @@ import 'constant_keys.dart';
 class ApiEndPoints{
 
   static Map<String,String> headerWithoutToken =  {
-    'Content-Type': 'application/json',
+
+  'Accept':'application/json',
     "Accept-Language":getLanguage(),
   };
 

@@ -62,7 +62,7 @@ class CartController extends ChangeNotifier {
         orderDetails.total = 0;
       }
 
-    // total = total! + tax!;
+    // total = total + tax!;
     return orderDetails.total;
   }
 
@@ -115,26 +115,26 @@ class CartController extends ChangeNotifier {
 
 
     if(orderDetails.orderUpdatedId!=null){
-      orderDetails.cart![index].updated = true;
+      orderDetails.cart[index].updated = true;
     }
 
     List notesID= [];
 
-    orderDetails.cart![index].extra!.forEach((element) {
+    orderDetails.cart[index].extra!.forEach((element) {
       notesID.add(element.id);
     });
 
     if (!notesID.contains(note.id!)) {
-      orderDetails.cart![index].extra!.add(note);
-      orderDetails.cart![index].total =
-          orderDetails.cart![index].total! + note.price! * orderDetails.cart![index].count!;
+      orderDetails.cart[index].extra!.add(note);
+      orderDetails.cart[index].total =
+          orderDetails.cart[index].total + note.price! * orderDetails.cart[index].count!;
 
     }
     else
     {
-      orderDetails.cart![index].extra!.remove(note);
-      orderDetails.cart![index].total =
-          orderDetails.cart![index].total! -(note.price! * orderDetails.cart![index].count!);
+      orderDetails.cart[index].extra!.remove(note);
+      orderDetails.cart[index].total =
+          orderDetails.cart[index].total -(note.price! * orderDetails.cart[index].count!);
 
     }
 
@@ -146,46 +146,46 @@ class CartController extends ChangeNotifier {
 
   void addAttributes(Attributes attribute , int productIndex , AttributeItem value ) {
 
-    orderDetails.cart![productIndex].total =orderDetails.cart![productIndex].total! /orderDetails.cart![productIndex].count!;
-    orderDetails.cart![productIndex].count = 1;
+    orderDetails.cart[productIndex].total =orderDetails.cart[productIndex].total /orderDetails.cart[productIndex].count!;
+    orderDetails.cart[productIndex].count = 1;
 
     if(orderDetails.customer!= null)
       value.realPrice = value.customerPrice;
     else
       value.realPrice = value.price;
     bool inList = false;
-    orderDetails.cart![productIndex].attributes!.forEach((element) {
+    orderDetails.cart[productIndex].attributes!.forEach((element) {
       if(element.id == attribute.id) {
         inList = true;
       }
     });
 
 
-    if (!orderDetails.cart![productIndex].allAttributesID!.contains(value.id!)) {
+    if (!orderDetails.cart[productIndex].allAttributesID!.contains(value.id!)) {
       if (attribute.overridePrice == 1) {
         if(inList) {
           attribute.values!.forEach((element2) {
-            orderDetails.cart![productIndex].allAttributesID!.forEach((element3) {
+            orderDetails.cart[productIndex].allAttributesID!.forEach((element3) {
               if(element2.id == element3)
-                orderDetails.cart![productIndex].total =
-                    orderDetails.cart![productIndex].total! - element2.realPrice!;
+                orderDetails.cart[productIndex].total =
+                    orderDetails.cart[productIndex].total - element2.realPrice!;
             });
 
           });
         }
         else
-          orderDetails.cart![productIndex].total =
-             orderDetails.cart![productIndex].total! -orderDetails.cart![productIndex].price!;
+          orderDetails.cart[productIndex].total =
+             orderDetails.cart[productIndex].total -orderDetails.cart[productIndex].price!;
 
       }
-     orderDetails.cart![productIndex].total =orderDetails.cart![productIndex].total! + value.realPrice!;
+     orderDetails.cart[productIndex].total =orderDetails.cart[productIndex].total + value.realPrice!;
 
       if (attribute.multiSelect == 1) {
         if (!inList) {
-         orderDetails.cart![productIndex].attributes!.add(attribute);
-         orderDetails.cart![productIndex].allAttributesID!.add(value.id!);
+         orderDetails.cart[productIndex].attributes!.add(attribute);
+         orderDetails.cart[productIndex].allAttributesID!.add(value.id!);
         } else {
-         orderDetails.cart![productIndex].allAttributesID!.add(value.id!);
+         orderDetails.cart[productIndex].allAttributesID!.add(value.id!);
         }
 
       }
@@ -194,14 +194,14 @@ class CartController extends ChangeNotifier {
 
         if (!inList) {
 
-         orderDetails.cart![productIndex].attributes!.add(attribute);
-         orderDetails.cart![productIndex].allAttributesID!.add(value.id!);
+         orderDetails.cart[productIndex].attributes!.add(attribute);
+         orderDetails.cart[productIndex].allAttributesID!.add(value.id!);
         } else {
 
           attribute.values!.forEach((element) {
-           orderDetails.cart![productIndex].allAttributesID!.remove(element.id!);
+           orderDetails.cart[productIndex].allAttributesID!.remove(element.id!);
           });
-         orderDetails.cart![productIndex].allAttributesID!.add(value.id!);
+         orderDetails.cart[productIndex].allAttributesID!.add(value.id!);
 
         }
       }
@@ -212,8 +212,8 @@ class CartController extends ChangeNotifier {
 
   void removeAttributes(Attributes attribute, int productIndex, AttributeItem value,
       int attributeIndex) {
-   orderDetails.cart![productIndex].total =orderDetails.cart![productIndex].total! /orderDetails.cart![productIndex].count!;
-   orderDetails.cart![productIndex].count = 1;
+   orderDetails.cart[productIndex].total =orderDetails.cart[productIndex].total /orderDetails.cart[productIndex].count!;
+   orderDetails.cart[productIndex].count = 1;
 
     if(orderDetails.customer!= null)
       value.realPrice = value.customerPrice;
@@ -221,22 +221,22 @@ class CartController extends ChangeNotifier {
       value.realPrice = value.price;
 
     if (attribute.multiSelect == 1) {
-      if (orderDetails.cart![productIndex].attributes![attributeIndex].values!.length == 1)
-       orderDetails.cart![productIndex].attributes!.remove(attribute);
-     orderDetails.cart![productIndex].allAttributesID!.remove(value.id!);
+      if (orderDetails.cart[productIndex].attributes![attributeIndex].values!.length == 1)
+       orderDetails.cart[productIndex].attributes!.remove(attribute);
+     orderDetails.cart[productIndex].allAttributesID!.remove(value.id!);
       if (attribute.overridePrice == 1) {
-       orderDetails.cart![productIndex].total =
-           orderDetails.cart![productIndex].total! +orderDetails.cart![productIndex].price!;
+       orderDetails.cart[productIndex].total =
+           orderDetails.cart[productIndex].total +orderDetails.cart[productIndex].price!;
       }
-     orderDetails.cart![productIndex].total =orderDetails.cart![productIndex].total! - value.realPrice!;
+     orderDetails.cart[productIndex].total =orderDetails.cart[productIndex].total - value.realPrice!;
     } else {
       if (attribute.required == 0) {
-       orderDetails.cart![productIndex].allAttributesID!.remove(value.id!);
+       orderDetails.cart[productIndex].allAttributesID!.remove(value.id!);
         if (attribute.overridePrice == 1) {
-         orderDetails.cart![productIndex].total =
-             orderDetails.cart![productIndex].total! +orderDetails.cart![productIndex].price!;
+         orderDetails.cart[productIndex].total =
+             orderDetails.cart[productIndex].total +orderDetails.cart[productIndex].price!;
         }
-       orderDetails.cart![productIndex].total =orderDetails.cart![productIndex].total! - value.realPrice!;
+       orderDetails.cart[productIndex].total =orderDetails.cart[productIndex].total - value.realPrice!;
       }
     }
 
@@ -245,32 +245,33 @@ class CartController extends ChangeNotifier {
 
 
   void minusController(int i) {
-    if (orderDetails.cart![i].count! > 1) {
-      double itemPrice =orderDetails.cart![i].total! /orderDetails.cart![i].count! ;
+    if (orderDetails.cart[i].count! > 1) {
+      double itemPrice =orderDetails.cart[i].total /orderDetails.cart[i].count! ;
 
-     orderDetails.cart![i].count = orderDetails.cart![i].count! - 1;
-     orderDetails.cart![i].total =orderDetails.cart![i].total! - itemPrice ;
+     orderDetails.cart[i].count = orderDetails.cart[i].count! - 1;
+     orderDetails.cart[i].total =orderDetails.cart[i].total - itemPrice ;
 
       if (orderDetails.orderUpdatedId!=null) {
-       orderDetails.cart![i].updated = true;
-       orderDetails.cart![i].updatedQuantity =orderDetails.cart![i].updatedQuantity!-1;
+       orderDetails.cart[i].updated = true;
+       orderDetails.cart[i].updatedQuantity =orderDetails.cart[i].updatedQuantity!-1;
       }
       getTotal();
 
     }
+    notifyListeners();
   }
   void plusController(int i) {
     double totalOptions = 0.0;
     double totalAttributes = 0.0;
-   orderDetails.cart![i].extra!.forEach((element) {
+   orderDetails.cart[i].extra!.forEach((element) {
       totalOptions = totalOptions + element.price!;
     });
-   orderDetails.cart![i].attributes!.forEach((element) {
+   orderDetails.cart[i].attributes!.forEach((element) {
       element.values!.forEach((value2) {
-        if(orderDetails.cart![i].allAttributesID!.contains(value2.id)) {
+        if(orderDetails.cart[i].allAttributesID!.contains(value2.id)) {
           totalAttributes = totalAttributes + value2.realPrice!;
           if(element.overridePrice==1) {
-           orderDetails.cart![i].price = 0;
+           orderDetails.cart[i].price = 0;
           }
 
         }
@@ -279,40 +280,39 @@ class CartController extends ChangeNotifier {
     });
 
 
-   orderDetails.cart![i].count =orderDetails.cart![i].count! + 1;
-   orderDetails.cart![i].total = (orderDetails.cart![i].price! + totalOptions + totalAttributes)*orderDetails.cart![i].count!;
-
-
-
+   orderDetails.cart[i].count =orderDetails.cart[i].count! + 1;
+   orderDetails.cart[i].total = (orderDetails.cart[i].price! + totalOptions +
+       totalAttributes)*orderDetails.cart[i].count!;
 
     if (orderDetails.orderUpdatedId!=null) {
-     orderDetails.cart![i].updated = true;
-     orderDetails.cart![i].updatedQuantity =orderDetails.cart![i].updatedQuantity!+1;
+     orderDetails.cart[i].updated = true;
+     orderDetails.cart[i].updatedQuantity =orderDetails.cart[i].updatedQuantity!+1;
     }
     getTotal();
+    notifyListeners();
 
   }
   void textCountController(int i,int qty) {
 
 
     if (orderDetails.orderUpdatedId!=null) {
-     orderDetails.cart![i].updated = true;
-     orderDetails.cart![i].updatedQuantity =  qty -orderDetails.cart![i].count!;
+     orderDetails.cart[i].updated = true;
+     orderDetails.cart[i].updatedQuantity =  qty -orderDetails.cart[i].count!;
     }
 
-   orderDetails.cart![i].count =qty;
-    // (cart![i].price! + totalOptions)
-   orderDetails.cart![i].total = orderDetails.cart![i].total! *qty;
+   orderDetails.cart[i].count =qty;
+    // (cart[i].price! + totalOptions)
+   orderDetails.cart[i].total = orderDetails.cart[i].total *qty;
     getTotal();
   }
   void removeOption(int i,int chosenCartItem){
 
-   orderDetails.cart![chosenCartItem].total =orderDetails.cart![chosenCartItem].total! -
-        (orderDetails.cart![chosenCartItem].extra![i].price! *orderDetails.cart![chosenCartItem].count!) ;
-   orderDetails.cart![chosenCartItem].extra!.removeAt(i);
+   orderDetails.cart[chosenCartItem].total =orderDetails.cart[chosenCartItem].total -
+        (orderDetails.cart[chosenCartItem].extra![i].price! *orderDetails.cart[chosenCartItem].count!) ;
+   orderDetails.cart[chosenCartItem].extra!.removeAt(i);
     getTotal();
     if (orderDetails.orderUpdatedId!=null) {
-     orderDetails.cart![chosenCartItem].updated = true;
+     orderDetails.cart[chosenCartItem].updated = true;
     }
 
   }
@@ -443,7 +443,7 @@ class CartController extends ChangeNotifier {
       }
 
 
-     orderDetails.cart!.add(
+     orderDetails.cart.add(
         CartModel(
             id: element.productId,
             rowId: element.id,
@@ -464,8 +464,8 @@ class CartController extends ChangeNotifier {
       );
 
       element.attributes!.forEach((element2) {
-       orderDetails.cart!.last.allAttributesID!.add(element2.attributeValue!.id!);
-       orderDetails.cart!.last.attributes!.add(
+       orderDetails.cart.last.allAttributesID!.add(element2.attributeValue!.id!);
+       orderDetails.cart.last.attributes!.add(
             Attributes(
                 title: ProductTitle(
                     en: element2.attribute!.title!.en!
@@ -563,16 +563,16 @@ class CartController extends ChangeNotifier {
   void insertOption({required int indexOfProduct, required NotesModel note}){
     List notesID= [];
     if(orderDetails.orderUpdatedId!=null){
-      orderDetails.cart![indexOfProduct].updated = true;
+      orderDetails.cart[indexOfProduct].updated = true;
     }
-    orderDetails.cart![indexOfProduct].extra!.forEach((element) {
+    orderDetails.cart[indexOfProduct].extra!.forEach((element) {
       notesID.add(element.id);
     });
 
     if (!notesID.contains(note.id!)) {
-      orderDetails.cart![indexOfProduct].extra!.add(note);
-      orderDetails.cart![indexOfProduct].total =
-          orderDetails.cart![indexOfProduct].total! + note.price! * orderDetails.cart![indexOfProduct].count!;
+      orderDetails.cart[indexOfProduct].extra!.add(note);
+      orderDetails.cart[indexOfProduct].total =
+          orderDetails.cart[indexOfProduct].total + note.price! * orderDetails.cart[indexOfProduct].count!;
 
     }
     getTotal();
@@ -584,13 +584,13 @@ class CartController extends ChangeNotifier {
 
     if(itemWidget)
     {
-      orderDetails.cart![index!].extraNotes = anotherOption;
-      orderDetails.cart![index].updated=true;
+      orderDetails.cart[index!].extraNotes = anotherOption;
+      orderDetails.cart[index].updated=true;
     }
 
     else {
-      orderDetails.cart!.last.extraNotes = anotherOption;
-      orderDetails.cart!.last.updated = true;
+      orderDetails.cart.last.extraNotes = anotherOption;
+      orderDetails.cart.last.updated = true;
     }
     notifyListeners();
   }
@@ -600,11 +600,11 @@ class CartController extends ChangeNotifier {
 void itemCount({required int index ,required int value,}){
 
   if (orderDetails.orderUpdatedId!=null) {
-    orderDetails.cart![index].updated = true;
-    orderDetails.cart![index].updatedQuantity =  value - orderDetails.cart![index].count!;
+    orderDetails.cart[index].updated = true;
+    orderDetails.cart[index].updatedQuantity =  value - orderDetails.cart[index].count!;
   }
-  orderDetails.cart![index].count = value;
-  orderDetails.cart![index].total = orderDetails.cart![index].total! * value;
+  orderDetails.cart[index].count = value;
+  orderDetails.cart[index].total = orderDetails.cart[index].total * value;
   getTotal();
 
   notifyListeners();
@@ -613,7 +613,7 @@ void itemCount({required int index ,required int value,}){
   bool inList({ required Attributes attribute , required int productIndex}){
     bool x = false;
     attribute.values!.forEach((element) {
-      if(orderDetails.cart![productIndex].allAttributesID!.contains(element.id))
+      if(orderDetails.cart[productIndex].allAttributesID!.contains(element.id))
         x = true;
     });
     return x;

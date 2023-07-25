@@ -30,7 +30,7 @@ class UpperRowCard extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              if(icon!=null)
+              if(image==null)
               Icon(
                 icon,
                 size: size.height * 0.05,

@@ -7,6 +7,7 @@ import 'package:shormeh_pos_new_28_11_2022/models/notes_model.dart';
 import 'package:shormeh_pos_new_28_11_2022/models/product_details_model.dart';
 import 'package:shormeh_pos_new_28_11_2022/ui/screens/home/widgets/product_item.dart';
 import 'package:shormeh_pos_new_28_11_2022/ui/screens/home/widgets/single_item_upper_row.dart';
+import 'package:shormeh_pos_new_28_11_2022/ui/widgets/custom_button.dart';
 import 'package:shormeh_pos_new_28_11_2022/ui/widgets/numpad.dart';
 
 import '../../../../constants/colors.dart';
@@ -14,34 +15,30 @@ import '../../../../data_controller/cart_controller.dart';
 import '../../../widgets/attributes.dart';
 import '../../../widgets/custom_text_field.dart';
 
-class SingleItem extends ConsumerStatefulWidget {
-  final bool customer ;
-  final int productID ;
+
+
+class SingleItem extends ConsumerWidget {
+  final TextEditingController anotherOption = TextEditingController();
+
+  final List<Attributes> attributes;
   final int index ;
   final List<NotesModel> optionList ;
-  const SingleItem({Key? key , required this.customer , required this.productID, required this.index,
-  required this.optionList}) : super(key: key);
+   SingleItem({Key? key , required this.index,
+    required this.attributes ,required this.optionList}) : super(key: key);
+  // List<Attributes> attributes = [];
+
+  // @override
+  // void initState() {
+  //   ref.watch(dataFuture).getProductDetails(productID: productID,
+  //       customerPrice: customer).then((value){
+  //     attributes = List.from(ref.watch(dataFuture).attributes);
+  //   });
+  //   super.initState();
+  // }
 
   @override
-  SingleItemState createState() => SingleItemState();
-}
+  Widget build(BuildContext context, ref) {
 
-class SingleItemState extends ConsumerState<SingleItem> {
-  TextEditingController anotherOption = TextEditingController();
-  List<Attributes> attributes = [];
-
-  @override
-  void initState() {
-    ref.watch(dataFuture).getProductDetails(productID: widget.productID,
-        customerPrice: widget.customer).then((value){
-      attributes = List.from(ref.watch(dataFuture).attributes);
-    });
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // final viewModel = ref.watch(dataFuture);
     final cartController = ref.watch(cartFuture);
     Size size = MediaQuery.of(context).size;
     return  SingleChildScrollView(
@@ -57,20 +54,22 @@ class SingleItemState extends ConsumerState<SingleItem> {
                     icon:  Icons.delete_outline,
                     color: Colors.red,
                     onTap: (){
-                      cartController.removeCartItem(index: widget.index);
+                      Navigator.pop(context);
+                      cartController.removeCartItem(index: index);
+
                     },),
 
                     SingleItemUpperRow(
                       icon:  Icons.add,
                       onTap: (){
-                        cartController.plusController(widget.index);
+                        cartController.plusController(index);
                       },
                     ),
 
                     SingleItemUpperRow(
                       icon:  Icons.minimize,
                       onTap: (){
-                        cartController.minusController(widget.index);
+                        cartController.minusController(index);
                       },
                     ),
                     SingleItemUpperRow(
@@ -80,7 +79,7 @@ class SingleItemState extends ConsumerState<SingleItem> {
                            context: context,
                            title: 'qty'.tr(),
                            content: Numpad()).then((value) {
-                         cartController.itemCount(index: widget.index , value: int.parse(value));
+                         cartController.itemCount(index: index , value: int.parse(value));
                        });
                       },
                     ),
@@ -88,7 +87,7 @@ class SingleItemState extends ConsumerState<SingleItem> {
                       icon:  Icons.arrow_back,
                       title:  'back'.tr(),
                       onTap: (){
-                        // viewModel.switchToCardItemWidget(false);
+                  Navigator.pop(context);
                       },
                     ),
                   ],
@@ -100,8 +99,8 @@ class SingleItemState extends ConsumerState<SingleItem> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      '${cartController.orderDetails.cart![widget.index].count}X  ${cartController
-                              .orderDetails.cart![widget.index].mainName!}',
+                      '${cartController.orderDetails.cart[index].count}X  ${cartController
+                              .orderDetails.cart[index].mainName!}',
                       style: TextStyle(
                           color: Colors.black,
                           fontSize: size.height * 0.03,
@@ -111,7 +110,7 @@ class SingleItemState extends ConsumerState<SingleItem> {
                       width: 100,
                     ),
                     Text(
-                      '${cartController.orderDetails.cart![widget.index].total} SAR',
+                      '${cartController.orderDetails.cart[index].total} SAR',
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                           color: Colors.black,
@@ -124,7 +123,7 @@ class SingleItemState extends ConsumerState<SingleItem> {
                   height: 20,
                 ),
 
-                  AttributesWidget(productIndex: widget.index , attributes: attributes),
+                  AttributesWidget(productIndex: index , attributes: attributes),
 
                 Container(
                   width: size.width,
@@ -138,7 +137,7 @@ class SingleItemState extends ConsumerState<SingleItem> {
                 ),
                 SizedBox(height: 10,),
                 GridView.builder(
-                    itemCount: widget.optionList.length + 1 ,
+                    itemCount: optionList.length + 1 ,
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -146,16 +145,30 @@ class SingleItemState extends ConsumerState<SingleItem> {
                       childAspectRatio: 1.8,
                     ),
                     itemBuilder: (context, i) {
-                      return i == widget.optionList.length
+                      return i == optionList.length
                           ? ProductItemWidget(
                         onTap: () {
                           ConstantStyles.showPopup(
                             context: context,
+                            height: size.height*0.4,
+                            width: size.width*0.5,
                             title: 'anotherOption'.tr(),
-                            content: CustomTextField(
-                              controller: anotherOption,
-                              label: 'anotherOption'.tr(),
-                            ),
+                            content: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                CustomTextField(
+                                  controller: anotherOption,
+                                  maxLines: 4,
+                                  label: 'anotherOption'.tr(),
+                                ),
+                                CustomButton(title: 'save'.tr(),
+                                    onTap: (){
+                                  Navigator.pop(context);
+                                      cartController.addAnotherOption(itemWidget: false ,
+                                          anotherOption: anotherOption.text);
+                                    })
+                              ],
+                            )
                           );
                         },
                         title: 'anotherOption'.tr(),
@@ -163,14 +176,14 @@ class SingleItemState extends ConsumerState<SingleItem> {
                           :   ProductItemWidget(
                           onTap: () {
                               cartController.insertOption(
-                                  indexOfProduct: cartController.orderDetails.cart!.length - 1,
-                                  note: widget.optionList[i]);
+                                  indexOfProduct: cartController.orderDetails.cart.length - 1,
+                                  note: optionList[i]);
 
                           },
-                          title: widget.optionList[i].titleEn!,
-                          price: widget.optionList[i].price != 0
-                              ? '${widget.optionList[i].price!} SAR'
-                              : '');
+                          title: optionList[i].titleEn!,
+                          price: optionList[i].price != 0
+                              ? '${optionList[i].price!}'
+                              : null);
                     }),
               ],
             ),

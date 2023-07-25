@@ -57,7 +57,7 @@ class NewHomeState extends ConsumerState<Home> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Container(
-                                width: size.width * 0.1,
+                                width: size.width * 0.12,
                                 child: ListView.builder(
                                     itemCount: viewModel.categories.length + 1,
                                     shrinkWrap: true,
@@ -123,7 +123,7 @@ class NewHomeState extends ConsumerState<Home> {
                                                     title: 'anotherOption'.tr(),
                                                   )
                                                 : viewModel.options
-                                                 ? ProductItemWidget(
+                                                ? ProductItemWidget(
                                                         onTap: () {
                                                           cartController.insertOption(
                                                               indexOfProduct:
@@ -145,36 +145,53 @@ class NewHomeState extends ConsumerState<Home> {
                                                                 0
                                                             ? '${viewModel.optionsList[i].price!} SAR'
                                                             : '')
-                                                : ProductItemWidget(
+                                              : ProductItemWidget(
                                                         onTap: () {
-                                                          cartController
-                                                              .insertCart(viewModel
-                                                                  .products[i]);
+                                                          viewModel
+                                                              .getProductDetails(
+                                                                  productID:
+                                                                      viewModel
+                                                                          .products[i].id!,
+                                                                  customerPrice:
+                                                                      cartController
+                                                                              .orderDetails
+                                                                              .customer !=
+                                                                          null)
+                                                              .then((value) {
+                                                            cartController
+                                                                .insertCart(
+                                                                    viewModel
+                                                                        .products[i]);
 
-                                                          ConstantStyles
-                                                              .showPopup(
-                                                                  context:
-                                                                      context,
-                                                                  content:
-                                                                      SingleItem(
-                                                                    index: cartController
-                                                                            .orderDetails
-                                                                            .cart
-                                                                            .length -
-                                                                        1,
-                                                                    customer: cartController
-                                                                            .orderDetails
-                                                                            .customer !=
-                                                                        null,
-                                                                    optionList:
-                                                                        viewModel
-                                                                            .optionsList,
-                                                                    productID:
-                                                                        viewModel
-                                                                            .products[i]
-                                                                            .id!,
-                                                                  ),
-                                                                  title: '');
+                                                            viewModel.attributes.forEach((element) {
+                                                              if(element.required == 1) {
+                                                                cartController.addAttributes(element,
+                                                                    cartController.orderDetails.cart.length - 1,
+                                                                    element.values![0]);
+                                                              }
+                                                            });
+
+                                                            ConstantStyles
+                                                                .showPopup(
+                                                                    context:
+                                                                        context,
+                                                                    height: size.height*0.9,
+                                                                    width: size.width*0.8,
+                                                                    content: SingleItem(
+                                                                      index: cartController
+                                                                              .orderDetails
+                                                                              .cart
+                                                                              .length -
+                                                                          1,
+                                                                      optionList:
+                                                                          viewModel
+                                                                              .optionsList,
+                                                                      attributes:
+                                                                          viewModel
+                                                                              .attributes,
+                                                                    ),
+                                                                    title: '');
+                                                          });
                                                         },
                                                         title: viewModel
                                                             .products[i]
@@ -188,8 +205,8 @@ class NewHomeState extends ConsumerState<Home> {
                                                                     .orderDetails
                                                                     .customer !=
                                                                 null
-                                                            ? '${viewModel.products[i].customerPrice!} SAR'
-                                                            : '${viewModel.products[i].price!} SAR');
+                                                            ? '${viewModel.products[i].customerPrice!}'
+                                                            : '${viewModel.products[i].price!}');
                                           }))
                             ],
                           )),

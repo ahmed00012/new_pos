@@ -468,8 +468,8 @@ class HomeController extends ChangeNotifier {
    var data = await productsRepo.getSecondScreenPicture();
 
    if(data['status']) {
-     secondScreenDuration = int.parse(data['seconds'].toString());
-     data['screens'].forEach((e) {
+     secondScreenDuration = int.parse(data['data']['seconds'].toString());
+     data['data']['screens'].forEach((e) {
        branchScreenImages.add(e['image']);
      });
    }
@@ -496,7 +496,7 @@ class HomeController extends ChangeNotifier {
   Future expense(String description , String price) async {
     try{
       var data = await productsRepo.expense(description, double.parse(price));
-      ConstantStyles.displayToastMessage(data['msg'], data['status']);
+      ConstantStyles.displayToastMessage(data['msg'], !data['status']);
     }
     catch(e){
       ConstantStyles.displayToastMessage(e.toString(), true);
