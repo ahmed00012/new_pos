@@ -1,7 +1,7 @@
 import 'package:easy_localization/src/public_ext.dart';
 import 'package:flutter/material.dart';
 
-import '../../constants/colors.dart';
+import '../../../../constants/colors.dart';
 
 class AmountWidget extends StatefulWidget {
  String? predict1;

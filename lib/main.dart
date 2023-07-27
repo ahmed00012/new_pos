@@ -9,7 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:shormeh_pos_new_28_11_2022/ui/screens/home/home_screen.dart';
-import 'package:shormeh_pos_new_28_11_2022/ui/screens/login.dart';
+import 'package:shormeh_pos_new_28_11_2022/ui/screens/auth_screens/login.dart';
 import 'package:shormeh_pos_new_28_11_2022/ui/widgets/bottom_nav_bar.dart';
 import 'constants/colors.dart';
 import 'local_storage.dart';

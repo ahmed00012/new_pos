@@ -6,13 +6,14 @@ class CustomTextField extends StatelessWidget {
   final String label;
   final String? hint;
   final String? Function(String?)?validator;
+  final Function(String?)?onChange;
   final bool numerical;
   final int? maxLines;
 
 
   CustomTextField(
       {Key? key, required this.controller, required this.label, this.hint,this.validator,
-      this.numerical = false , this.maxLines = 1})
+      this.numerical = false , this.maxLines = 1,this.onChange})
       : super(key: key);
 
   @override
@@ -58,6 +59,7 @@ class CustomTextField extends StatelessWidget {
         border: InputBorder.none,
       ),
       validator: validator,
+      onChanged: onChange,
     );
   }
 }

@@ -2,22 +2,22 @@ import 'package:easy_localization/src/public_ext.dart';
 import 'package:flutter/material.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:shormeh_pos_new_28_11_2022/constants/colors.dart';
+import 'package:shormeh_pos_new_28_11_2022/constants/styles.dart';
 import 'package:shormeh_pos_new_28_11_2022/data_controller/order_method_controller.dart';
 
 
-class Numpad2 extends StatefulWidget {
-double height;
-double width;
- Numpad2(this.height,this.width);
+class CountOfGuests extends StatefulWidget {
+  const CountOfGuests({super.key});
+
   @override
-  _Numpad2State createState() => _Numpad2State();
+  _CountOfGuestsState createState() => _CountOfGuestsState();
 }
 
-class _Numpad2State extends State<Numpad2> {
+class _CountOfGuestsState extends State<CountOfGuests> {
   String text = '';
   @override
   Widget build(BuildContext context) {
-     // Size size = MediaQuery.of(context).size;
+     Size size = MediaQuery.of(context).size;
     return Container(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -27,12 +27,22 @@ class _Numpad2State extends State<Numpad2> {
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 5),
                 child: Container(
-                  height: widget.height*0.09,
-                  width: widget.width*0.285,
-                  color: Colors.white,
+                  height: size.height*0.09,
+                  width: size.width*0.285,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        spreadRadius: 1,
+                        blurRadius: 2,
+                        offset: Offset(0, 3), // changes position of shadow
+                      ),
+                    ],
+                  ),
                   child: Center(
                     child: Text(text,
-                        style: TextStyle(fontSize: widget.height * 0.025)),
+                        style: TextStyle(fontSize: size.height * 0.025)),
                   ),
                 ),
               ),
@@ -49,13 +59,24 @@ class _Numpad2State extends State<Numpad2> {
                 child: Padding(
                   padding: const EdgeInsets.all(5.0),
                   child: Container(
-                    height: widget.height*0.09,
-                    width: widget.width*0.09,
-                    color: Colors.white,
+                    height: size.height*0.09,
+                    width: size.width*0.09,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 1,
+                          blurRadius: 2,
+                          offset: Offset(0, 3), // changes position of shadow
+                        ),
+                      ],
+                    ),
+
                     child: Center(
                       child: Text(
                         e.toString(),
-                        style: TextStyle(fontSize: widget.height * 0.022),
+                        style: TextStyle(fontSize: size.height * 0.022),
                       ),
                     ),
                   ),
@@ -75,13 +96,23 @@ class _Numpad2State extends State<Numpad2> {
                 child: Padding(
                   padding: const EdgeInsets.all(5.0),
                   child: Container(
-                    height: widget.height*0.09,
-                    width: widget.width*0.09,
-                    color: Colors.white,
+                    height: size.height*0.09,
+                    width: size.width*0.09,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 1,
+                          blurRadius: 2,
+                          offset: Offset(0, 3), // changes position of shadow
+                        ),
+                      ],
+                    ),
                     child: Center(
                       child: Text(
                         e.toString(),
-                        style: TextStyle(fontSize: widget.height * 0.022),
+                        style: TextStyle(fontSize: size.height * 0.022),
                       ),
                     ),
                   ),
@@ -101,13 +132,23 @@ class _Numpad2State extends State<Numpad2> {
                 child: Padding(
                   padding: const EdgeInsets.all(5.0),
                   child: Container(
-                    height: widget.height*0.09,
-                    width: widget.width*0.09,
-                    color: Colors.white,
+                    height: size.height*0.09,
+                    width: size.width*0.09,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 1,
+                          blurRadius: 2,
+                          offset: Offset(0, 3), // changes position of shadow
+                        ),
+                      ],
+                    ),
                     child: Center(
                       child: Text(
                         e.toString(),
-                        style: TextStyle(fontSize: widget.height * 0.022),
+                        style: TextStyle(fontSize: size.height * 0.022),
                       ),
                     ),
                   ),
@@ -129,13 +170,23 @@ class _Numpad2State extends State<Numpad2> {
                   child: Padding(
                     padding: const EdgeInsets.all(5.0),
                     child: Container(
-                      height: widget.height*0.09,
-                      width: widget.width*0.09,
-                      color: Colors.green,
+                      height: size.height*0.09,
+                      width: size.width*0.09,
+                      decoration: BoxDecoration(
+                        color: Colors.green,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 1,
+                            blurRadius: 2,
+                            offset: Offset(0, 3), // changes position of shadow
+                          ),
+                        ],
+                      ),
                       child: Center(
                         child: Icon(
                           Icons.backspace_outlined,
-                          size: widget.height * 0.03,
+                          size: size.height * 0.03,
                           color: Colors.white,
                         ),
                       ),
@@ -152,13 +203,23 @@ class _Numpad2State extends State<Numpad2> {
                   child: Padding(
                     padding: const EdgeInsets.all(5.0),
                     child: Container(
-                      height: widget.height*0.09,
-                      width: widget.width*0.09,
-                      color: Colors.white,
+                      height: size.height*0.09,
+                      width: size.width*0.09,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 1,
+                            blurRadius: 2,
+                            offset: Offset(0, 3), // changes position of shadow
+                          ),
+                        ],
+                      ),
                       child: Center(
                         child: Text(
                           '0',
-                          style: TextStyle(fontSize: widget.height * 0.022),
+                          style: TextStyle(fontSize: size.height * 0.022),
                         ),
                       ),
                     ),
@@ -174,25 +235,9 @@ class _Numpad2State extends State<Numpad2> {
                     Navigator.pop(context,int.parse(text));
                   }
                       else{
-                        showSimpleNotification(
-                           Container(
-                              height: 60,
-                              child:  Padding(
-                                padding: EdgeInsets.only(top: 8.0),
-                                child: Center(
-                                  child: Text(
-                                    'numOfGuestsAlert'.tr(),
-                                    style: TextStyle(
-                                        color: Colors.white ,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w500),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            duration: Duration(seconds: 3),
-                            elevation: 2,
-                            background: Colors.red[500] );
+
+                        ConstantStyles.displayToastMessage('numOfGuestsAlert'.tr(), true);
+
                       }
 
                   // if (ordersScreen == null) {
@@ -207,13 +252,23 @@ class _Numpad2State extends State<Numpad2> {
                       //
                     },
                     child: Container(
-                      height: widget.height*0.08,
-                      width: widget.width*0.09,
-                      color: Constants.mainColor,
+                      height: size.height*0.09,
+                      width: size.width*0.09,
+                      decoration: BoxDecoration(
+                        color: Constants.mainColor,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 1,
+                            blurRadius: 2,
+                            offset: Offset(0, 3), // changes position of shadow
+                          ),
+                        ],
+                      ),
                       child: Center(
                         child: Icon(
                           Icons.check,
-                          size: widget.height * 0.035,
+                          size: size.height * 0.035,
                           color: Colors.white,
                         ),
                       ),

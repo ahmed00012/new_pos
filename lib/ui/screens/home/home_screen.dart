@@ -87,9 +87,7 @@ class NewHomeState extends ConsumerState<Home> {
                                     }),
                               ),
                               Expanded(
-                                  child: viewModel.loading
-                                      ? const CustomProgressIndicator()
-                                      : GridView.builder(
+                                  child:  GridView.builder(
                                           itemCount: viewModel.options
                                               ? viewModel.optionsList.length + 1
                                               : viewModel.products.length,

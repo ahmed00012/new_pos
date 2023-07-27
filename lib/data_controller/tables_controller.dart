@@ -14,6 +14,8 @@ import 'package:overlay_support/overlay_support.dart';
 import 'package:screenshot/screenshot.dart';
 
 import 'package:image/image.dart' as img;
+import 'package:shormeh_pos_new_28_11_2022/constants/printing_services/printing_service.dart';
+import 'package:shormeh_pos_new_28_11_2022/constants/styles.dart';
 import '../constants/colors.dart';
 import '../local_storage.dart';
 import '../main.dart';
@@ -26,7 +28,7 @@ import '../models/orders_model.dart';
 import '../models/printers_model.dart';
 import '../models/tables_model.dart';
 import '../repositories/new_order_repository.dart';
-import '../ui/screens/login.dart';
+import '../ui/screens/auth_screens/login.dart';
 import 'home_controller.dart';
 
 final tablesFuture = ChangeNotifierProvider.autoDispose<TablesController>(
@@ -81,32 +83,17 @@ class TablesController extends ChangeNotifier {
 
 
 
- // Future<void>  reserveTable(
- //     int i, Tables table, int count,BuildContext context,
- //     bool homeDialog,
- //     OrderDetails order) async{
- //
- //    chosenTable = table;
- //    departments[i].tables!.forEach((element) {element.chosen=false;});
- //    table.chosen = true;
- //
- //    order.table = table.id.toString();
- //    order.tableTitle = table.title;
- //    order.department = departments[i].title;
- //    order.orderMethod = 'restaurant';
- //    order.orderMethodId = 2;
- //    order.customer = null;
- //    order.paymentId = null;
- //    // order.cancelPayment();
- //
- //
- //    if(!homeDialog)
- //    await confirmOrder(count,context , order);
- //    else
- //      Navigator.pop(context,count);
- //
- //    notifyListeners();
- //  }
+ reserveTable({required int i,required Tables table,required int count,required OrderDetails order}) {
+
+    departments[i].tables!.forEach((element) {element.chosen=false;});
+    table.chosen = true;
+    order.table = table.id.toString();
+    order.tableTitle = table.title;
+    order.department = departments[i].title;
+    order.orderMethod = 'restaurant';
+    order.orderMethodId = 2;
+     confirmOrder(order);
+  }
 
 
   // editOrder(var homeController){
@@ -165,23 +152,20 @@ class TablesController extends ChangeNotifier {
 
   void getTables() async {
     switchLoading(true);
-    var data = await repo.getTables();
-
-    if(data == 'unauthorized'){
-      // testToken();
-    }
-    else if(data ==false){
-      displayToastMessage('Connection Error', true);
-    }
-
-    else {
-      departments =
-      List<Department>.from(data.map((e) => Department.fromJson(e)));
-      departments.forEach((element) {
-        element.tables!.forEach((element) {
-          element.chosen = false;
+    try{
+      var data = await repo.getTables();
+      if (data['status']) {
+        departments = List<Department>.from(
+            data['data'].map((e) => Department.fromJson(e)));
+        departments.forEach((element) {
+          element.tables!.forEach((element) {
+            element.chosen = false;
+          });
         });
-      });
+      }
+    }
+    catch(e){
+      ConstantStyles.displayToastMessage(e.toString(), true);
     }
     switchLoading(false);
     // print(departments[0].tables![0].title);
@@ -191,68 +175,38 @@ class TablesController extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future confirmOrder(OrderDetails order) async {
+    loading = true;
+    try{
+      List<Order> details = [];
+      order.cart.forEach((element) {
+        List<int> notesId = [];
+        element.extra!.forEach((element) {
+          notesId.add(element.id!);
+        });
 
-  //
-  // Future confirmOrder(int guestsCount, BuildContext context , OrderDetails order) async {
-  //   List<Order> details = [];
-  //   order.cart!.forEach((element) {
-  //     List<int> notesId = [];
-  //     element.extra!.forEach((element) {
-  //       notesId.add(element.id!);
-  //     });
-  //
-  //     Order myOrder = Order(
-  //         productId: element.id,
-  //         quantity: element.count,
-  //         note: element.extraNotes,
-  //         notes: notesId
-  //     );
-  //
-  //     details.add(myOrder);
-  //   });
-  //
-  //
-  //   ConfirmOrderModel confirmOrderModel = ConfirmOrderModel(
-  //       name: order.clientName,
-  //       phone: order.clientPhone,
-  //       hold: 0,
-  //       tableId: order.table,
-  //       notes: order.notes,
-  //       // clientsCount:  HomeController.orderDetails.co,
-  //       paymentStatus:  0,
-  //       orderMethodId: 2,
-  //       order: details
-  //   );
-  //
-  //
-  //   var responseValue = await repo.confirmOrder(LocalStorage.getData(key: 'token'),
-  //       LocalStorage.getData(key: 'language'), confirmOrderModel.toJson());
-  //
-  //   if(responseValue == 'unauthorized'){
-  //     testToken();
-  //   }
-  //   else if(responseValue ==false){
-  //     displayToastMessage('Order Failed', true);
-  //   }
-  //
-  //   else {
-  //     //
-  //     // OrderDetails newOrder = HomeController.orderDetails.copyWith();
-  //     testPrint(order, responseValue['uuid']).then((value) {
-  //       deviceReceipt(order, responseValue['uuid']);
-  //       displayToastMessage(
-  //           ' ${'order'.tr()} ${responseValue['uuid']}  ${'createdSuccessfully'.tr()}',
-  //           false);
-  //       // closeOrder();
-  //       Navigator.pushAndRemoveUntil(context,
-  //           MaterialPageRoute(builder: (_)=>Home()), (route) => false);
-  //     });
-  //
-  //
-  //   }
-  //   loading = false;
-  //   notifyListeners();
-  // }
+        Order myOrder = Order(
+            productId: element.id,
+            quantity: element.count,
+            note: element.extraNotes,
+            notes: notesId);
+
+        details.add(myOrder);
+      });
+      order.finalOrder = details;
+      var responseValue = await repo.confirmOrder(order.toJson());
+      ConstantStyles.displayToastMessage(
+          responseValue['msg'], !responseValue['status']);
+      if (responseValue['status']) {
+        PrintingService.printInvoice(order: order, payLater: false);
+      }
+    }catch(e){
+      ConstantStyles.displayToastMessage(e.toString(), true);
+    }
+
+    loading = false;
+    notifyListeners();
+  }
   // void editOrder(){
   //   HomeController.orderDetails = OrderDetails();
   //   HomeController.orderDetails.editOrderTable(departments[chosenDepartment!] , chosenOrder!);
@@ -260,7 +214,7 @@ class TablesController extends ChangeNotifier {
   //
   //   notifyListeners();
   // }
-
+  //
   // void closeOrder() {
   //   HomeController.orderDetails = OrderDetails();
   //   departments.forEach((element) {element.tables!.forEach((element) {element.chosen=false;});});

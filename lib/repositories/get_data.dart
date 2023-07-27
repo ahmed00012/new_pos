@@ -22,7 +22,7 @@ class GetData {
     try {
       if (data.isEmpty) {
         var response = await http.get(Uri.parse(ApiEndPoints.PaymentMethods),
-            headers: ApiEndPoints.headerWithToken);
+            headers: ApiEndPoints.headerWithToken(token:getUserToken() ,language: getLanguage()));
         if (response.statusCode == 200) {
           var data = json.decode(response.body);
           setPaymentMethodsPrefs(json.encode(data['data']));
@@ -38,7 +38,7 @@ class GetData {
     try {
       if (data.isEmpty) {
         var response = await http.get(Uri.parse(ApiEndPoints.Owners),
-            headers: ApiEndPoints.headerWithToken);
+            headers: ApiEndPoints.headerWithToken(token:getUserToken() ,language: getLanguage()));
         if (response.statusCode == 200) {
           var data = json.decode(response.body);
           setOwnersPrefs(json.encode(data['data']));
@@ -50,11 +50,11 @@ class GetData {
   }
 
   Future getCoupons() async {
-    String data = getOwnersPrefs();
+    String data = getCouponsPrefs();
     try {
       if (data.isEmpty) {
         var response = await http.get(Uri.parse(ApiEndPoints.Coupons),
-            headers: ApiEndPoints.headerWithToken);
+            headers: ApiEndPoints.headerWithToken(token:getUserToken() ,language: getLanguage()));
         if (response.statusCode == 200) {
           var data = json.decode(response.body);
           setCouponsPrefs(json.encode(data['data']));
@@ -71,7 +71,7 @@ class GetData {
       if (data.isEmpty) {
         var response = await http.get(
             Uri.parse("${ApiEndPoints.OrderMethods}${getBranch()}"),
-            headers: ApiEndPoints.headerWithToken);
+            headers: ApiEndPoints.headerWithToken(token:getUserToken() ,language: getLanguage()));
         if (response.statusCode == 200) {
           var data = json.decode(response.body);
           List methods = List.from(data['data']);
@@ -93,7 +93,7 @@ class GetData {
       String data = getComplainReasonsPrefs();
       if (data.isEmpty) {
         var response = await http.get(Uri.parse(ApiEndPoints.ComplainReasons),
-            headers: ApiEndPoints.headerWithToken);
+            headers: ApiEndPoints.headerWithToken(token:getUserToken() ,language: getLanguage()));
         var data = json.decode(response.body);
         setComplainReasonsPrefs(json.encode(data['data']));
       }
@@ -107,7 +107,7 @@ class GetData {
       String data = getOrderStatusPrefs();
       if (data.isEmpty) {
         var response = await http.get(Uri.parse(ApiEndPoints.OrderStatus),
-            headers: ApiEndPoints.headerWithToken);
+            headers: ApiEndPoints.headerWithToken(token:getUserToken() ,language: getLanguage()));
         var data = json.decode(response.body);
         setOrderStatusPrefs(json.encode(data['data']));
       }
@@ -121,7 +121,7 @@ class GetData {
       String data = getPrintersPrefs();
       if (data.isEmpty) {
         var response = await http.get(Uri.parse(ApiEndPoints.Printers),
-            headers: ApiEndPoints.headerWithToken);
+            headers: ApiEndPoints.headerWithToken(token:getUserToken() ,language: getLanguage()));
         var data = json.decode(response.body);
         setPrintersPrefs(json.encode(data['data']));
       }
@@ -135,7 +135,7 @@ class GetData {
       String data = getOptionsPrefs();
       if (data.isEmpty) {
         var response = await http.get(Uri.parse(ApiEndPoints.GetNotes),
-            headers: ApiEndPoints.headerWithToken);
+            headers: ApiEndPoints.headerWithToken(token:getUserToken() ,language: getLanguage()));
         var data = json.decode(response.body);
         setOptionsPrefs(json.encode(data['data']));
       }
@@ -149,7 +149,7 @@ class GetData {
       String data = getPaymentCustomersPrefs();
       if (data.isEmpty) {
         var response = await http.get(Uri.parse(ApiEndPoints.PaymentCustomers),
-            headers: ApiEndPoints.headerWithToken);
+            headers: ApiEndPoints.headerWithToken(token:getUserToken() ,language: getLanguage()));
         var data = json.decode(response.body);
         setPaymentCustomersPrefs(json.encode(data['data']));
       }
@@ -161,11 +161,9 @@ class GetData {
   Future getCategories() async {
     // try {
       String categoriesPrefs = getAllCategoriesPrefs();
-      List categoriesId = getCategoriesIdPrefs();
+      List<String> categoriesId = getCategoriesIdPrefs();
       var response = await http.get(Uri.parse(ApiEndPoints.GetCategories),
-          headers: ApiEndPoints.headerWithToken);
-      print(getBranch());
-      print('sdfdsf'+response.body);
+          headers: ApiEndPoints.headerWithToken(token:getUserToken() ,language: getLanguage()));
       if (categoriesPrefs.isEmpty) {
         var data = json.decode(response.body);
         if (response.statusCode == 200) {
@@ -189,12 +187,12 @@ class GetData {
 
   Future getProducts(int id) async {
     String productPrefs = getProductsPrefs(id);
-    List productsId = getProductsIdPrefs();
+    List<String> productsId = getProductsIdPrefs();
     try {
       if (productPrefs.isEmpty) {
         var response = await http.get(
             Uri.parse("${ApiEndPoints.Products}$id/products"),
-            headers: ApiEndPoints.headerWithToken);
+            headers: ApiEndPoints.headerWithToken(token:getUserToken() ,language: getLanguage()));
         var data = json.decode(response.body);
         data['data'].forEach((element) async{
           productsId.add(element['id'].toString());
@@ -214,7 +212,7 @@ class GetData {
       if (data.isEmpty) {
         var response = await http.get(
             Uri.parse("${ApiEndPoints.ProductDetails}$id/details"),
-            headers: ApiEndPoints.headerWithToken);
+            headers: ApiEndPoints.headerWithToken(token:getUserToken() ,language: getLanguage()));
         var data = json.decode(response.body);
         setProductDetailsPrefs(json.encode(data['data']['attributes']), id);
       }

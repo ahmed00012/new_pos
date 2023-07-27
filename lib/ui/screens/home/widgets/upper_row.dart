@@ -2,7 +2,7 @@ import 'package:easy_localization/src/public_ext.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shormeh_pos_new_28_11_2022/data_controller/home_controller.dart';
-import 'package:shormeh_pos_new_28_11_2022/ui/screens/cash_logout.dart';
+import 'package:shormeh_pos_new_28_11_2022/ui/screens/auth_screens/cash_logout.dart';
 import 'package:shormeh_pos_new_28_11_2022/ui/screens/home/widgets/select_customer_dialog.dart';
 import 'package:shormeh_pos_new_28_11_2022/ui/screens/home/widgets/upper_row_cart.dart';
 import 'package:shormeh_pos_new_28_11_2022/ui/widgets/custom_text_field.dart';
@@ -141,11 +141,10 @@ class UpperRowState extends ConsumerState {
                 ),
               ),
 
-              child:
-              UpperRowCard(
+              child: UpperRowCard(
                 title:'language'.tr(),
                 icon:Icons.language,
-                onTap: (){},
+
               ),
               itemBuilder: (context) => [
                 PopupMenuItem(
@@ -167,7 +166,6 @@ class UpperRowState extends ConsumerState {
                       color: getLanguage() == 'ar'? Constants.mainColor:Colors.black,
                       fontSize: size.height*0.02
                   ),),),
-
               ]),
 
 

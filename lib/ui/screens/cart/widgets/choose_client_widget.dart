@@ -177,7 +177,7 @@ class ChooseClientWidget extends ConsumerWidget {
                             SizedBox(
                                 width: size.width * 0.05,
                                 child: Text(
-                                  client.points ?? '0',
+                                  client.points.toString(),
                                   style: TextStyle(
                                       color: client.allowCreateOrder
                                           ? Colors.black
@@ -192,7 +192,7 @@ class ChooseClientWidget extends ConsumerWidget {
                               width: 10,
                             ),
                             Text(
-                              client.balance ?? '0',
+                              client.balance.toString(),
                               style: TextStyle(
                                   color: client.allowCreateOrder
                                       ? Colors.black

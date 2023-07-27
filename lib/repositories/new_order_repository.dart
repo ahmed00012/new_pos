@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shormeh_pos_new_28_11_2022/constants/api.dart';
 
+import '../constants/prefs_utils.dart';
+
 
 
 
@@ -13,7 +15,7 @@ class NewOrderRepository {
   Future getTables() async {
     try{
       var response = await http.get(Uri.parse(ApiEndPoints.BranchTables),
-          headers: ApiEndPoints.headerWithToken);
+          headers: ApiEndPoints.headerWithToken(token:getUserToken() ,language: getLanguage()));
       log(response.body.toString());
       var data = json.decode(response.body);
       return data;
@@ -27,8 +29,10 @@ class NewOrderRepository {
   Future confirmOrder(Map data) async {
     try{
       var response = await http.post(Uri.parse(ApiEndPoints.ConfirmOrder),
-          headers: ApiEndPoints.headerWithToken, body: jsonEncode(data));
+          headers: ApiEndPoints.headerWithToken(token:getUserToken() ,language: getLanguage()), body: jsonEncode(data));
       var myData = json.decode(response.body);
+      print('sdfsd'+myData.toString());
+      print('sdfsd'+data.toString());
       return myData;
     }
     catch(e){
@@ -41,7 +45,7 @@ class NewOrderRepository {
       var response = await http.post(
         Uri.parse("${ApiEndPoints.EditOrder}$itemId/updateDetails"),
         body: jsonEncode(data),
-        headers: ApiEndPoints.headerWithToken,
+        headers: ApiEndPoints.headerWithToken(token:getUserToken() ,language: getLanguage()),
       );
       var encodedResponse = json.decode(response.body);
       return encodedResponse;
@@ -53,11 +57,10 @@ class NewOrderRepository {
   }
 
   Future searchClient(String query) async {
-
     try{
       var response = await http.get(
         Uri.parse("${ApiEndPoints.SearchClient}$query"),
-        headers: ApiEndPoints.headerWithToken,
+        headers: ApiEndPoints.headerWithToken(token:getUserToken() ,language: getLanguage()),
       );
       var data = json.decode(response.body);
       return data;

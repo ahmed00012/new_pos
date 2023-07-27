@@ -24,9 +24,8 @@ import '../models/integration_model.dart';
 import '../models/printers_model.dart';
 
 
-final newOrderFuture = ChangeNotifierProvider.autoDispose
-    .family<NewOrderController, OrderDetails>(
-        (ref, order) => NewOrderController(order));
+final newOrderFuture = ChangeNotifierProvider.autoDispose<NewOrderController>(
+        (ref) => NewOrderController());
 
 class NewOrderController extends ChangeNotifier {
   NewOrderRepository repo = NewOrderRepository();
@@ -51,15 +50,15 @@ class NewOrderController extends ChangeNotifier {
   // img.Image? productsScreenshot;
   // Uint8List? productsImage;
   double remaining = 0.0;
-  OrderDetails? currentOrder;
 
-  NewOrderController(OrderDetails order) {
+
+  NewOrderController() {
     getPaymentMethods();
     collapse();
     getOwners();
     getPrinters();
-    currentOrder = order;
-    notifyListeners();
+
+    // notifyListeners();
   }
 
   // testToken()async{
@@ -119,12 +118,12 @@ class NewOrderController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void selectOwner(OwnerModel owner) {
+  void selectOwner(OrderDetails order ,OwnerModel owner) {
     owners.forEach((element) {
       element.chosen = false;
     });
     owner.chosen = true;
-    currentOrder!.owner = owner;
+    order.owner = owner;
     collapse();
     notifyListeners();
   }
@@ -137,21 +136,13 @@ class NewOrderController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void selectPayment(int i, double total) {
+  void selectPayment(OrderDetails order,int i, double total) {
     owners.forEach((element) {
       element.chosen = false;
     });
-    currentOrder!.owner = null;
+    order.owner = null;
     collapse();
-    List<int> paymentIds = currentOrder!.payMethods.map((e) => e.id!).toList();
-
-    if (!paymentIds.contains(paymentMethods[i].id)) {
-      amountCalculator(total);
-      currentOrder!.payMethods.add(OrderPaymentMethods(
-        id: paymentMethods[i].id,
-        title: paymentMethods[i].title!.en,
-      ));
-    }
+    amountCalculator(total);
 
     //  if(currentOrder!.payMethods.isEmpty){
     //    currentOrder!.payMethods.add(OrderPaymentMethods()) ;
@@ -372,10 +363,10 @@ class NewOrderController extends ChangeNotifier {
           postingDate: DateTime.now().toString(),
           quantity: '1',
           description: '',
-          tax: currentOrder!.tax.toString(),
+          tax: orderDetails.tax.toString(),
           discount: orderDetails.discount.toString(),
           amount: element.value,
-          paymentType: currentOrder!.payment1!.id.toString(),
+          paymentType: orderDetails.payment1!.id.toString(),
           itemNo: '',
           locationCode: getBranchCode(),
           type: 'Payment',

@@ -23,7 +23,7 @@ import '../../../constants/colors.dart';
 import '../../../data_controller/cart_controller.dart';
 import '../../../local_storage.dart';
 import '../../../models/cart_model.dart';
-import '../../widgets/amount_widget.dart';
+import 'widgets/amount_widget.dart';
 import '../cart/cart_screen.dart';
 
 import 'package:image/image.dart' as img;
@@ -53,7 +53,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
   @override
   void initState() {
     // TODO: implement initState
-    imageProductsPrinter();
+    // imageProductsPrinter();
     super.initState();
   }
 
@@ -69,15 +69,12 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
   @override
   Widget build(BuildContext context) {
-
-
     Size size = MediaQuery.of(context).size;
-
     return Scaffold(
       key: scaffoldKey,
       body: Consumer(
         builder: (context , ref , child) {
-          final orderController = ref.watch(newOrderFuture( widget.order ));
+          final orderController = ref.watch(newOrderFuture);
           final cartController = ref.watch(cartFuture);
           return Row(
             children: [
@@ -121,13 +118,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                       ],
                                     ),
                                   ),
-
                                   SizedBox(
                                     height: 10,
                                   ),
-
-
-
                                   Container(
                                     width: size.width * 0.35,
                                     child: ListView.builder(
@@ -141,16 +134,19 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                               ? Container()
                                               : PaymentItem(
                                                 index: i,
-                                                title:  orderController
-                                                    .paymentMethods[i]
-                                                    .title!.en!,
+                                                title: orderController.paymentMethods[i].title!.en!,
+                                                color: orderController.paymentMethods[i].chosen? Constants.mainColor :Colors.white,
+                                                textColor: orderController.paymentMethods[i].chosen? Colors.white:Colors.black,
                                                 onTap: (){
-                                                  List<int> paymentIds = orderController.currentOrder!.
-                                                  payMethods.map((e) => e.id!).toList();
 
-                                                  if(!paymentIds.contains(orderController.paymentMethods[i].id))
-                                                  {
-                                                    orderController.selectPayment(i,cartController.getTotal());
+                                                  setState(() {
+                                                    orderController.paymentMethods[i].chosen = !orderController.paymentMethods[i].chosen ;
+                                                  });
+
+                                                  if(orderController.paymentMethods[i].chosen ) {
+                                                    orderController.selectPayment(cartController.orderDetails,
+                                                        i,cartController.getTotal());
+
                                                     if(orderController.paymentMethods[i].id == 1) {
                                                       ConstantStyles.showPopup(context: context,
                                                         content: AmountWidget(
@@ -164,10 +160,18 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                                           showTextField: true,
                                                         ),
                                                         title:  'amount'.tr(),).then((value) {
-                                                          if(value!=null)
-                                                        cartController.setPayment(value);
-                                                          else
-                                                            cartController.removePayment();
+                                                          if(value!=null) {
+                                                          cartController.setPayment(
+                                                              orderController
+                                                                  .paymentMethods[i],
+                                                              value);
+                                                          setState(() {});
+                                                        } else{
+                                                            setState(() {
+                                                              orderController.paymentMethods[i].chosen = false ;
+                                                            });
+                                                          }
+
                                                       });
                                                     }
                                                     else{
@@ -177,23 +181,24 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                                           showTextField: true,
                                                         ),
                                                         title:  'amount'.tr(),).then((value) {
-                                                        if(value!=null)
-                                                          cartController.setPayment(value);
-                                                        else
-                                                          cartController.removePayment();
+                                                        if(value!=null) {
+                                                          cartController.setPayment(
+                                                              orderController
+                                                                  .paymentMethods[i],
+                                                              value);
+                                                          setState(() {});
+                                                        } else
+                                                         setState(() {
+                                                           orderController.paymentMethods[i].chosen = false;
+                                                         });
                                                       });
 
                                                     }
                                                   }
                                                   else{
-                                                    orderController.currentOrder!.payMethods.removeWhere(
-                                                            (element) => element.id == orderController.
-                                                        paymentMethods[i].id);
-
-                                                  cartController.removePayment(index:  orderController.currentOrder!.payMethods.indexWhere(
-                                                          (element) => element.id == orderController.
-                                                      paymentMethods[i].id));
+                                                  cartController.removePayment(paymentModel: orderController.paymentMethods[i],clear: false);
                                                   }
+
 
                                                 },
 
@@ -239,7 +244,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                             return InkWell(
                                               onTap: () {
                                                 cartController.removePayment(clear: true);
-                                                orderController.selectOwner(element);
+                                                orderController.selectOwner(cartController.orderDetails,element);
                                               },
                                               child: Container(
                                                 width: size.width * 0.35,
@@ -374,7 +379,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                   child: SizedBox(
                                     width: size.width * 0.3,
                                     height: size.height*0.9,
-
                                     child: Receipt(screenshotController: screenshotController,
                                         order: cartController.orderDetails,
                                         onScreenShot: (){
@@ -397,7 +401,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Align(
-                        alignment:LocalStorage.getData(key: 'language')=='en'?
+                        alignment:getLanguage()=='en'?
                         Alignment.topRight:Alignment.topLeft,
                         child: InkWell(
                           onTap: () {

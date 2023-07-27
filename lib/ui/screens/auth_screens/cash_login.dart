@@ -2,9 +2,9 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shormeh_pos_new_28_11_2022/data_controller/auth_controller.dart';
-import '../../constants/colors.dart';
-import '../../constants/styles.dart';
-import 'home/home_screen.dart';
+import '../../../constants/colors.dart';
+import '../../../constants/styles.dart';
+import '../home/home_screen.dart';
 
 class Finance extends StatefulWidget {
   @override

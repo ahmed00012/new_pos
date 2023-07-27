@@ -1,14 +1,17 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shormeh_pos_new_28_11_2022/constants/styles.dart';
 import 'package:shormeh_pos_new_28_11_2022/data_controller/tables_controller.dart';
-
-import '../../constants/colors.dart';
-import '../../data_controller/cart_controller.dart';
-import '../../data_controller/home_controller.dart';
+import 'package:shormeh_pos_new_28_11_2022/ui/widgets/bottom_nav_bar.dart';
+import '../../../../constants/colors.dart';
+import '../../../../data_controller/cart_controller.dart';
 import 'num_of_guests.dart';
 
 
 class TablesDialog extends ConsumerWidget {
+  const TablesDialog({super.key});
+
   @override
   Widget build(BuildContext context, ref) {
     final tablesController = ref.watch(tablesFuture);
@@ -42,10 +45,9 @@ class TablesDialog extends ConsumerWidget {
               GridView.builder(
                 itemCount:
                 tablesController.departments[index].tables!.length,
-                physics: NeverScrollableScrollPhysics(),
+                physics:const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
-                gridDelegate:
-                SliverGridDelegateWithFixedCrossAxisCount(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 5,
                   childAspectRatio: 1.5,
                 ),
@@ -58,32 +60,31 @@ class TablesDialog extends ConsumerWidget {
                     child: InkWell(
                       onTap: () {
                         if(tablesController.departments[index].tables![i].currentOrder==null
-                            && cartController.orderDetails.cart!=null) {
-                          showDialog(
-                              context: context,
-                              builder: (context) {
-                                return AlertDialog(
-                                    backgroundColor:
-                                    Constants
-                                        .scaffoldColor,
-                                    title: Center(
-                                      child: Text(
-                                        'Count Of Guests',
-                                        style: TextStyle(
-                                          fontSize:
-                                          size.height *
-                                              0.03,
-                                        ),
-                                      ),
-                                    ),
-                                    content: Numpad2(
-                                        size.height,
-                                        size.width));
-                              }).then((value) {
-                               // tablesController.reserveTable( index,tablesController.departments[
-                               // index].tables![i], value, context, true,cartController.orderDetails);
+                            && cartController.orderDetails.cart.isNotEmpty) {
 
+                          ConstantStyles.showPopup(context: context,
+                              height: size.height*0.7,
+                              content:const CountOfGuests(),
+                              title: 'guests'.tr()).then((value) {
+                                if(value!=null) {
+
+                              // tablesController.reserveTable(
+                              //     order: cartController.orderDetails,
+                              //     i: i,
+                              //     count: value,
+                              //     table: tablesController
+                              //         .departments[index].tables![i]);
+                                  cartController.orderDetails.table = tablesController.departments[index].
+                                  tables![i].id.toString();
+                                  cartController.orderDetails.tableTitle =  tablesController.departments[index].
+                                  tables![i].title;
+                                  cartController.orderDetails.department = tablesController.departments[index].title;
+                                  cartController.orderDetails.orderMethod = 'restaurant';
+                                  cartController.orderDetails.orderMethodId = 2;
+                                    Navigator.pop(context, true);
+                            }
                           });
+
                         }
                         else if(tablesController.departments[index].tables![i].currentOrder!=null){
                           tablesController.displayToastMessage('Table Busy', true);

@@ -3,6 +3,8 @@ import 'package:http/http.dart' as http;
 import 'package:shormeh_pos_new_28_11_2022/constants/api.dart';
 import 'package:shormeh_pos_new_28_11_2022/constants/colors.dart';
 
+import '../constants/prefs_utils.dart';
+
 class MobileOrdersRepository {
   Future getOrders(int page,
       {int? orderMethod,
@@ -20,7 +22,7 @@ class MobileOrdersRepository {
             "${ApiEndPoints.MobileOrders}?paginate=15&page=$page&order_method_id=${orderMethod ?? ''}&"
             "payment_method_id=${paymentMethod ?? ''}&order_pos_status_id=${orderStatus ?? ''}&date=${date ?? ''}"
             "&query=${orderId ?? ''}&payment_customer_id=${customer ?? ''}&client=$client"),
-        headers: ApiEndPoints.headerWithToken,
+        headers: ApiEndPoints.headerWithToken(token:getUserToken() ,language: getLanguage()),
       );
       var data = json.decode(response.body);
       return data;
@@ -33,7 +35,7 @@ class MobileOrdersRepository {
     try {
       var response = await http.get(
         Uri.parse(ApiEndPoints.MobileOrdersCount),
-        headers: ApiEndPoints.headerWithToken,
+        headers: ApiEndPoints.headerWithToken(token:getUserToken() ,language: getLanguage()),
       );
       var data = json.decode(response.body);
       if (response.statusCode == 200) {
@@ -55,7 +57,7 @@ class MobileOrdersRepository {
             'secret_code': secretCode,
             'branch_id': branchId
           },
-          headers: ApiEndPoints.headerWithToken);
+          headers: ApiEndPoints.headerWithToken(token:getUserToken() ,language: getLanguage()));
       var data = json.decode(response.body);
 
       return data;
@@ -70,7 +72,7 @@ class MobileOrdersRepository {
           body: {
             'order_id': orderID.toString(),
           },
-          headers: ApiEndPoints.headerWithToken);
+          headers: ApiEndPoints.headerWithToken(token:getUserToken() ,language: getLanguage()));
 
       var data = json.decode(response.body);
 
@@ -85,7 +87,7 @@ class MobileOrdersRepository {
       var response = await http.post(
           Uri.parse("${ApiEndPoints.ComplainOrder}$orderID/complain"),
           body: jsonEncode(body),
-          headers: ApiEndPoints.headerWithToken);
+          headers: ApiEndPoints.headerWithToken(token:getUserToken() ,language: getLanguage()));
       var data = json.decode(response.body);
       return data;
     } catch (e) {

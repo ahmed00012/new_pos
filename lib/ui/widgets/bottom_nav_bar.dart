@@ -7,7 +7,7 @@ import '../../constants/enums.dart';
 
 import '../screens/home/home_screen.dart';
 import '../screens/orders/order_screen.dart';
-import '../screens/tables.dart';
+import '../screens/tables/tables_screen.dart';
 
 class BottomNavBar extends StatefulWidget {
   @override

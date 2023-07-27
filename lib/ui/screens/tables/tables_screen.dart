@@ -5,11 +5,11 @@ import 'package:lottie/lottie.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:shormeh_pos_new_28_11_2022/data_controller/home_controller.dart';
 import 'package:shormeh_pos_new_28_11_2022/data_controller/tables_controller.dart';
-import '../../constants/colors.dart';
-import '../../data_controller/cart_controller.dart';
-import '../widgets/num_of_guests.dart';
-import 'reciept/receipt_screen.dart';
-import 'cart/cart_screen.dart';
+import '../../../constants/colors.dart';
+import '../../../data_controller/cart_controller.dart';
+import 'widgets/num_of_guests.dart';
+import '../reciept/receipt_screen.dart';
+import '../cart/cart_screen.dart';
 
 class TablesScreen extends ConsumerWidget {
   // ScreenshotController screenshotController = ScreenshotController();
@@ -120,9 +120,7 @@ class TablesScreen extends ConsumerWidget {
                                                                 ),
                                                               ),
                                                             ),
-                                                            content: Numpad2(
-                                                                size.height,
-                                                                size.width));
+                                                            content: CountOfGuests());
                                                       }).then((value) {
                                                     if (value != null) {
 

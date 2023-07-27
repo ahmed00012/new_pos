@@ -10,26 +10,50 @@ import '../../../../constants/colors.dart';
 import '../../../../data_controller/cart_controller.dart';
 import '../../../../models/client_model.dart';
 
-class DeliveryOrder extends ConsumerWidget {
-  final _formKey = GlobalKey<FormState>();
+class DeliveryOrder extends StatefulWidget {
   final OrderDetails order;
-  final TextEditingController customerPhone = TextEditingController();
-  final TextEditingController customerName = TextEditingController();
-  final TextEditingController deliveryFee = TextEditingController();
-  final TextEditingController notes = TextEditingController();
-  final TextEditingController coupon = TextEditingController();
+
    DeliveryOrder({super.key, required this.order});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final cartController = ref.watch(cartFuture);
+  State<DeliveryOrder> createState() => _DeliveryOrderState();
+}
+
+class _DeliveryOrderState extends State<DeliveryOrder> {
+  final _formKey = GlobalKey<FormState>();
+
+  final TextEditingController customerPhone = TextEditingController();
+
+  final TextEditingController customerName = TextEditingController();
+
+  final TextEditingController deliveryFee = TextEditingController();
+
+  final TextEditingController notes = TextEditingController();
+
+  final TextEditingController coupon = TextEditingController();
+
+  @override
+  void initState() {
+
+    customerName.text = widget.order.clientName ?? '';
+    customerPhone.text = widget.order.clientPhone ?? '';
+    deliveryFee.text = widget.order.deliveryFee.toString() ?? '';
+    notes.text = widget.order.notes ?? '';
+
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
     Size size = MediaQuery.of(context).size;
-    return SingleChildScrollView(
-      child: Form(
-        key: _formKey,
-        child: Stack(
-          children: [
-            Padding(
+    return Consumer(
+      builder: (context , ref , child) {
+        final cartController = ref.watch(cartFuture);
+        return SingleChildScrollView(
+          child: Form(
+            key: _formKey,
+            child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
                 children: [
@@ -40,25 +64,45 @@ class DeliveryOrder extends ConsumerWidget {
                     textFieldConfiguration: TextFieldConfiguration(
                       keyboardType: TextInputType.phone,
                       controller: customerPhone,
-                      decoration: const InputDecoration(
+                      decoration:  InputDecoration(
                         contentPadding: EdgeInsets.all(10),
-                        hintText: '050*******',
-                        border: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(width: 1, color: Colors.black12),
+                        label: Text(
+                          'phone'.tr(),
+                          style: TextStyle(
+                            fontSize: size.height * 0.02,
+                            color: Colors.black45,
+                          ),
                         ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(width: 1, color: Colors.black45),
+
+                        focusedBorder:const OutlineInputBorder(
+                          borderSide:  BorderSide(color: Colors.black26),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10),
+                          ),
                         ),
-                        icon: Icon(
-                          Icons.phone,
-                          color: Colors.black45,
+                        focusedErrorBorder:  const OutlineInputBorder(
+                          borderSide:  BorderSide(color: Colors.black26),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10),
+                          ),
                         ),
+                        enabledBorder: const OutlineInputBorder(
+                          borderSide:  BorderSide(color: Colors.black26),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10),
+                          ),
+                        ),
+                        errorBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.red, width: 2.0),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10),
+                          ),
+                        ),
+
                       ),
                     ),
-                    suggestionsCallback: (pattern) {
-                      return cartController.onSearchClientTextChanged(pattern);
+                    suggestionsCallback: (pattern) async {
+                      return await cartController.onSearchClientTextChanged(pattern);
                     },
                     itemBuilder: (context, suggestion) {
                       return Column(
@@ -73,7 +117,10 @@ class DeliveryOrder extends ConsumerWidget {
                       cartController.chooseClient(
                           name: (suggestion as ClientModel).name!,
                           phone: (suggestion as ClientModel).phone!);
+                      customerPhone.text = (suggestion as ClientModel).phone!;
+                      customerName.text = (suggestion as ClientModel).name!;
                     },
+
                   ),
                   SizedBox(
                     height: 10,
@@ -97,6 +144,9 @@ class DeliveryOrder extends ConsumerWidget {
                     label: 'deliveryFee'.tr(),
                     hint: 'deliveryFee'.tr(),
                     numerical: true,
+                    onChange: (value){
+                      cartController.orderDetails.deliveryFee = double.parse(deliveryFee.text);
+                    },
                     validator: (value) {
                       if (value!.isEmpty) {
                         return 'pleaseEnterDeliveryFee'.tr();
@@ -115,6 +165,10 @@ class DeliveryOrder extends ConsumerWidget {
                     controller:  notes,
                     label: 'address'.tr(),
                     hint: 'address'.tr(),
+                    maxLines: 4,
+                    onChange: (value){
+                      cartController.orderDetails.notes = notes.text;
+                    },
                     validator: (value) {
                       if (value!.isEmpty) {
                         return 'pleaseEnterAddress'.tr();
@@ -123,57 +177,51 @@ class DeliveryOrder extends ConsumerWidget {
                     },
                   ),
                   SizedBox(
-                    height: 20,
+                    height: 10,
                   ),
-                  if (cartController.orderDetails.discount == null)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 5),
-                      child: Container(
-                        width: size.width * 0.35,
-                        child: Row(
-                          children: [
-                            Expanded(
-                              flex: 7,
-                              child: CustomTextField(
-                                controller:  coupon,
-                                label: 'coupon'.tr(),
-                                hint: 'coupon'.tr(),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 3,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: InkWell(
-                                  onTap: () {
-                                    FocusManager.instance.primaryFocus
-                                        ?.unfocus();
-                                    cartController.checkCoupon(coupon.text);
-                                  },
-                                  child: Container(
-                                    height: size.height * 0.07,
-                                    // width: size.width*0.2,
-                                    decoration: BoxDecoration(
-                                        color: Constants.mainColor,
-                                        borderRadius:
-                                            BorderRadius.circular(10)),
-                                    child: Center(
-                                      child: Text(
-                                        'add'.tr(),
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: size.height * 0.02),
-                                      ),
-                                    ),
+                  if (cartController.orderDetails.discount == 0)
+                    Row(
+                      children: [
+                        Expanded(
+                          flex: 7,
+                          child: CustomTextField(
+                            controller:  coupon,
+                            label: 'coupon'.tr(),
+                            hint: 'coupon'.tr(),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 3,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: InkWell(
+                              onTap: () {
+                                FocusManager.instance.primaryFocus
+                                    ?.unfocus();
+                                cartController.checkCoupon(coupon.text);
+                              },
+                              child: Container(
+                                height: size.height * 0.07,
+                                // width: size.width*0.2,
+                                decoration: BoxDecoration(
+                                    color: Constants.mainColor,
+                                    borderRadius:
+                                        BorderRadius.circular(10)),
+                                child: Center(
+                                  child: Text(
+                                    'add'.tr(),
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: size.height * 0.02),
                                   ),
                                 ),
                               ),
-                            )
-                          ],
-                        ),
-                      ),
+                            ),
+                          ),
+                        )
+                      ],
                     ),
-                  if (cartController.orderDetails.discount != null)
+                  if (cartController.orderDetails.discount != 0)
                     Container(
                       height: size.height * 0.1,
                       width: size.width * 0.4,
@@ -221,8 +269,6 @@ class DeliveryOrder extends ConsumerWidget {
                     onTap: () {
                       if (_formKey.currentState!.validate()) {
                         Navigator.pop(context, true);
-                        cartController.chooseClient(
-                            name: customerName.text, phone: customerPhone.text);
                       }
                     },
                     child: Container(
@@ -247,20 +293,9 @@ class DeliveryOrder extends ConsumerWidget {
                 ],
               ),
             ),
-            // if(orderController.loading)
-            //   Container(
-            //     height: size.height,
-            //
-            //     color: Colors.white.withOpacity(0.5),
-            //     child: Center(
-            //       child: CircularProgressIndicator(
-            //         color: Constants.mainColor,
-            //       ),
-            //     ),
-            //   )
-          ],
-        ),
-      ),
+          ),
+        );
+      }
     );
   }
 }

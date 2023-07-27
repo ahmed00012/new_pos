@@ -22,8 +22,8 @@ class InvoiceWidget{
           total: order.total,
           deliveryFee: order.deliveryFee,
           discount: order.discount,
-          paidAmount: order.total,
-          remainingAmount: 0,
+          paidAmount: order.paid,
+          remainingAmount: order.remaining,
         ),
 
         const SizedBox(

@@ -5,9 +5,9 @@ import 'package:lottie/lottie.dart';
 import 'package:shormeh_pos_new_28_11_2022/constants/colors.dart';
 import 'package:shormeh_pos_new_28_11_2022/constants/prefs_utils.dart';
 import 'package:shormeh_pos_new_28_11_2022/data_controller/auth_controller.dart';
-import '../widgets/custom_progress_indicator.dart';
+import '../../widgets/custom_progress_indicator.dart';
 import 'cash_login.dart';
-import 'home/home_screen.dart';
+import '../home/home_screen.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -21,14 +21,15 @@ class _LoginState extends State<Login> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
-  @override
-  void initState() {
-    if (getUserToken() != '') {
-      Navigator.pushAndRemoveUntil(
-          context, MaterialPageRoute(builder: (_) => Home()), (route) => false);
-    }
-    super.initState();
-  }
+  // @override
+  // void initState() {
+  //   // print(getUserToken());
+  //   // if (getUserToken() != '') {
+  //   //   Navigator.pushAndRemoveUntil(
+  //   //       context, MaterialPageRoute(builder: (_) => Home()), (route) => false);
+  //   // }
+  //   super.initState();
+  // }
 
   @override
   Widget build(BuildContext context) {

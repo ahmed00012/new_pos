@@ -15,7 +15,7 @@ class ProductsRepo {
     try{
       var response = await http.post(
         Uri.parse("${ApiEndPoints.DeleteItemOrder}$itemId"),
-        headers: ApiEndPoints.headerWithToken,
+        headers: ApiEndPoints.headerWithToken(token:getUserToken() ,language: getLanguage()),
       );
       var data = json.decode(response.body);
       return data;
@@ -35,7 +35,7 @@ class ProductsRepo {
           'price': price,
           'branch_id': getBranch()
         }),
-        headers: ApiEndPoints.headerWithToken,
+        headers: ApiEndPoints.headerWithToken(token:getUserToken() ,language: getLanguage()),
       );
       var data = json.decode(response.body);
       return data;
@@ -51,9 +51,10 @@ class ProductsRepo {
     try{
       var response = await http.get(
         Uri.parse("${ApiEndPoints.SearchClient}$query"),
-        headers: ApiEndPoints.headerWithToken,
+        headers: ApiEndPoints.headerWithToken(token:getUserToken() ,language: getLanguage()),
       );
       var data = json.decode(response.body);
+      // print('fdsfds'+data.toString());
       return data;
     }
     catch(e){
@@ -65,7 +66,7 @@ class ProductsRepo {
     try {
       var response = await http.get(
         Uri.parse(ApiEndPoints.MobileOrdersCount),
-        headers: ApiEndPoints.headerWithToken,
+        headers: ApiEndPoints.headerWithToken(token:getUserToken() ,language: getLanguage()),
       );
       var data = json.decode(response.body);
       if (response.statusCode == 200) {
@@ -80,7 +81,7 @@ class ProductsRepo {
   try  {
       var response = await http.get(
         Uri.parse(ApiEndPoints.ScreenImages),
-        headers: ApiEndPoints.headerWithToken,
+        headers: ApiEndPoints.headerWithToken(token:getUserToken() ,language: getLanguage()),
       );
       print(response.body.toString()+'sdfljdhf');
       var data = json.decode(response.body);

@@ -4,16 +4,15 @@ import 'constant_keys.dart';
 
 class ApiEndPoints{
 
-  static Map<String,String> headerWithoutToken =  {
-
+  static Map<String,String> headerWithoutToken ({String ?language}) => {
   'Accept':'application/json',
-    "Accept-Language":getLanguage(),
+    "Accept-Language": language ?? 'en',
   };
 
-  static Map<String,String> headerWithToken =  {
+  static Map<String,String> headerWithToken({required String token,required String language}) => {
     'Content-Type': 'application/json',
-    "Accept-Language": getLanguage(),
-    'AUTHORIZATION':'Bearer ${getUserToken()}',
+    "Accept-Language": language,
+    'AUTHORIZATION':'Bearer $token',
     'Content-Language':getLanguage(),
     'Accept':'application/json'
   };
@@ -51,7 +50,7 @@ class ApiEndPoints{
   static String AcceptMobileOrder=  '${baseURL}pos/confirm';
   static String DeleteItemOrder=  '${baseURL}pos/order/deleteDetails/';
   static String Expense =  '${baseURL}expense';
-  static String SearchClient =  '${baseURL}expense';
+  static String SearchClient =  '${baseURL}clients/all?query=';
   static String ScreenImages =  '${baseURL}branch-screen-images?screen_number=1';
   static String BranchTables =  '${baseURL}branch/${getBranch()}/tables';
   static String ConfirmOrder =  '${baseURL}pos/orders';

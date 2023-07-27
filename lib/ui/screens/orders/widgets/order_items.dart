@@ -38,15 +38,12 @@ class OrderItems extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: InkWell(
                     onTap: () {
-                      PrintingService printService = PrintingService();
                       OrderDetails orderDetails =
                           cartController.editOrder(order);
-                      printService.printInvoice(
+                      PrintingService.printInvoice(
                           order: orderDetails,
                           payLater: order.paymentCustomer != null &&
-                              order.paymentStatus == 0,
-                          productsTable:
-                              InvoiceWidget.invoiceProducts(orderDetails));
+                              order.paymentStatus == 0,);
                     },
                     child: Icon(
                       Icons.print,

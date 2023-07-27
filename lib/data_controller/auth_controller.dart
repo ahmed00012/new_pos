@@ -71,9 +71,8 @@ class FinanceController extends ChangeNotifier {
   }
 
   Future setStartShiftCash(double cash) async {
-   // try {
-   //    loadingSwitch(true);
-
+    loadingSwitch(true);   loadingSwitch(true);
+   try {
         var data = await _authRepository.startShiftCash(cash: cash.toString());
         if (data['status']) {
           loadingSwitch(false);
@@ -83,10 +82,10 @@ class FinanceController extends ChangeNotifier {
           ConstantStyles.displayToastMessage(data['msg'],true);
           return false;
         }
-      // }
-    // catch(e){
-    //   ConstantStyles.displayToastMessage(e.toString(),true);
-    // }
+      }
+    catch(e){
+      ConstantStyles.displayToastMessage(e.toString(),true);
+    }
     notifyListeners();
   }
 
@@ -126,8 +125,9 @@ class FinanceController extends ChangeNotifier {
 
   Future login({required VoidCallback onSuccess , required String email ,
   required String password}) async {
+    loadingSwitch(true);
     try {
-      loadingSwitch(true);
+
       var data = await _authRepository.loginCashier(email:email, password: password);
       if (data['status']) {
         UserModel user = UserModel.fromJson(data['data']);
@@ -205,8 +205,8 @@ class FinanceController extends ChangeNotifier {
   }
 
   Future endShift(bool logoutEmployee) async {
-    // loadingSwitch(true);
-    // try{
+    loadingSwitch(true);
+    try{
       var data = await _authRepository.endShiftCash(
           cash: endShiftCash.join().toString());
       if (!data['status']) {
@@ -221,7 +221,7 @@ class FinanceController extends ChangeNotifier {
            time: DateTime.now().toString(),
            employeeCash: data['data']['employee_cash'],
            startCash: data['data']['start_cash'].toString(),
-           expenses: data['data']['expenses'].toStringAsFixed(2),
+           expenses: data['data']['expenses'].toString(),
            complains: data['data']['complains'].toStringAsFixed(2),
            cancelled: data['data']['cancel_orders_count'].toString(),
            ownerCount: data['data']['owner_orders_count'].toString(),
@@ -234,9 +234,9 @@ class FinanceController extends ChangeNotifier {
         else {
           testPrint(
             time:  DateTime.now().toString(),
-            employeeCash:  data['data']['نهاية الدرج'].toStringAsFixed(2),
-            startCash: data['data']['بداية الدرج'].toStringAsFixed(2),
-            expenses: data['data']['المصاريف'].toStringAsFixed(2),
+            employeeCash:  data['data']['نهاية الدرج'].toString(),
+            startCash: data['data']['بداية الدرج'].toString(),
+            expenses: data['data']['المصاريف'].toString(),
             complains: data['data']['الشكاوي'].toStringAsFixed(2),
             cancelled:  data['data']['عدد الطلبات الملغية'].toString(),
             ownerCount: data['data']['عدد طلبات الملاك'].toString(),
@@ -248,10 +248,10 @@ class FinanceController extends ChangeNotifier {
         }
         return true;
       }
-    // }
-    // catch(e){
-    //   ConstantStyles.displayToastMessage(e.toString(),true);
-    // }
+    }
+    catch(e){
+      ConstantStyles.displayToastMessage(e.toString(),true);
+    }
     loadingSwitch(false);
   }
 

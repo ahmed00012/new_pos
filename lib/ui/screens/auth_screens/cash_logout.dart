@@ -3,25 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shormeh_pos_new_28_11_2022/constants/styles.dart';
 import 'package:shormeh_pos_new_28_11_2022/data_controller/auth_controller.dart';
-import '../../constants/colors.dart';
+import '../../../constants/colors.dart';
 import 'login.dart';
 
-class FinanceOut extends ConsumerStatefulWidget {
-  const FinanceOut({super.key});
 
-  @override
-  FinanceOutState createState() => FinanceOutState();
-}
 
-class FinanceOutState extends ConsumerState {
+class FinanceOut extends ConsumerWidget {
+  // @override
+  // void initState() {
+  //   // TODO: implement initState
+  //   // ref.watch(financeFuture).getPrinters();
+  //   super.initState();
+  // }
   @override
-  void initState() {
-    // TODO: implement initState
-    // ref.watch(financeFuture).getPrinters();
-    super.initState();
-  }
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context , ref) {
     final viewModel = ref.watch(financeFuture);
     // final homeController = ref.watch(dataFuture);
     Size size = MediaQuery.of(context).size;

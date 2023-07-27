@@ -11,20 +11,20 @@ import 'package:shormeh_pos_new_28_11_2022/constants/prefs_utils.dart';
 import 'dart:ui' as ui;
 import '../../models/cart_model.dart';
 import '../../models/printers_model.dart';
+import '../../ui/screens/reciept/widgets/products_table.dart';
 import '../constant_keys.dart';
 import '../styles.dart';
 
 
 class PrintingService{
 
- List<PrinterModel> printers = List<PrinterModel>.from(json.decode(getPrintersPrefs())
+  static List<PrinterModel> printers = List<PrinterModel>.from(json.decode(getPrintersPrefs())
       .map((e) => PrinterModel.fromJson(e)));
 
 
 
-  printInvoice({String ?orderNo,required OrderDetails order ,required bool payLater ,
-    required Widget productsTable}) async {
-    deviceReceipt(order: order ,payLater: payLater ,productsTable: productsTable ,orderNo: orderNo);
+ static printInvoice({String ?orderNo,required OrderDetails order ,required bool payLater}) async {
+    deviceReceipt(order: order ,payLater: payLater ,productsTable:ProductsTable(cart: order.cart) ,orderNo: orderNo);
     const PaperSize paper = PaperSize.mm80;
     final profile = await CapabilityProfile.load();
     final printer = NetworkPrinter(paper, profile);
@@ -32,14 +32,14 @@ class PrintingService{
       PosPrintResult res = await printer.connect(element.ip!, port: 9100);
       if (res == PosPrintResult.success) {
         await printReceipt(printer:  printer ,order: order ,kitchen: element.typeName == 'Kitchen' ,
-            payLater:payLater, productsTable: productsTable ,orderNo: orderNo );
+            payLater:payLater, productsTable: ProductsTable(cart: order.cart) ,orderNo: orderNo );
         printer.disconnect();
       }
 
     });
   }
 
- printReceipt({required NetworkPrinter printer,
+ static printReceipt({required NetworkPrinter printer,
    required Widget productsTable,
    required  OrderDetails order,required bool kitchen,
    required  bool payLater, String? orderNo}) async {
@@ -134,7 +134,7 @@ class PrintingService{
 
 
 
- deviceReceipt({required OrderDetails order,required Widget productsTable,required bool payLater,
+ static deviceReceipt({required OrderDetails order,required Widget productsTable,required bool payLater,
    String? orderNo }) async {
    channel.invokeMethod("sdkInit");
 
@@ -210,7 +210,7 @@ class PrintingService{
 
 
 
- String getQrCodeContent(String orderTotal, String orderTax) {
+ static String getQrCodeContent(String orderTotal, String orderTax) {
    final bytesBuilder = BytesBuilder();
    // 1. Seller Name
    bytesBuilder.addByte(1);
@@ -247,22 +247,22 @@ class PrintingService{
 
 
 
- Uint8List textEncoder(String word) {
+ static Uint8List textEncoder(String word) {
    return Uint8List.fromList(
        const Windows1256Codec(allowInvalid: false).encode(word));
  }
 
 
- List<dynamic> iminPrintTextChannel({required String text, String? fontSize, String? alignment}){
+ static List<dynamic> iminPrintTextChannel({required String text, String? fontSize, String? alignment}){
    return [text, fontSize ?? '25',alignment ?? '1'];
  }
 
- iminPrintDividerChannel(){
+ static iminPrintDividerChannel(){
    channel.invokeMethod(iminPrintText, ['_____________________________________', '30', '1']);
  }
 
 
- Future createImageFromWidget(Widget widget , bool iminPrint) async {
+  static Future createImageFromWidget(Widget widget , bool iminPrint) async {
    final repaintBoundary = RenderRepaintBoundary();
 
    Size logicalSize = ui.window.physicalSize / ui.window.devicePixelRatio;

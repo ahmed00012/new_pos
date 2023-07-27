@@ -1,16 +1,18 @@
 
 
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 import '../../../../constants/colors.dart';
 import '../../../../constants/styles.dart';
 
 class UpperRowCard extends StatelessWidget {
-  final VoidCallback onTap;
+  final VoidCallback ?onTap;
   final String title;
   final IconData? icon;
   final String? image;
-   const UpperRowCard({Key? key, required this.onTap , required this.title ,this.icon , this.image})
+   const UpperRowCard({Key? key,  this.onTap , required this.title ,this.icon , this.image})
       : super(key: key);
 
   @override
@@ -51,6 +53,7 @@ class UpperRowCard extends StatelessWidget {
 
               Text(
                 title,
+                textAlign: TextAlign.center,
                 style: TextStyle(
                     fontSize: size.height * 0.019,
                     color: Constants.mainColor),

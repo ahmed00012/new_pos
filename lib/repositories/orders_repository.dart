@@ -22,7 +22,7 @@ class OrdersRepository {
               "$uri?paginate=15&page=$page&order_method_id=${orderMethod ?? ''}&"
               "payment_method_id=${paymentMethod ?? ''}&order_pos_status_id=${orderStatus ?? ''}&date=${getLoginDate()}"
               "&query=${orderId ?? ''}&payment_customer_id=${customer ?? ''}&owner_id=${owner ?? ''}&client=$client"),
-          headers: ApiEndPoints.headerWithToken);
+          headers: ApiEndPoints.headerWithToken(token:getUserToken() ,language: getLanguage()));
 
       var data = json.decode(response.body);
       log(data['data'].toString());
@@ -46,7 +46,7 @@ class OrdersRepository {
             'secret_code': secretCode,
             'branch_id': getBranch()
           },
-          headers: ApiEndPoints.headerWithToken);
+          headers: ApiEndPoints.headerWithToken(token:getUserToken() ,language: getLanguage()));
       var data = json.decode(response.body);
       return data;
     } catch (e) {
@@ -72,7 +72,7 @@ class OrdersRepository {
             'complain_reason_id': reasonId,
             'phone': mobile
           },
-          headers: ApiEndPoints.headerWithToken);
+          headers: ApiEndPoints.headerWithToken(token:getUserToken() ,language: getLanguage()));
       var data = json.decode(response.body);
       return data;
     } catch (e) {
@@ -84,7 +84,7 @@ class OrdersRepository {
     try {
       var response = await http.get(
         Uri.parse(ApiEndPoints.MobileOrdersCount),
-        headers: ApiEndPoints.headerWithToken,
+        headers: ApiEndPoints.headerWithToken(token:getUserToken() ,language: getLanguage()),
       );
       var data = json.decode(response.body);
       if (response.statusCode == 200) {
@@ -111,7 +111,7 @@ class OrdersRepository {
             'secret_code': secretCode,
             'branch_id': getBranch()
           },
-          headers: ApiEndPoints.headerWithToken);
+          headers: ApiEndPoints.headerWithToken(token:getUserToken() ,language: getLanguage()));
       var data = json.decode(response.body);
 
       return data;
@@ -126,7 +126,7 @@ class OrdersRepository {
           body: {
             'order_id': orderID.toString(),
           },
-          headers: ApiEndPoints.headerWithToken);
+          headers: ApiEndPoints.headerWithToken(token:getUserToken() ,language: getLanguage()));
 
       var data = json.decode(response.body);
 

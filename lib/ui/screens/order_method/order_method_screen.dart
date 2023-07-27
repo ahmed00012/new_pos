@@ -14,20 +14,21 @@ import 'package:shormeh_pos_new_28_11_2022/ui/screens/payment/payment_screen.dar
 import 'package:shormeh_pos_new_28_11_2022/ui/screens/reciept/receipt_screen.dart';
 import 'package:shormeh_pos_new_28_11_2022/ui/screens/order_method/widgets/delivery_order.dart';
 import 'package:image/image.dart' as img;
+import 'package:shormeh_pos_new_28_11_2022/ui/widgets/bottom_nav_bar.dart';
 import '../../../constants/colors.dart';
+import '../../../constants/printing_services/printing_service.dart';
 import '../../../data_controller/cart_controller.dart';
 import '../../../data_controller/order_method_controller.dart';
 import '../../../models/order_method_model.dart';
 import '../../widgets/back_btn.dart';
-import '../../widgets/tables_dialog.dart';
+import '../tables/widgets/tables_dialog.dart';
 import '../cart/cart_screen.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import '../home/home_screen.dart';
 
 class OrderMethod extends ConsumerStatefulWidget {
-  const OrderMethod({Key? key, required this.order}) : super(key: key);
-  final OrderDetails order;
+  const OrderMethod({Key? key,}) : super(key: key);
 
   @override
   OrderMethodState createState() => OrderMethodState();
@@ -35,25 +36,25 @@ class OrderMethod extends ConsumerStatefulWidget {
 
 class OrderMethodState extends ConsumerState<OrderMethod> {
   ScreenshotController screenshotController = ScreenshotController();
-  Uint8List? productsImage;
-  img.Image? productsScreenshot;
-
-  imageProductsPrinter() async {
-    final controller = ref.watch(orderMethodFuture(widget.order));
-    screenshotController.capture().then((Uint8List? image2) {
-      setState(() {
-        productsScreenshot = img.decodePng(image2!);
-        productsScreenshot!.setPixelRgba(0, 0, 255, 255, 255);
-        productsScreenshot = img.copyResize(productsScreenshot!, width: 550);
-        productsImage = image2;
-        controller.setImageScreenshot(image2, productsScreenshot);
-      });
-    });
-  }
+  // Uint8List? productsImage;
+  // img.Image? productsScreenshot;
+  //
+  // imageProductsPrinter() async {
+  //   final controller = ref.watch(orderMethodFuture(widget.order));
+  //   screenshotController.capture().then((Uint8List? image2) {
+  //     setState(() {
+  //       productsScreenshot = img.decodePng(image2!);
+  //       productsScreenshot!.setPixelRgba(0, 0, 255, 255, 255);
+  //       productsScreenshot = img.copyResize(productsScreenshot!, width: 550);
+  //       productsImage = image2;
+  //       controller.setImageScreenshot(image2, productsScreenshot);
+  //     });
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
-    final orderController = ref.watch(orderMethodFuture(widget.order));
+    final orderController = ref.watch(orderMethodFuture);
     final cartController = ref.watch(cartFuture);
 
     Size size = MediaQuery.of(context).size;
@@ -111,8 +112,7 @@ class OrderMethodState extends ConsumerState<OrderMethod> {
                                       orderMethods:
                                           orderController.orderMethods,
                                       onTap: () {
-                                        orderController.setOrderMethod(
-                                            orderController.orderMethods[i]);
+                                        cartController.setOrderMethod(orderController.orderMethods[i]);
                                         if (orderMethod.id == 1) {
                                           Navigator.push(
                                               context,
@@ -125,38 +125,56 @@ class OrderMethodState extends ConsumerState<OrderMethod> {
                                         if (orderMethod.id == 2) {
                                           ConstantStyles.showPopup(
                                               context: context,
+                                              height: size.height*0.8,
+                                              width: size.width*0.8,
                                               content: TablesDialog(),
-                                              title: 'tables'.tr());
+                                              title: 'tables'.tr()).then((value) async{
+                                           if(value != null) {
+                                             await orderController.confirmOrder(
+                                                  cartController.orderDetails);
+                                              Navigator.pushAndRemoveUntil(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          BottomNavBar()),
+                                                  (route) => false);
+                                              cartController.closeOrder();
+                                            }
+                                          });
                                         }
                                         if (orderMethod.id == 3) {
-                                          imageProductsPrinter();
+                                          // imageProductsPrinter();
                                           orderController
                                               .confirmOrder(
                                                   cartController.orderDetails)
                                               .then((value) {
+                                            cartController.closeOrder();
                                             Navigator.pushAndRemoveUntil(
                                                 context,
                                                 MaterialPageRoute(
-                                                    builder: (_) =>
-                                                        const Home()),
+                                                    builder: (_) => BottomNavBar()),
                                                 (route) => false);
                                           });
                                         }
                                         if (orderMethod.id == 4) {
-                                          orderController.getCoupons();
-                                          orderController.getClients();
+                                          // orderController.getCoupons();
+                                          // orderController.getClients();
                                           ConstantStyles.showPopup(
                                             context: context,
                                             content: DeliveryOrder(
-                                                order: widget.order),
+                                                order: cartController.orderDetails,
+                                           ),
                                             title: 'orderDetails'.tr(),
                                           ).then((value) {
-                                            // imageProductsPrinter();
-                                            orderController
-                                                .confirmOrder(cartController.orderDetails).then((value) {
-                                              Navigator.pushAndRemoveUntil(context,
-                                                  MaterialPageRoute(builder: (_)=>Home()), (route) => false);
-                                            });
+                                            if(value != null){
+                                              orderController
+                                                  .confirmOrder(cartController.orderDetails).then((value) {
+                                                Navigator.pushAndRemoveUntil(context,
+                                                    MaterialPageRoute(builder: (_)=>BottomNavBar()),
+                                                    (route) => false);
+                                                cartController.closeOrder();
+                                              });
+                                            }
                                           });
                                         }
                                       },
@@ -174,11 +192,13 @@ class OrderMethodState extends ConsumerState<OrderMethod> {
                                   screenshotController: screenshotController,
                                   order: cartController.orderDetails,
                                   onScreenShot: () {
-                                    imageProductsPrinter();
-                                    Future.delayed(Duration(milliseconds: 500),
-                                        () {
-                                      orderController.testPrint();
-                                    });
+                                    PrintingService.printInvoice(order: cartController.orderDetails ,
+                                        payLater: false );
+                                    // imageProductsPrinter();
+                                    // Future.delayed(Duration(milliseconds: 500),
+                                    //     () {
+                                    //   orderController.testPrint();
+                                    // });
                                   }),
                             ),
                           ),

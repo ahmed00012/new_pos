@@ -29,7 +29,7 @@ final cartFuture = ChangeNotifierProvider.autoDispose<CartController>(
 class CartController extends ChangeNotifier {
 
   ProductsRepo productsRepo = ProductsRepo();
-   OrderDetails orderDetails= OrderDetails(cart: []);
+   OrderDetails orderDetails= OrderDetails(cart: [],payMethods: []);
   bool clientsLoading = false;
   List<ClientModel> clients = [];
   List<CouponModel> coupons = [];
@@ -41,13 +41,6 @@ class CartController extends ChangeNotifier {
     orderDetails.cart.forEach((element) {
       orderDetails.total = orderDetails.total + element.total;
     });
-
-    // print(orderDetails.total+5 );
-    // print(orderDetails.total.toString()+'dsfdskjfn' );
-    // print(orderDetails.tax+5 );
-    // print(orderDetails.tax.toString()+'dsfdskjfn' );
-    // print(getTax()+5 );
-    // print(getTax()+'dsfdskjfn' );
     orderDetails.tax = orderDetails.total * getTax() / 100;
       orderDetails.total = orderDetails.total + orderDetails.deliveryFee;
 
@@ -492,21 +485,9 @@ class CartController extends ChangeNotifier {
     department = department;
   }
 
-  void cancelPayment(){
-    orderDetails.payment1 = null;
-    orderDetails.payment2 = null;
-    orderDetails.amount1 = 0.0;
-    orderDetails.amount2 = 0.0;
-    orderDetails.paid = 0.0;
-  }
-
-  double getTotalAmount(){
-    return orderDetails.amount1 + orderDetails.amount2;
-  }
-
 
    emptyCardList(){
-    orderDetails = OrderDetails(cart: []);
+    orderDetails = OrderDetails(cart: [],payMethods: []);
     notifyListeners();
    }
 
@@ -636,20 +617,19 @@ removeAttributes(attribute, productIndex, attributeValue ,attributeIndex);
 notifyListeners();
 }
 
-  onSearchClientTextChanged(String text) async {
+ Future onSearchClientTextChanged(String text) async {
     try {
       clientsLoading = true;
       final data = await productsRepo.searchClient(text);
       clients = List<ClientModel>.from(
-          data.map((client) => ClientModel.fromJson(client)));
+          data['data'].map((client) => ClientModel.fromJson(client)));
       clientsLoading = false;
     }
     catch(e){
       ConstantStyles.displayToastMessage(e.toString(), true);
     }
-    notifyListeners();
+    // notifyListeners();
     return clients;
-
   }
 
 
@@ -662,16 +642,20 @@ chooseClient({required String name ,required String phone}){
   }
 
 
-  void getCoupons() async {
-    coupons = List<CouponModel>.from(json
-        .decode(LocalStorage.getData(key: 'coupons'))
-        .map((e) => CouponModel.fromJson(e)));
-    notifyListeners();
-  }
+  // void getCoupons() async {
+  //   coupons = List<CouponModel>.from(json
+  //       .decode(LocalStorage.getData(key: 'coupons'))
+  //       .map((e) => CouponModel.fromJson(e)));
+  //   notifyListeners();
+  // }
 
 
   void checkCoupon(String code) {
-    CouponModel couponUse = CouponModel();
+    coupons = List<CouponModel>.from(json
+        .decode(getCouponsPrefs())
+        .map((e) => CouponModel.fromJson(e)));
+
+    CouponModel ?couponUse ;
     bool inBranch = false;
     bool valid = true;
     coupons.forEach((element) {
@@ -680,36 +664,38 @@ chooseClient({required String name ,required String phone}){
       }
     });
 
-    if (couponUse.id == null) {
+    if (couponUse== null) {
       ConstantStyles.displayToastMessage('couponNotFound'.tr(), true);
       valid = false;
-    } else {
-      couponUse.branches!.forEach((element) {
-        if (element.id == LocalStorage.getData(key: 'branch')) inBranch = true;
+    }
+    else if (couponUse!.branches!= null){
+      couponUse!.branches!.forEach((element) {
+        if (element.id == getBranch())
+          inBranch = true;
       });
     }
-    if (couponUse.isActive == 0) {
+    else if (couponUse!.isActive == 0) {
       ConstantStyles.displayToastMessage('couponNotValid'.tr(), true);
       valid = false;
     }
-    if (couponUse.counter! >= couponUse.numOfUses!) {
+    else if (couponUse!.counter! >= couponUse!.numOfUses!) {
       ConstantStyles.displayToastMessage('couponHasEnded'.tr(), true);
       valid = false;
     }
-    if (!inBranch) {
+    else if (!inBranch) {
       ConstantStyles.displayToastMessage('couponNotAvailableForThisBranch'.tr(), true);
       valid = false;
     }
-    if (couponUse.dateFrom != null) {
+     if (couponUse!= null && couponUse!.dateFrom != null) {
 
-      if (DateTime.parse('${couponUse.dateFrom} ${couponUse.timeFrom??'00:00'}')
+      if (DateTime.parse('${couponUse!.dateFrom} ${couponUse!.timeFrom??'00:00'}')
           .isAfter(DateTime.now())) {
         ConstantStyles.displayToastMessage('couponStillNotAvailable'.tr(), true);
         valid = false;
       }
     }
-    if (couponUse.dateTo != null ) {
-      if (DateTime.parse('${couponUse.dateTo} ${couponUse.timeTo??'23:59'}')
+   else if (couponUse!= null && couponUse!.dateTo != null ) {
+      if (DateTime.parse('${couponUse!.dateTo} ${couponUse!.timeTo??'23:59'}')
           .isBefore(DateTime.now())) {
         ConstantStyles.displayToastMessage('couponHasEnded'.tr(), true);
         valid = false;
@@ -717,15 +703,15 @@ chooseClient({required String name ,required String phone}){
     }
     if (valid) {
       ConstantStyles.displayToastMessage('couponAdded'.tr(), false);
-      if (couponUse.type == 1) {
-        orderDetails.discountValue = couponUse.value!;
-        String discount = (getTotal() - couponUse.value! - orderDetails.deliveryFee)
+      if (couponUse!.type == 1) {
+        orderDetails.discountValue = couponUse!.value!;
+        String discount = (getTotal() - couponUse!.value! - orderDetails.deliveryFee)
             .toStringAsFixed(2);
         orderDetails.discount = double.parse(discount);
         // orderDetails.setDiscount(false, couponUse.value!);
       } else {
-        orderDetails.discountValue = couponUse.value!;
-        String discount = (couponUse.value! * 0.01 * (getTotal()
+        orderDetails.discountValue = couponUse!.value!;
+        String discount = (couponUse!.value! * 0.01 * (getTotal()
             - orderDetails.deliveryFee)).toStringAsFixed(2);
         orderDetails.discount = double.parse(discount);
 
@@ -733,20 +719,50 @@ chooseClient({required String name ,required String phone}){
     }
   }
 
-  void setPayment(double paymentAmount){
-    orderDetails.payMethods.last.value = paymentAmount.toString();
-    orderDetails.paid = paymentAmount;
+  void setPayment(PaymentModel paymentMethod, String total){
+    print(total);
+    orderDetails.payMethods.add(OrderPaymentMethods(
+      id: paymentMethod.id,
+      value: total,
+      title: paymentMethod.title!.en
+    ));
+    orderDetails.paid = orderDetails.paid + double.parse(total);
+    print( orderDetails.paid );
+      // notifyListeners();
+    // orderDetails.payMethods.last.value = paymentAmount.toString();
+    // orderDetails.paid = double.parse(paymentAmount);
   }
 
-  void removePayment({int? index, bool? clear}){
-    if(index == null)
-      orderDetails.payMethods.removeLast();
-    else
-      orderDetails.payMethods.removeAt(index);
-
-    if(clear ?? false)
+  void removePayment({ PaymentModel? paymentModel,required bool clear}){
+    if(!clear)
+    {
+      int? index;
+      orderDetails.payMethods.asMap().forEach((i, element) {
+        if (element.id == paymentModel!.id) index = i;
+      });
+      orderDetails.paid = orderDetails.paid -
+          double.parse(orderDetails.payMethods[index!].value!);
+      orderDetails.payMethods.removeAt(index!);
+    }
+  else{
       orderDetails.payMethods.clear();
+      orderDetails.paid = 0;
+    }
   }
+
+  closeOrder(){
+    orderDetails = OrderDetails(cart: [],payMethods: []);
+  }
+
+  setOrderMethod(OrderMethodModel orderMethod){
+    orderDetails.orderMethod  = orderMethod.title!.en;
+    orderDetails.orderMethodId  = orderMethod.id;
+    notifyListeners();
+  }
+
+
+
+
 
 
 }

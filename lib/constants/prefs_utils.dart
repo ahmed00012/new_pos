@@ -135,11 +135,11 @@ getPaymentCustomersPrefs() {
   return LocalStorage.getData(key: kPaymentCustomers) ?? '';
 }
 
-setCategoriesIdPrefs(List categoriesId) {
+setCategoriesIdPrefs(List<String> categoriesId) {
   LocalStorage.saveList(key: kCategoriesId, value: categoriesId);
 }
 
-getCategoriesIdPrefs() {
+List<String >getCategoriesIdPrefs() {
   return LocalStorage.getList(key: kCategoriesId) ?? [];
 }
 
@@ -154,11 +154,11 @@ getAllCategoriesPrefs() {
   return LocalStorage.getData(key: kAllCategories) ?? '';
 }
 
-setProductsIdPrefs(List productsId) {
+setProductsIdPrefs(List<String> productsId) {
   LocalStorage.saveList(key: kProductsId, value: productsId);
 }
 
-getProductsIdPrefs() {
+List<String> getProductsIdPrefs() {
   return LocalStorage.getList(key: kProductsId) ?? [];
 }
 
@@ -245,9 +245,11 @@ syncAppData() {
   LocalStorage.removeData(key: kOptions);
   LocalStorage.removeData(key: kPaymentCustomers);
   LocalStorage.removeData(key: kAllCategories);
+  if(LocalStorage.getList(key: kCategoriesId)!=null)
   LocalStorage.getList(key: kCategoriesId).forEach((element) {
     LocalStorage.removeData(key: '$kProducts$element');
   });
+  if(LocalStorage.getList(key: kProductsId)!=null)
   LocalStorage.getList(key: kProductsId).forEach((element) {
     LocalStorage.removeData(key: '$kProductDetails$element');
   });

@@ -14,7 +14,7 @@ import 'package:shormeh_pos_new_28_11_2022/models/client_model.dart';
 import 'package:shormeh_pos_new_28_11_2022/models/customer_model.dart';
 import 'package:shormeh_pos_new_28_11_2022/models/notes_model.dart';
 import 'package:shormeh_pos_new_28_11_2022/models/products_model.dart';
-import 'package:shormeh_pos_new_28_11_2022/ui/screens/login.dart';
+import 'package:shormeh_pos_new_28_11_2022/ui/screens/auth_screens/login.dart';
 import 'package:shormeh_pos_new_28_11_2022/ui/screens/mobile_orders.dart';
 import 'package:shormeh_pos_new_28_11_2022/ui/screens/order_method/order_method_screen.dart';
 import 'package:shormeh_pos_new_28_11_2022/ui/screens/payment/payment_screen.dart';
@@ -274,7 +274,7 @@ class HomeController extends ChangeNotifier {
 
   void emptyCardList({required OrderDetails orderDetails }) {
     itemWidget = false;
-    orderDetails = OrderDetails(cart: []);
+    orderDetails = OrderDetails(cart: [],payMethods: []);
     notifyListeners();
   }
 

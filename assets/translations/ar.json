@@ -167,7 +167,8 @@
   "totalDiscount": "اجمالي التخفيض",
   "totalTax": "اجمالي الضريبة",
   "totalAllOrders": "اجمالي الطلبات",
-  "required": "الحقل مطلوب"
+  "required": "الحقل مطلوب",
+  "guests": "عدد العملاء"
 
 
 

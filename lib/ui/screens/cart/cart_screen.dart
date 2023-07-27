@@ -8,6 +8,7 @@ import 'package:shormeh_pos_new_28_11_2022/ui/screens/cart/widgets/cart_item.dar
 import 'package:shormeh_pos_new_28_11_2022/ui/screens/cart/widgets/cart_upper_row.dart';
 import 'package:shormeh_pos_new_28_11_2022/ui/screens/cart/widgets/summary_row.dart';
 import 'package:shormeh_pos_new_28_11_2022/ui/screens/payment/payment_screen.dart';
+import 'package:shormeh_pos_new_28_11_2022/ui/widgets/bottom_nav_bar.dart';
 
 import '../../../constants/colors.dart';
 import '../../../constants/enums.dart';
@@ -15,7 +16,7 @@ import '../../../data_controller/cart_controller.dart';
 import '../../../models/cart_model.dart';
 import '../home/home_screen.dart';
 import 'widgets/choose_client_widget.dart';
-import '../../widgets/tables_dialog.dart';
+import '../tables/widgets/tables_dialog.dart';
 import '../order_method/order_method_screen.dart';
 
 class Cart extends ConsumerStatefulWidget {
@@ -47,7 +48,7 @@ class CartState extends ConsumerState<Cart> {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => OrderMethod(order: orderDetails,)));
+                builder: (context) => OrderMethod()));
       }
     }
   }
@@ -99,7 +100,7 @@ class CartState extends ConsumerState<Cart> {
                         cartController.emptyCardList();
                         Navigator.pushAndRemoveUntil(
                             context,
-                            MaterialPageRoute(builder: (context) => Home()),
+                            MaterialPageRoute(builder: (context) => BottomNavBar()),
                             (route) => false);
                       },
                       child: Container(

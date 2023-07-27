@@ -9,14 +9,17 @@ class PaymentItem extends StatefulWidget {
   final String title;
   final int index;
   final VoidCallback onTap;
- const PaymentItem({Key? key , required this.title,required this.onTap, required this.index}) : super(key: key);
+  final Color color;
+  final Color textColor;
+
+ const PaymentItem({Key? key , required this.title,required this.onTap, required this.index,
+ required this.color, required this.textColor}) : super(key: key);
 
   @override
   _PaymentItemState createState() => _PaymentItemState();
 }
 
 class _PaymentItemState extends State<PaymentItem> {
-  int? chosenIndex;
 
   @override
   Widget build(BuildContext context) {
@@ -32,9 +35,7 @@ class _PaymentItemState extends State<PaymentItem> {
           width: size.width * 0.3,
           height: size.height * 0.06,
           decoration: BoxDecoration(
-              color: chosenIndex!= widget.index
-                  ? Constants.mainColor
-                  : Colors.white,
+              color: widget.color,
               borderRadius:
               BorderRadius.circular(
                   10),
@@ -48,10 +49,7 @@ class _PaymentItemState extends State<PaymentItem> {
                   fontSize:
                   size.height *
                       0.02,
-                  color:  chosenIndex!= widget.index
-                      ? Colors.white
-                      : Colors
-                      .black,
+                  color:  widget.textColor,
                   fontWeight:
                   FontWeight.w500),
             ),

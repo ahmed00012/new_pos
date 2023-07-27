@@ -14,10 +14,10 @@ class AuthRepository {
   Future loginCashier({required String email , required String password}) async {
     try{
     var response = await http.post(Uri.parse(ApiEndPoints.Login),
-        body: jsonEncode({'email': email, 'password': password}),
-        headers: ApiEndPoints.headerWithoutToken);
+        body: {'email': email, 'password': password},
+        headers: ApiEndPoints.headerWithoutToken(language: getLanguage()));
     var data = json.decode(response.body);
-    debugPrint(data.toString());
+    debugPrint('loginCashier : ' + response.body.toString());
     return data;
     }
     catch(e){
@@ -46,7 +46,7 @@ class AuthRepository {
   Future logoutCashier() async {
     try{
       var response = await http.post(Uri.parse(ApiEndPoints.Logout),
-        headers:  ApiEndPoints.headerWithToken,);
+        headers:  ApiEndPoints.headerWithToken(token:getUserToken() ,language: getLanguage()),);
       // if(response.statusCode==200) {
       var data = json.decode(response.body);
       return data;
@@ -74,7 +74,7 @@ class AuthRepository {
     try{
     var response = await http.post(Uri.parse(ApiEndPoints.ProductsZReport),
       body: {'login_date':getLoginDate(), 'logout_date': DateTime.now().toUtc().toString()},
-      headers:  ApiEndPoints.headerWithToken,);
+      headers:  ApiEndPoints.headerWithToken(token:getUserToken() ,language: getLanguage()),);
     var data = json.decode(response.body);
     return data;
     }
@@ -95,17 +95,18 @@ class AuthRepository {
   }
 
   Future startShiftCash({required String cash}) async {
-    try{
+    // try{
       var response = await http.post(Uri.parse(ApiEndPoints.StartCash),
           body: jsonEncode({'status':  '1', 'cash': cash}),
-          headers: ApiEndPoints.headerWithToken);
+          headers: ApiEndPoints.headerWithToken(token:getUserToken() ,language: getLanguage()));
       debugPrint(response.body);
+
       var data = json.decode(response.body);
       return data;
-    }
-    catch(e){
-      return e.toString();
-    }
+    // }
+    // catch(e){
+    //   return e.toString();
+    // }
   }
 
   Future endShiftCash({required String cash}) async {
@@ -117,7 +118,7 @@ class AuthRepository {
             'login_date': getLoginDate(),
             'logout_date': DateTime.now().toUtc().toString(),
           }),
-          headers: ApiEndPoints.headerWithToken);
+          headers: ApiEndPoints.headerWithToken(token:getUserToken() ,language: getLanguage()));
       debugPrint(response.body.toString()+'FDSFSDF');
       var data = json.decode(response.body);
       return data;
