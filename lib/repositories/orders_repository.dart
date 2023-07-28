@@ -17,6 +17,9 @@ class OrdersRepository {
     try {
       String uri = mobileOrders? ApiEndPoints.MobileOrders : ApiEndPoints.CashierOrders;
 
+      print( "$uri?paginate=15&page=$page&order_method_id=${orderMethod ?? ''}&"
+          "payment_method_id=${paymentMethod ?? ''}&order_pos_status_id=${orderStatus ?? ''}&date=${getLoginDate()}"
+          "&query=${orderId ?? ''}&payment_customer_id=${customer ?? ''}&owner_id=${owner ?? ''}&client=$client");
       var response = await http.get(
           Uri.parse(
               "$uri?paginate=15&page=$page&order_method_id=${orderMethod ?? ''}&"
@@ -39,15 +42,16 @@ class OrdersRepository {
         required  String secretCode,}) async {
     try {
       var response = await http.post(Uri.parse(ApiEndPoints.CancelOrder),
-          body: {
+          body: jsonEncode( {
             'order_id': orderID.toString(),
             'notes': notes,
             'secret_id': secretId,
             'secret_code': secretCode,
             'branch_id': getBranch()
-          },
+          }),
           headers: ApiEndPoints.headerWithToken(token:getUserToken() ,language: getLanguage()));
       var data = json.decode(response.body);
+      print(data.toString());
       return data;
     } catch (e) {
       return e.toString();

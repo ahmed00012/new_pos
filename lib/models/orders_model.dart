@@ -134,7 +134,7 @@ class OrdersModel {
     clientsCount = json['clients_count'];
     car =json['car']!=null? Car.fromJson(json['car']):null;
 
-    if (json['payment_methods']!=null && json['payment_methods'].isNotEmpty) {
+    if (json['payment_methods']!=null) {
       paymentMethods = <OrderPaymentMethods>[];
       json['payment_methods'].forEach((v) {
         paymentMethods!.add(new OrderPaymentMethods.fromJson(v));

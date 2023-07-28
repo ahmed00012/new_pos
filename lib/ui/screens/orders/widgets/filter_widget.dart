@@ -44,9 +44,8 @@ class _FilterWidgetState extends State<FilterWidget> {
 
     Size size = MediaQuery.of(context).size;
 
-    return SizedBox(
-      // width: size.width *0.7,
-      // height: size.height *0.6,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 20),
       child: Stack(
         children: [
           ListView(

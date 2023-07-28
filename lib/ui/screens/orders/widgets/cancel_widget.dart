@@ -16,6 +16,7 @@ class CancelWidget extends StatefulWidget {
       {super.key,
         required this.orderId,
         required this.mobileOrders,
+
         });
 
   @override
@@ -44,9 +45,9 @@ class _CancelWidgetState extends State<CancelWidget> {
 
             CustomTextField(
               controller: reason,
-              numerical: true,
               label:  'reason'.tr(),
             ),
+            SizedBox(height: 20,),
 
             CustomTextField(
               controller: secretId,
@@ -57,41 +58,28 @@ class _CancelWidgetState extends State<CancelWidget> {
                 return null;
               },
             ),
-
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: TextFormField(
-                controller: secretCode,
-                keyboardType: TextInputType.phone,
-                obscureText: visible,
-                decoration: InputDecoration(
-                  suffixIcon: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        visible = !visible;
-                      });
-                    },
-                    child: Icon(
-                      visible ? Icons.visibility : Icons.visibility_off,
-                      color: Colors.grey,
-                    ),
-                  ),
-                  contentPadding: EdgeInsets.all(10),
-                  label: Text(
-                    'password'.tr(),
-                    style: TextStyle(
-                      fontSize: size.height * 0.02,
-                      color: Colors.black45,
-                    ),
-                  ),
-                  border: InputBorder.none,
-                ),
-                validator: (e) {
-                  if (e!.isEmpty) return 'passwordRequired'.tr();
-                  return null;
+            SizedBox(height: 20,),
+            CustomTextField(
+              controller: secretCode,
+              numerical: true,
+              label:    'password'.tr(),
+              suffixIcon: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    visible = !visible;
+                  });
                 },
+                child: Icon(
+                  visible ? Icons.visibility : Icons.visibility_off,
+                  color: Colors.grey,
+                ),
               ),
+              validator: (e) {
+                if (e!.isEmpty) return 'passwordRequired'.tr();
+                return null;
+              },
             ),
+
             SizedBox(
               height: 50,
             ),
@@ -102,18 +90,19 @@ class _CancelWidgetState extends State<CancelWidget> {
               return InkWell(
                 onTap: () {
                   if (_formKey.currentState!.validate()) {
-
                     widget.mobileOrders?
                     orderController.cancelMobileOrder(
                         id: widget.orderId,
                         secretId: secretId.text,
                         secretCode: secretCode.text,
-                        reason: reason.text):
+                        reason: reason.text,
+                    ):
                     orderController.cancelOrder(
                         id: widget.orderId,
                         secretId: secretId.text,
                         secretCode: secretCode.text,
-                        reason: reason.text);
+                        reason: reason.text,);
+                    Navigator.pop(context);
                   }
                 },
                 child: Container(

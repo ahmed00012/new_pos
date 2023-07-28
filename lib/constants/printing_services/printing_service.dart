@@ -23,8 +23,8 @@ class PrintingService{
 
 
 
- static printInvoice({String ?orderNo,required OrderDetails order ,required bool payLater}) async {
-    deviceReceipt(order: order ,payLater: payLater ,productsTable:ProductsTable(cart: order.cart) ,orderNo: orderNo);
+ static printInvoice({String ?orderNo,required OrderDetails order}) async {
+    deviceReceipt(order: order ,productsTable:ProductsTable(cart: order.cart) ,orderNo: orderNo);
     const PaperSize paper = PaperSize.mm80;
     final profile = await CapabilityProfile.load();
     final printer = NetworkPrinter(paper, profile);
@@ -32,7 +32,7 @@ class PrintingService{
       PosPrintResult res = await printer.connect(element.ip!, port: 9100);
       if (res == PosPrintResult.success) {
         await printReceipt(printer:  printer ,order: order ,kitchen: element.typeName == 'Kitchen' ,
-            payLater:payLater, productsTable: ProductsTable(cart: order.cart) ,orderNo: orderNo );
+             productsTable: ProductsTable(cart: order.cart) ,orderNo: orderNo );
         printer.disconnect();
       }
 
@@ -41,8 +41,7 @@ class PrintingService{
 
  static printReceipt({required NetworkPrinter printer,
    required Widget productsTable,
-   required  OrderDetails order,required bool kitchen,
-   required  bool payLater, String? orderNo}) async {
+   required  OrderDetails order,required bool kitchen, String? orderNo}) async {
    printer.setGlobalCodeTable('CP775');
    if (orderNo != null) printer.hr(ch: '_');
    if (orderNo != null) {
@@ -87,12 +86,12 @@ class PrintingService{
          styles: ConstantStyles.centerBold);
    });
 
-   if (order.customer != null && payLater) {
+   if (order.customer != null && order.payLater) {
      printer.textEncoded(
          textEncoder("${order.customer!.title!}  -  ${'payLater'.tr()}"),
          styles: ConstantStyles.centerBold);
    }
-   if (order.customer != null && !payLater) {
+   if (order.customer != null && !order.payLater) {
      printer.textEncoded(textEncoder(order.customer!.title!),
          styles: ConstantStyles.centerBold);
    }
@@ -134,8 +133,7 @@ class PrintingService{
 
 
 
- static deviceReceipt({required OrderDetails order,required Widget productsTable,required bool payLater,
-   String? orderNo }) async {
+ static deviceReceipt({required OrderDetails order,required Widget productsTable, String? orderNo }) async {
    channel.invokeMethod("sdkInit");
 
    if (orderNo != null)
@@ -161,17 +159,17 @@ class PrintingService{
 
    order.payMethods.asMap().forEach((index , element) {
      channel.invokeMethod(iminPrintText,
-         iminPrintTextChannel(text:'${'paymentMethod'.tr()}$index : ${order.payment1!.title!.en!}'));
+         iminPrintTextChannel(text:'${'paymentMethod'.tr()}$index : ${element.title}'));
    });
 
 
 
-   if (order.customer != null && payLater)
+   if (order.customer != null && order.payLater)
      channel.invokeMethod(iminPrintText,
          iminPrintTextChannel(text:'${order.customer!.title!}  -  ${'payLater'.tr()}'));
 
 
-   if (order.customer != null && !payLater)
+   if (order.customer != null && !order.payLater)
      channel.invokeMethod(iminPrintText,
          iminPrintTextChannel(text:'${order.customer!.title!}'));
 

@@ -74,20 +74,21 @@ class _OrdersScreenState extends State<OrdersScreen> {
                             ordersController.getOrders(
                                 page: 1,
                                 mobileOrders: false,
-                                orderStatus: orderStatusIdFilter);
+                                orderStatus: orderStatusIdFilter,
+                                filter: true);
                           } else {
                             clearFilter();
                             ordersController.getOrders(
-                                page: 1, mobileOrders: false);
+                                page: 1, mobileOrders: false, filter: true);
                           }
                         }
                       },
                       child: OrderStatusWidget(
-                        title: ordersController.images[i],
+                        title:ordersController.orderStatus[i].title!.en! ,
                         color: ordersController.orderStatus[i].chosen
                             ? Constants.secondryColor
                             : Constants.mainColor,
-                        image: ordersController.orderStatus[i].title!.en!,
+                        image: ordersController.images[i],
                       ));
                 }),
           ),
@@ -166,6 +167,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                                           ordersController.getOrders(
                                               page: 1,
                                               mobileOrders: false,
+                                              filter: true,
                                               client: clientSearch.text);
                                         },
                                         child: Container(
@@ -201,11 +203,13 @@ class _OrdersScreenState extends State<OrdersScreen> {
                                             content: Numpad(),
                                             title: '')
                                         .then((value) {
+                                          print(value);
                                       if (value != null)
                                         ordersController.getOrders(
                                             page: 1,
                                             mobileOrders: false,
-                                            orderId: int.parse(value));
+                                            orderId: int.parse(value),
+                                        filter: true);
 
                                       setState(() {
                                         orderNumSearch = value;
@@ -261,6 +265,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                                     // if(viewModel.connected) {
                                     ConstantStyles.showPopup(
                                       context: context,
+                                      height: size.height*0.9,
                                       content: FilterWidget(
                                         orderMethods:
                                             ordersController.orderMethods,
@@ -272,12 +277,17 @@ class _OrdersScreenState extends State<OrdersScreen> {
                                       ),
                                       title: 'filter'.tr(),
                                     ).then((customizedOrder) {
+
                                       if (customizedOrder != null) {
+                                       setState(() {
+                                         clientSearch.clear();
+                                         orderNumSearch = '';
+                                       });
                                         orderMethodIdFilter =
                                             customizedOrder.orderMethodId;
                                         paymentIdFilter =
-                                            customizedOrder.paymentMethod;
-                                        ownerIdFilter = customizedOrder.owner;
+                                            customizedOrder.paymentMethodId;
+                                        ownerIdFilter = customizedOrder.ownerId;
                                         customerIdFilter =
                                             customizedOrder.paymentCustomerId;
                                         if (customizedOrder.paymentStatus !=
@@ -292,14 +302,13 @@ class _OrdersScreenState extends State<OrdersScreen> {
 
                                         ordersController.getOrders(
                                             page: 1,
+                                            filter: true,
                                             mobileOrders: false,
                                             orderStatus: orderStatusIdFilter,
                                             ownerId: ownerIdFilter,
                                             paymentMethod: paymentIdFilter,
-                                            client: clientSearch.text,
                                             customer: customerIdFilter,
                                             orderMethod: orderMethodIdFilter,
-                                            orderId: int.parse(orderNumSearch),
                                             notPaid: notPaid,
                                             paid: paid);
                                       }
@@ -367,13 +376,18 @@ class _OrdersScreenState extends State<OrdersScreen> {
                                 gridDelegate:
                                     const SliverGridDelegateWithFixedCrossAxisCount(
                                         crossAxisCount: 5,
-                                        childAspectRatio: 1.1),
+                                        childAspectRatio: 1),
                                 itemBuilder: (context, i) {
+                                  bool filter = orderStatusIdFilter != null ||  ownerIdFilter!=null||
+                                      paymentIdFilter!=null || clientSearch.text.isNotEmpty ||
+                                      customerIdFilter!=null || orderMethodIdFilter!=null ;
+
                                   if (i == ordersController.orders.length - 1 &&
                                       ordersController.currentPage <
                                           ordersController.lastPage) {
                                     ordersController.getOrders(
                                         page: ordersController.currentPage + 1,
+                                        filter: filter,
                                         mobileOrders: false,
                                         orderStatus: orderStatusIdFilter,
                                         ownerId: ownerIdFilter,

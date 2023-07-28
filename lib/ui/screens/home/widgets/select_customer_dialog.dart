@@ -43,7 +43,7 @@ class _SelectCustomerDialogState extends State<SelectCustomerDialog> {
       child: GridView.builder(
           itemCount: widget.paymentCustomers.length,
           gridDelegate:
-          SliverGridDelegateWithFixedCrossAxisCount(
+         const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3,
               childAspectRatio: 1.5),
           itemBuilder: (context, i) {

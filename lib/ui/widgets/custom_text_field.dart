@@ -9,11 +9,12 @@ class CustomTextField extends StatelessWidget {
   final Function(String?)?onChange;
   final bool numerical;
   final int? maxLines;
+  final Widget? suffixIcon;
 
 
   CustomTextField(
       {Key? key, required this.controller, required this.label, this.hint,this.validator,
-      this.numerical = false , this.maxLines = 1,this.onChange})
+      this.numerical = false , this.maxLines = 1,this.onChange , this.suffixIcon})
       : super(key: key);
 
   @override
@@ -57,7 +58,9 @@ class CustomTextField extends StatelessWidget {
           ),
         ),
         border: InputBorder.none,
+        suffixIcon: suffixIcon
       ),
+
       validator: validator,
       onChanged: onChange,
     );

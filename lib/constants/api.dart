@@ -41,7 +41,7 @@ class ApiEndPoints{
   static String GetCategories =  '${baseURL}pos/branch/${getBranch()}/categories';
   static String Products =  '${baseURL}branch/${getBranch()}/category/';
   static String ProductDetails =  '${baseURL}pos/product/';
-  static String CashierOrders =  '${baseURL}pos/cashierMobileOrders';
+  static String CashierOrders =  '${baseURL}pos/cashierPosOrders';
   static String CancelOrder=  '${baseURL}pos/cancelOrder';
   static String ComplainOrder=  '${baseURL}pos/order/';
   static String MobileOrders=  '${baseURL}pos/cashierMobileOrders';

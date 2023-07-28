@@ -59,13 +59,14 @@ class OrdersController extends ChangeNotifier {
 
 
   OrdersController(this.mobileOrders) {
-    getOrders(page: 1,mobileOrders: mobileOrders);
+    getOrders(page: 1,mobileOrders: mobileOrders,filter: false);
     getOrderMethods();
     getPaymentMethods();
     getOrderStatus();
     getPaymentCustomers();
     getReasons();
     getOwners();
+
     if(mobileOrders) {
       initPusher();
     }
@@ -86,6 +87,7 @@ class OrdersController extends ChangeNotifier {
   Future getOrders(
       {required int page,
       required bool mobileOrders,
+        required bool filter,
       int? orderMethod,
       int? paymentMethod,
       int? orderStatus,
@@ -95,7 +97,10 @@ class OrdersController extends ChangeNotifier {
       int? ownerId,
       bool? paid,
       bool? notPaid}) async {
+
     if (page == 1) switchLoading(true);
+
+    if(filter) orders.clear();
 
     var data = await repo.getOrders(page,
         mobileOrders: mobileOrders,
@@ -184,8 +189,10 @@ class OrdersController extends ChangeNotifier {
         notes: reason ?? '',
         secretCode: secretCode,
         secretId: secretId);
+
     if (!data['status']) {
       ConstantStyles.displayToastMessage(data['msg'], true);
+
     } else {
       ConstantStyles.displayToastMessage(data['msg'], false);
       orders.forEach((element) {
@@ -292,7 +299,7 @@ class OrdersController extends ChangeNotifier {
       pusherChannel!.bind(pusherAcceptCancelEvent,
               (PusherEvent? event) {
             String data = event!.data!;
-              getOrders(page:  1 ,mobileOrders: mobileOrders);
+              getOrders(page:  1 ,mobileOrders: mobileOrders,filter: false);
             _inEventData.add(event.data);
           });
     });
@@ -307,7 +314,7 @@ class OrdersController extends ChangeNotifier {
           // print(json.toString() + 'NewOrdersPusher' + HomeController.ordersCount.toString());
           setMobileOrdersCount(getMobileOrdersCount() + 1);
           playSound();
-          getOrders(page: 1 ,mobileOrders: mobileOrders);
+          getOrders(page: 1 ,mobileOrders: mobileOrders,filter: false);
           _inEventData.add(event.data);
         });
   }
@@ -327,7 +334,7 @@ class OrdersController extends ChangeNotifier {
     if (data != false && data != 0) {
       playSound();
       setMobileOrdersCount(data);
-        getOrders(page: 1 ,mobileOrders: mobileOrders);
+        getOrders(page: 1 ,mobileOrders: mobileOrders,filter: false);
     }
   }
 

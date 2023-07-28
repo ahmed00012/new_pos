@@ -13,6 +13,7 @@ import '../../../../constants/colors.dart';
 import '../../../../constants/printing_services/invoice_widget.dart';
 import '../../../../models/cart_model.dart';
 import '../../../../models/orders_model.dart';
+import '../../../widgets/bottom_nav_bar.dart';
 
 class OrderItems extends StatelessWidget {
   final ScreenshotController screenshotController = ScreenshotController();
@@ -26,37 +27,33 @@ class OrderItems extends StatelessWidget {
     // final viewModel = ref.watch(ordersFuture);
     // final cartController = ref.watch(cartFuture);
     Size size = MediaQuery.of(context).size;
-    return Container(
-      child: Stack(
-        children: [
-          Consumer(builder: (context, ref, child) {
-            final cartController = ref.watch(cartFuture);
-            return Container(
-              color: Colors.white,
-              alignment: Alignment.topLeft,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: InkWell(
-                    onTap: () {
-                      OrderDetails orderDetails =
-                          cartController.editOrder(order);
-                      PrintingService.printInvoice(
-                          order: orderDetails,
-                          payLater: order.paymentCustomer != null &&
-                              order.paymentStatus == 0,);
-                    },
-                    child: Icon(
-                      Icons.print,
-                      color: Constants.mainColor,
-                      size: 30,
-                    )),
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      body: Consumer(builder: (context, ref, child) {
+        final cartController = ref.watch(cartFuture);
+        final ordersController = ref.watch(ordersFuture(mobileOrders));
+          return Stack(
+            children: [
+              Container(
+                color: Colors.white,
+                alignment: Alignment.topLeft,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: InkWell(
+                      onTap: () {
+                        OrderDetails orderDetails =
+                        cartController.editOrder(order);
+                        PrintingService.printInvoice(
+                            order: orderDetails);
+                      },
+                      child: Icon(
+                        Icons.print,
+                        color: Constants.mainColor,
+                        size: 30,
+                      )),
+                ),
               ),
-            );
-          }),
-          Consumer(
-              builder: (context , ref , child) {
-                final ordersController = ref.watch(ordersFuture(mobileOrders));
-              return Column(
+              Column(
                 children: [
                   if (order.orderStatusId == 4 && order.paymentMethod != null)
                     InkWell(
@@ -164,7 +161,7 @@ class OrderItems extends StatelessWidget {
                                                 color: Colors.grey, width: 0.5)),
                                         child: Column(
                                           crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                          CrossAxisAlignment.start,
                                           children: [
                                             Padding(
                                               padding: const EdgeInsets.all(10.0),
@@ -180,20 +177,20 @@ class OrderItems extends StatelessWidget {
                                             ),
                                             ListView.separated(
                                               itemCount:
-                                                  details[i].attributes!.length,
+                                              details[i].attributes!.length,
                                               physics:
-                                                  NeverScrollableScrollPhysics(),
+                                              NeverScrollableScrollPhysics(),
                                               shrinkWrap: true,
                                               itemBuilder: (context, j) {
                                                 return Padding(
                                                   padding:
-                                                      const EdgeInsets.symmetric(
-                                                          horizontal: 10,
-                                                          vertical: 2),
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 10,
+                                                      vertical: 2),
                                                   child: Row(
                                                     mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
                                                     children: [
                                                       Flexible(
                                                         child: Text(
@@ -202,31 +199,31 @@ class OrderItems extends StatelessWidget {
                                                               .attribute!,
                                                           style: TextStyle(
                                                               fontSize:
-                                                                  size.height *
-                                                                      0.018,
+                                                              size.height *
+                                                                  0.018,
                                                               overflow: TextOverflow
                                                                   .ellipsis,
                                                               letterSpacing: 0.1,
                                                               color: Constants
                                                                   .lightBlue,
                                                               fontWeight:
-                                                                  FontWeight.bold),
+                                                              FontWeight.bold),
                                                         ),
                                                       ),
                                                       Container(
                                                         width: size.width * 0.12,
                                                         alignment:
-                                                            Alignment.centerRight,
+                                                        Alignment.centerRight,
                                                         child: Text(
                                                           details[i]
                                                               .attributes![j]
                                                               .value!,
                                                           overflow:
-                                                              TextOverflow.ellipsis,
+                                                          TextOverflow.ellipsis,
                                                           style: TextStyle(
                                                               fontSize:
-                                                                  size.height *
-                                                                      0.018,
+                                                              size.height *
+                                                                  0.018,
                                                               letterSpacing: 0.1,
                                                               color: Constants
                                                                   .lightBlue),
@@ -238,7 +235,7 @@ class OrderItems extends StatelessWidget {
                                               },
                                               separatorBuilder:
                                                   (BuildContext context,
-                                                      int index) {
+                                                  int index) {
                                                 return Divider();
                                               },
                                             ),
@@ -248,46 +245,46 @@ class OrderItems extends StatelessWidget {
                                             ListView.separated(
                                               itemCount: details[i].notes!.length,
                                               physics:
-                                                  NeverScrollableScrollPhysics(),
+                                              NeverScrollableScrollPhysics(),
                                               shrinkWrap: true,
                                               itemBuilder: (context, j) {
                                                 return Padding(
                                                   padding:
-                                                      const EdgeInsets.symmetric(
-                                                          horizontal: 10,
-                                                          vertical: 2),
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 10,
+                                                      vertical: 2),
                                                   child: Row(
                                                     mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
                                                     textDirection:
-                                                        getLanguage() == 'en'
-                                                            ? TextDirection.ltr
-                                                            : TextDirection.rtl,
+                                                    getLanguage() == 'en'
+                                                        ? TextDirection.ltr
+                                                        : TextDirection.rtl,
                                                     children: [
                                                       Text(
                                                         details[i].notes![j],
                                                         style: TextStyle(
                                                             fontSize:
-                                                                size.height * 0.018,
+                                                            size.height * 0.018,
                                                             overflow: TextOverflow
                                                                 .ellipsis,
                                                             letterSpacing: 0.1,
                                                             color:
-                                                                Constants.lightBlue,
+                                                            Constants.lightBlue,
                                                             fontWeight:
-                                                                FontWeight.bold),
+                                                            FontWeight.bold),
                                                       ),
                                                       Text(
                                                         '${details[i].notesID![j].price} SAR',
                                                         style: TextStyle(
                                                           fontSize:
-                                                              size.height * 0.018,
+                                                          size.height * 0.018,
                                                           overflow:
-                                                              TextOverflow.ellipsis,
+                                                          TextOverflow.ellipsis,
                                                           letterSpacing: 0.1,
                                                           color:
-                                                              Constants.lightBlue,
+                                                          Constants.lightBlue,
                                                         ),
                                                       ),
                                                     ],
@@ -296,14 +293,14 @@ class OrderItems extends StatelessWidget {
                                               },
                                               separatorBuilder:
                                                   (BuildContext context,
-                                                      int index) {
+                                                  int index) {
                                                 return Divider();
                                               },
                                             ),
                                             if ((details[i].notes!.isNotEmpty ||
-                                                    details[i]
-                                                        .attributes!
-                                                        .isNotEmpty) &&
+                                                details[i]
+                                                    .attributes!
+                                                    .isNotEmpty) &&
                                                 details[i].note != null)
                                               Divider(),
                                             if (details[i].note != null)
@@ -312,21 +309,21 @@ class OrderItems extends StatelessWidget {
                                                     horizontal: 10),
                                                 child: Row(
                                                   mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                                   children: [
                                                     Text(
                                                       'notes'.tr(),
                                                       style: TextStyle(
                                                           fontSize:
-                                                              size.height * 0.02,
+                                                          size.height * 0.02,
                                                           color: Colors.red),
                                                     ),
                                                     Text(
                                                       details[i].note!,
                                                       style: TextStyle(
                                                           fontSize:
-                                                              size.height * 0.02,
+                                                          size.height * 0.02,
                                                           color: Colors.red),
                                                     ),
                                                   ],
@@ -393,26 +390,26 @@ class OrderItems extends StatelessWidget {
                                   children: order.paymentMethods!
                                       .map(
                                         (paymentMethod) => Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              paymentMethod.title!,
-                                              style: TextStyle(
-                                                  fontSize: size.height * 0.02,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Constants.mainColor),
-                                            ),
-                                            Text(
-                                              paymentMethod.value!,
-                                              style: TextStyle(
-                                                  fontSize: size.height * 0.02,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Constants.mainColor),
-                                            ),
-                                          ],
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          paymentMethod.title!,
+                                          style: TextStyle(
+                                              fontSize: size.height * 0.02,
+                                              fontWeight: FontWeight.bold,
+                                              color: Constants.mainColor),
                                         ),
-                                      )
+                                        Text(
+                                          paymentMethod.value!,
+                                          style: TextStyle(
+                                              fontSize: size.height * 0.02,
+                                              fontWeight: FontWeight.bold,
+                                              color: Constants.mainColor),
+                                        ),
+                                      ],
+                                    ),
+                                  )
                                       .toList()),
                               if (order.discount != 0)
                                 Row(
@@ -492,7 +489,7 @@ class OrderItems extends StatelessWidget {
                       order.paymentStatus == 0 &&
                       order.orderStatusId != 8 &&
                       order.orderStatusId != 10 &&
-                       !mobileOrders)
+                      !mobileOrders)
                     Container(
                       height: 50,
                       child: Row(
@@ -501,10 +498,10 @@ class OrderItems extends StatelessWidget {
                             child: InkWell(
                               onTap: () {
                                 ConstantStyles.showPopup(context: context,
-                                    content: CancelWidget(orderId: order.id!,
-                                        mobileOrders: mobileOrders,
-                                    ),
-                                    title:    'cancelOrder'.tr(),);
+                                  content: CancelWidget(orderId: order.id!,
+                                    mobileOrders: mobileOrders,
+                                  ),
+                                  title:  'cancelOrder'.tr(),);
                               },
                               child: Container(
                                 color: Constants.secondryColor,
@@ -531,6 +528,13 @@ class OrderItems extends StatelessWidget {
                                 //                   .orders[viewModel.chosenOrder!],
                                 //             )),
                                 //     (route) => false);
+                                cartController.editOrder(order);
+                                Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => BottomNavBar()),
+                                    (route) => false);
+
                               },
                               child: Container(
                                 color: Constants.mainColor,
@@ -604,7 +608,7 @@ class OrderItems extends StatelessWidget {
                       order.orderStatusId != 5 &&
                       order.paymentStatus == 0 &&
                       order.orderStatusId != 10 &&
-                       mobileOrders)
+                      mobileOrders)
                     Container(
                       height: 50,
                       child: InkWell(
@@ -630,16 +634,16 @@ class OrderItems extends StatelessWidget {
 
 
                 ],
-              );
-            }
-          ),
-          // if (viewModel.loading)
-          //   Container(
-          //     height: size.height,
-          //     width: size.width,
-          //     color: Colors.white.withOpacity(0.5),
-          //   )
-        ],
+              )
+              // if (viewModel.loading)
+              //   Container(
+              //     height: size.height,
+              //     width: size.width,
+              //     color: Colors.white.withOpacity(0.5),
+              //   )
+            ],
+          );
+        }
       ),
     );
   }

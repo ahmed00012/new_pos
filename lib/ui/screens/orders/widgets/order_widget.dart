@@ -95,9 +95,10 @@ class OrderWidget extends StatelessWidget {
                     if (order.ownerName != null)
                       Text(
                         order.ownerName!,
+                        textAlign: TextAlign.center,
                         style: TextStyle(
                             fontSize: size.height * 0.02,
-                            color: Constants.lightBlue),
+                            color: Constants.secondryColor),
                       ),
                     if (order.orderStatusId == 7)
                       Icon(

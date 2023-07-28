@@ -198,7 +198,7 @@ class TablesController extends ChangeNotifier {
       ConstantStyles.displayToastMessage(
           responseValue['msg'], !responseValue['status']);
       if (responseValue['status']) {
-        PrintingService.printInvoice(order: order, payLater: false);
+        PrintingService.printInvoice(order: order);
       }
     }catch(e){
       ConstantStyles.displayToastMessage(e.toString(), true);

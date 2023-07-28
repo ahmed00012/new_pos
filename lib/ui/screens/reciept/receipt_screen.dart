@@ -75,7 +75,7 @@ class Receipt extends ConsumerWidget{
                   Column(
                     children: List.generate(order.payMethods.length,
                             (index) =>  Text(
-                              order.payMethods[index].title!,
+                              order.payMethods[index].title ?? '',
                               style: const TextStyle(
                                 fontSize: 16,
                               ),

@@ -47,6 +47,7 @@ class NewOrderRepository {
         body: jsonEncode(data),
         headers: ApiEndPoints.headerWithToken(token:getUserToken() ,language: getLanguage()),
       );
+      print(response.body.toString()+'dsflkjds');
       var encodedResponse = json.decode(response.body);
       return encodedResponse;
     }

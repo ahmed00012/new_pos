@@ -88,7 +88,7 @@ class OrderDetails {
   String? departmentId;
   List<OrderPaymentMethods> payMethods = [];
   int? paymentId;
-  double? remaining;
+  double remaining = 0;
 
   PaymentModel? payment1;
   PaymentModel? payment2;
@@ -98,6 +98,9 @@ class OrderDetails {
   int? orderStatusID;
   int? paymentStatus;
   int hold = 0;
+  bool payLater = false;
+
+
 
   OrderDetails({
     this.clientName,
@@ -136,7 +139,8 @@ class OrderDetails {
     this.hold = 0,
     this.tableCount,
     this.finalOrder,
-    this.remaining
+    this.remaining = 0,
+    this.payLater = false
   });
 
   Map<String, dynamic> toJson() {
@@ -147,7 +151,7 @@ class OrderDetails {
     data['payment_method_id'] = this.paymentId;
     data['order_method_id'] = this.orderMethodId;
     data['paid_amount'] = this.paid;
-    data['payment_status'] = this.paymentStatus ?? 0;
+    data['payment_status'] = this.payMethods.isEmpty ? 0 : 1;
     data['finish'] = payMethods.isNotEmpty;
     data['table_id'] = this.table;
     data['coupon'] = this.coupon;

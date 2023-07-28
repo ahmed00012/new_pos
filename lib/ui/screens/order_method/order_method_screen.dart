@@ -123,6 +123,7 @@ class OrderMethodState extends ConsumerState<OrderMethod> {
                                                       )));
                                         }
                                         if (orderMethod.id == 2) {
+                                          orderController.getTables();
                                           ConstantStyles.showPopup(
                                               context: context,
                                               height: size.height*0.8,
@@ -192,8 +193,7 @@ class OrderMethodState extends ConsumerState<OrderMethod> {
                                   screenshotController: screenshotController,
                                   order: cartController.orderDetails,
                                   onScreenShot: () {
-                                    PrintingService.printInvoice(order: cartController.orderDetails ,
-                                        payLater: false );
+                                    PrintingService.printInvoice(order: cartController.orderDetails);
                                     // imageProductsPrinter();
                                     // Future.delayed(Duration(milliseconds: 500),
                                     //     () {

@@ -38,6 +38,7 @@ class CartState extends ConsumerState<Cart> {
           orderDetails.tableTitle != null ||
           orderDetails.orderUpdatedId != null
       ) {
+        orderDetails.orderMethodId = 1;
         Navigator.push(
             context,
             MaterialPageRoute(
@@ -48,7 +49,7 @@ class CartState extends ConsumerState<Cart> {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => OrderMethod()));
+                builder: (context) => const OrderMethod()));
       }
     }
   }

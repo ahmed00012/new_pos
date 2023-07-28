@@ -65,7 +65,7 @@ class OrderMethodController extends ChangeNotifier {
     // notes = TextEditingController(text:  order.notes);
     // orderDetails = order;
     getOrderMethods();
-     getTables();
+
      // getPrinters();
      // notifyListeners();
   }
@@ -192,7 +192,6 @@ class OrderMethodController extends ChangeNotifier {
       if (responseValue['status']) {
         PrintingService.printInvoice(
             order: order,
-            payLater: false,
             orderNo: responseValue['data']['uuid']);
         ConstantStyles.displayToastMessage(responseValue['msg'], false);
       } else {

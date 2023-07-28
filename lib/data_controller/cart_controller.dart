@@ -314,8 +314,6 @@ class CartController extends ChangeNotifier {
     orderDetails.orderUpdatedId = order.id;
     orderDetails. total = order.total!;
     orderDetails.tax = orderDetails.total * getTax() / 100;
-    orderDetails.amount1 = 0.0;
-    orderDetails.amount2 = 0.0;
    orderDetails.cart = [];
     orderDetails.paid = order.paidAmount??0.0;
     orderDetails.paymentStatus = order.paymentStatus;
@@ -394,24 +392,26 @@ class CartController extends ChangeNotifier {
         chosen: true
     );
     orderDetails.tableTitle = order.table;
-    orderDetails.payMethods = order.paymentMethods! ;
+    orderDetails.payMethods = order.paymentMethods!;
+    if(orderDetails.payMethods.isNotEmpty)
+    orderDetails.paymentId = orderDetails.payMethods[0].id;
 
 
-    if(order.paymentMethods!=null) {
-      orderDetails.payment1 =
-          PaymentModel(id: order.paymentMethods![0].id!, title: PaymentTitle(
-            en: order.paymentMethods![0].title!,
-          ));
-      orderDetails.amount1 = double.parse(order.paymentMethods![0].value!);
-    }
-    if(order.paymentMethods!=null&& order.paymentMethods!.length>1){
-      orderDetails.payment2 =
-          PaymentModel(id: order.paymentMethods![1].id!, title: PaymentTitle(
-            en: order.paymentMethods![1].title!,
-          ));
-      orderDetails.amount2 = double.parse(order.paymentMethods![1].value!);
-
-    }
+    // if(order.paymentMethods!=null) {
+    //   orderDetails.payment1 =
+    //       PaymentModel(id: order.paymentMethods![0].id!, title: PaymentTitle(
+    //         en: order.paymentMethods![0].title!,
+    //       ));
+    //   orderDetails.amount1 = double.parse(order.paymentMethods![0].value!);
+    // }
+    // if(order.paymentMethods!=null&& order.paymentMethods!.length>1){
+    //   orderDetails.payment2 =
+    //       PaymentModel(id: order.paymentMethods![1].id!, title: PaymentTitle(
+    //         en: order.paymentMethods![1].title!,
+    //       ));
+    //   orderDetails.amount2 = double.parse(order.paymentMethods![1].value!);
+    //
+    // }
 
     return orderDetails;
   }
@@ -708,6 +708,7 @@ chooseClient({required String name ,required String phone}){
         String discount = (getTotal() - couponUse!.value! - orderDetails.deliveryFee)
             .toStringAsFixed(2);
         orderDetails.discount = double.parse(discount);
+        orderDetails.coupon = code;
         // orderDetails.setDiscount(false, couponUse.value!);
       } else {
         orderDetails.discountValue = couponUse!.value!;
@@ -727,6 +728,7 @@ chooseClient({required String name ,required String phone}){
       title: paymentMethod.title!.en
     ));
     orderDetails.paid = orderDetails.paid + double.parse(total);
+    orderDetails.remaining = orderDetails.paid - orderDetails.total;
     print( orderDetails.paid );
       // notifyListeners();
     // orderDetails.payMethods.last.value = paymentAmount.toString();
@@ -742,11 +744,13 @@ chooseClient({required String name ,required String phone}){
       });
       orderDetails.paid = orderDetails.paid -
           double.parse(orderDetails.payMethods[index!].value!);
+      orderDetails.remaining = orderDetails.paid - orderDetails.total;
       orderDetails.payMethods.removeAt(index!);
     }
   else{
       orderDetails.payMethods.clear();
       orderDetails.paid = 0;
+      orderDetails.remaining = orderDetails.total;
     }
   }
 
