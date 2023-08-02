@@ -38,7 +38,7 @@ class PaymentSummaryTable extends StatelessWidget {
             padding: const EdgeInsets.all(5.0),
             child: Center(
               child: Text(
-                '${paidAmount!.toStringAsFixed(2)} SAR ',
+                '${paidAmount} SAR ',
                 style:const TextStyle(
                     fontSize: 17,
                     fontWeight: FontWeight.w500),
@@ -110,7 +110,7 @@ class PaymentSummaryTable extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(5.0),
               child: Center(
-                child: Text(deliveryFee.toString()+  ' SAR',
+                child: Text('$deliveryFee SAR',
                   style: TextStyle(
                       fontSize: 17,
                       fontWeight: FontWeight.w500),
@@ -126,6 +126,17 @@ class PaymentSummaryTable extends StatelessWidget {
               child: Center(
                 child: Text(
                   'discount'.tr(),
+                  style: TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w500),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: Center(
+                child: Text(
+                  '$deliveryFee SAR',
                   style: TextStyle(
                       fontSize: 17,
                       fontWeight: FontWeight.w500),

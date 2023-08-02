@@ -117,12 +117,10 @@ class OrdersModel {
     discount = json['discount']!=null? double.parse(json['discount'].toString()) : 0.0;
     subTotal =json['subtotal'].toString();
     tax =  json['tax'].toString();
-    table = json['table'].toString();
+    table = json['table'];
     notes = json['notes'];
     ownerId = json['owner_id'];
     department = json['table_department'];
-
-
     finished = json['finished'];
     paidAmount = json['paid_amount']!=null?json['paid_amount'].toDouble():null;
     paymentMethodId = json['payment_method_id'];

@@ -33,6 +33,15 @@ class CartItem extends ConsumerWidget {
               productID: item.id!,
               customerPrice: cartController.orderDetails.customer != null)
               .then((value) {
+            if(!cartController.orderDetails.cart[index].updated) {
+              cartController.orderDetails.cart[index].attributes!.forEach((element) {
+                viewModel.attributes.forEach((element2) {
+                  if(element.title!.en == element2.title!.en){
+                    element.id = element2.id;
+                  }
+                });
+              });
+            }
             ConstantStyles.showPopup(
                 context: context,
                 height: size.height*0.9,
@@ -115,7 +124,7 @@ class CartItem extends ConsumerWidget {
                                 }
 
                               },
-                              child: Image.asset('assets/images/minus-button.png',height: size.height*0.04,)),
+                              child: Image.asset('assets/images/minus-button.png',height: size.height*0.04,color: Colors.green,)),
                           Text(
                             '${item.count}',
                             overflow: TextOverflow.ellipsis,
@@ -127,10 +136,16 @@ class CartItem extends ConsumerWidget {
                           InkWell(
                               onTap: (){
                                 if (!closeEdit) {
-                                  cartController.plusController(index);
+                                  viewModel.getProductDetails(productID: cartController.orderDetails.cart[index].id!,
+                                      customerPrice: cartController.orderDetails.customer!=null).then((value){
+                                    cartController.plusController(index,
+                                      viewModel.attributes);
+
+                                  });
+
                                 }
                               },
-                              child: Image.asset('assets/images/plus(1).png',height: size.height*0.04,)),
+                              child: Image.asset('assets/images/plus(1).png',height: size.height*0.05,color: Colors.green,)),
 
 
                           Text(
@@ -186,7 +201,7 @@ class CartItem extends ConsumerWidget {
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: item.attributes![j].values!
                                       .map((value) => item
-                                      .allAttributesID!
+                                      .allAttributesValuesID!
                                       .contains(value.id)
                                       ? Row(
                                     mainAxisAlignment:
@@ -200,7 +215,7 @@ class CartItem extends ConsumerWidget {
                                           )),
                                       if (value.price != null)
                                         Text(
-                                            '${value.realPrice} SAR',
+                                            '${value.price} SAR',
                                             style: const TextStyle(
                                               color: Colors.black45,
                                             )),
@@ -217,7 +232,7 @@ class CartItem extends ConsumerWidget {
                       ),
                     ),
                     if (item.extra!.isNotEmpty &&
-                        item.allAttributesID!.isNotEmpty)
+                        item.allAttributesValuesID!.isNotEmpty)
                       const Padding(
                         padding: EdgeInsets.symmetric(horizontal: 10),
                         child: Divider(),

@@ -3,10 +3,10 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../constants/colors.dart';
-import '../../data_controller/cart_controller.dart';
-import '../../data_controller/home_controller.dart';
-import '../../models/product_details_model.dart';
+import '../../../../constants/colors.dart';
+import '../../../../data_controller/cart_controller.dart';
+import '../../../../data_controller/home_controller.dart';
+import '../../../../models/product_details_model.dart';
 
 
 class AttributesWidget extends ConsumerWidget {
@@ -48,11 +48,12 @@ class AttributesWidget extends ConsumerWidget {
                             padding: const EdgeInsets.all(5.0),
                             child: InkWell(
                               onTap: (){
+
                                 cartController.editAttributes(
                                     attribute: attributes[i],
                                     attributeValue: element,
                                     productIndex: productIndex,
-                                    attributeIndex: i);
+                                    attributeIndex: i,);
 
                               },
                               child: Container(
@@ -71,7 +72,7 @@ class AttributesWidget extends ConsumerWidget {
                                       ],
                                     color: Colors.white,
                                     border: Border.all(color: cartController.orderDetails.cart[productIndex]
-                                        .allAttributesID!.contains(element.id)?Constants.mainColor:Colors.white,
+                                        .allAttributesValuesID!.contains(element.id)?Constants.mainColor:Colors.white,
 
                                     )
                                   ),
@@ -87,12 +88,11 @@ class AttributesWidget extends ConsumerWidget {
 
                                       ),),
                                       const SizedBox(height: 10,),
-                                      if(element.realPrice!=0)
-                                      Text('${element.realPrice} SAR',style: TextStyle(
+                                      Text('${element.price} SAR',style: TextStyle(
                                           color: Constants.secondryColor,
                                           fontSize: size.height*0.02,
                                           fontWeight: FontWeight.bold
-                                      ),)
+                                      ),),
                                     ],
                                   )
                               ),

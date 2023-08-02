@@ -1,6 +1,7 @@
 
 
 
+import '../constants/prefs_utils.dart';
 import '../local_storage.dart';
 
 class OrderMethodModel {
@@ -32,7 +33,7 @@ class OrderMethodTitle {
   OrderMethodTitle({this.en, this.ar});
 
   OrderMethodTitle.fromJson(Map<String, dynamic> json) {
-    en = LocalStorage.getData(key: 'language')=='en'? json['en']:json['ar'];
+    en = getLanguage()=='en'? json['en']:json['ar'];
     ar = json['ar'];
   }
 

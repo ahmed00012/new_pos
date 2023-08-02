@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:shormeh_pos_new_28_11_2022/constants/colors.dart';
-import 'package:shormeh_pos_new_28_11_2022/constants/prefs_utils.dart';
-import 'package:shormeh_pos_new_28_11_2022/models/integration_model.dart';
 
-import '../models/cart_model.dart';
 
 class ConstantStyles {
 
@@ -28,46 +25,6 @@ class ConstantStyles {
   static contextWidth(BuildContext context){
     return MediaQuery.of(context).size.width;
   }
-
-  // static showDialog({required BuildContext context,
-  //   required String title,
-  //   required Widget content,}){
-  // AlertDialog(
-  //         titlePadding: EdgeInsets.zero,
-  //         title: Column(
-  //           children: [
-  //             Padding(
-  //               padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-  //               child: Align(
-  //                   alignment: Alignment.topRight,
-  //                   child: InkWell(
-  //                     onTap: (){
-  //                       Navigator.pop(context);
-  //                     },
-  //                     child: Container(
-  //                       height: contextHeight(context)*0.05,
-  //                       width: contextHeight(context)*0.05,
-  //                       decoration: BoxDecoration(
-  //                           color: Colors.red[400],
-  //                           borderRadius: BorderRadius.circular(10)),
-  //                       child: const Center(
-  //                         child: Icon(
-  //                           Icons.clear,
-  //                           color: Colors.white,
-  //                         ),
-  //                       ),
-  //                     ),
-  //                   )),
-  //             ),
-  //             Text(
-  //               title, style: TextStyle(fontSize: contextHeight(context) * 0.025),
-  //             ),
-  //           ],
-  //         ),
-  //         content: content,
-  //       );
-  // }
-
 
   static Future showPopup({
     required BuildContext context,

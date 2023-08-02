@@ -35,10 +35,12 @@ class CartState extends ConsumerState<Cart> {
     if (widget.navigate!) {
       selectedTab = SelectedTab.home;
       if (orderDetails.customer != null ||
-          orderDetails.tableTitle != null ||
           orderDetails.orderUpdatedId != null
       ) {
-        orderDetails.orderMethodId = 1;
+        if(orderDetails.tableId!=null)
+        orderDetails.orderMethodId = 2;
+        else
+          orderDetails.orderMethodId = 1;
         Navigator.push(
             context,
             MaterialPageRoute(
@@ -49,7 +51,7 @@ class CartState extends ConsumerState<Cart> {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => const OrderMethod()));
+                builder: (context) =>  OrderMethod()));
       }
     }
   }
@@ -66,8 +68,9 @@ class CartState extends ConsumerState<Cart> {
         clientName: cartController.orderDetails.clientName,
         tableTitle: cartController.orderDetails.tableTitle,
         onTapChooseClient: (){
+          cartController.getAllClients();
         ConstantStyles.showPopup(context: context,
-        content: const ChooseClientWidget(),
+        content:  ChooseClientWidget(),
         title: 'clients'.tr(), );
     },
         onTapSend: ()=> cartNavigation(orderDetails: cartController.orderDetails),
@@ -144,12 +147,12 @@ class CartState extends ConsumerState<Cart> {
                     Column(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-
-                        SummaryRow(title:    '${'delivery'.tr()} : ', value: '${cartController.orderDetails.tax.toStringAsFixed(2)} SAR',),
-
                         if (cartController.orderDetails.deliveryFee != 0)
+                        SummaryRow(title: '${'delivery'.tr()} : ', value: '${cartController.orderDetails.deliveryFee.toStringAsFixed(2)} SAR',),
+
+                        if (cartController.orderDetails.tax != 0)
                           SummaryRow(title:  '${'tax'.tr()}: ',
-                            value: '${cartController.orderDetails.deliveryFee.toStringAsFixed(2)} SAR',),
+                            value: '${cartController.orderDetails.tax.toStringAsFixed(2)} SAR',),
 
                         if (cartController.orderDetails.discount != 0)
                           SummaryRow(title: '${'discount'.tr()}: ',

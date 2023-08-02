@@ -1,155 +1,178 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lottie/lottie.dart';
-import 'package:screenshot/screenshot.dart';
-import 'package:shormeh_pos_new_28_11_2022/data_controller/home_controller.dart';
+import 'package:shormeh_pos_new_28_11_2022/constants/styles.dart';
 import 'package:shormeh_pos_new_28_11_2022/data_controller/tables_controller.dart';
+import 'package:shormeh_pos_new_28_11_2022/ui/screens/tables/widgets/table_order.dart';
 import '../../../constants/colors.dart';
 import '../../../data_controller/cart_controller.dart';
+import '../../../models/tables_model.dart';
 import 'widgets/num_of_guests.dart';
-import '../reciept/receipt_screen.dart';
-import '../cart/cart_screen.dart';
 
-class TablesScreen extends ConsumerWidget {
-  // ScreenshotController screenshotController = ScreenshotController();
+class TablesScreen extends StatefulWidget {
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final tablesController = ref.watch(tablesFuture);
+  State<TablesScreen> createState() => _TablesScreenState();
+}
 
-    final cartController = ref.watch(cartFuture);
-    // final printerController = ref.watch(printerFuture);
+class _TablesScreenState extends State<TablesScreen> {
+  // ScreenshotController screenshotController = ScreenshotController();
+  CurrentOrder? chosenOrder;
+  Tables? chosenTable;
+  Department? chosenDepartment;
+
+  @override
+  Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       body: Stack(
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+          Consumer(
+            builder: (context,ref , child) {
+              final tablesController = ref.watch(tablesFuture);
+              final cartController = ref.watch(cartFuture);
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
 
-              const Padding(
-                padding: EdgeInsets.all(10.0),
-                child: Cart(navigate: true,)
-
-              ),
-              Expanded(
-                child:Stack(
-                  children: [
-                      //
-                      // Padding(
-                      //   padding: const EdgeInsets.symmetric(horizontal: 20),
-                      //   child: Container(
-                      //     width: size.width * 0.3,
-                      //     child: Receipt(screenshotController: screenshotController,
-                      //         order: cartController.orderDetails,
-                      //         onScreenShot: (){}),
-                      //   ),
-                      // ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Container(
-                        width: size.width ,
+                  Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: SizedBox(
                         height: size.height,
-                        color: Constants.scaffoldColor,
-                      ),
-                    ),
-                    Column(
+                        width: size.width * 0.28,
+                        child: Card(
+                            elevation: 5,
+                            clipBehavior: Clip.antiAliasWithSaveLayer,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            child: chosenOrder != null
+                                ? _buildOrderInvoiceScreen(
+                              order: chosenOrder!,
+                              department: chosenDepartment!,
+                              table: chosenTable!,
+
+                            )
+                                : Container())),
+                  ),
+                  Expanded(
+                    child:Stack(
                       children: [
-                        Expanded(
-                          child: ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: tablesController.departments.length,
-                              itemBuilder: (context, index) {
-                                return ListView(
+                          //
+                          // Padding(
+                          //   padding: const EdgeInsets.symmetric(horizontal: 20),
+                          //   child: Container(
+                          //     width: size.width * 0.3,
+                          //     child: Receipt(screenshotController: screenshotController,
+                          //         order: cartController.orderDetails,
+                          //         onScreenShot: (){}),
+                          //   ),
+                          // ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Container(
+                            width: size.width ,
+                            height: size.height,
+                            color: Constants.scaffoldColor,
+                          ),
+                        ),
+                        Column(
+                          children: [
+                            Expanded(
+                              child: ListView.builder(
                                   shrinkWrap: true,
-                                  physics: NeverScrollableScrollPhysics(),
-                                  children: [
-                                    SizedBox(
-                                      height: 35,
-                                    ),
-                                    Center(
-                                      child: Text(
-                                        tablesController.departments[index].title!,
-                                        style: TextStyle(
-                                            fontSize: size.height * 0.03,
-                                            fontStyle: FontStyle.italic,
-                                            fontWeight: FontWeight.bold,
-                                            color: Constants.lightBlue),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 15,
-                                    ),
-                                    GridView.builder(
-                                      itemCount:
-                                      tablesController.departments[index].tables!.length,
-                                      physics: NeverScrollableScrollPhysics(),
+                                  itemCount: tablesController.departments.length,
+                                  itemBuilder: (context, index) {
+                                    return ListView(
                                       shrinkWrap: true,
-                                      gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                        crossAxisCount: 6,
-                                        childAspectRatio: 1.5,
-                                      ),
-                                      itemBuilder: (context, i) {
-                                        return Card(
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(10.0),
+                                      physics: NeverScrollableScrollPhysics(),
+                                      children: [
+                                        SizedBox(
+                                          height: 35,
+                                        ),
+                                        Center(
+                                          child: Text(
+                                            tablesController.departments[index].title!,
+                                            style: TextStyle(
+                                                fontSize: size.height * 0.03,
+                                                fontStyle: FontStyle.italic,
+                                                fontWeight: FontWeight.bold,
+                                                color: Constants.lightBlue),
                                           ),
-                                          elevation: 2,
-                                          child: Consumer(
-                                            builder: (context, ref , child) {
-                                              final homeController = ref.watch(dataFuture);
-                                              return InkWell(
+                                        ),
+                                        SizedBox(
+                                          height: 15,
+                                        ),
+                                        GridView.builder(
+                                          itemCount:
+                                          tablesController.departments[index].tables!.length,
+                                          physics: NeverScrollableScrollPhysics(),
+                                          shrinkWrap: true,
+                                          gridDelegate:
+                                          SliverGridDelegateWithFixedCrossAxisCount(
+                                            crossAxisCount: 6,
+                                            childAspectRatio: 1.5,
+                                          ),
+                                          itemBuilder: (context, i) {
+                                            return Card(
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(10.0),
+                                              ),
+                                              elevation: 2,
+                                              child: InkWell(
                                                 onTap: () {
-                                                  if(tablesController.departments[index].tables![i].currentOrder==null
-                                                  && cartController.orderDetails.cart!=null) {
-                                                  showDialog(
-                                                      context: context,
-                                                      builder: (context) {
-                                                        return AlertDialog(
-                                                            backgroundColor:
-                                                                Constants
-                                                                    .scaffoldColor,
-                                                            title: Center(
-                                                              child: Text(
-                                                                'Count Of Guests',
-                                                                style: TextStyle(
-                                                                  fontSize:
-                                                                      size.height *
-                                                                          0.03,
+                                                  if(tablesController.departments[index].tables![i].currentOrder==null) {
+                                                    showDialog(
+                                                        context: context,
+                                                        builder: (context) {
+                                                          return AlertDialog(
+                                                              backgroundColor:
+                                                              Constants
+                                                                  .scaffoldColor,
+                                                              title: Center(
+                                                                child: Text(
+                                                                  'Count Of Guests',
+                                                                  style: TextStyle(
+                                                                    fontSize:
+                                                                    size.height *
+                                                                        0.03,
+                                                                  ),
                                                                 ),
                                                               ),
-                                                            ),
-                                                            content: CountOfGuests());
-                                                      }).then((value) {
-                                                    if (value != null) {
+                                                              content: CountOfGuests());
+                                                        }).then((value) {
+                                                      if (value != null) {
 
-                                                      // tablesController
-                                                      //     .reserveTable(
-                                                      //         index,
-                                                      //         tablesController
-                                                      //             .departments[
-                                                      //                 index]
-                                                      //             .tables![i],
-                                                      //         value,
-                                                      //         context,false,
-                                                      //     cartController.orderDetails)
-                                                      //     .then((value) {
-                                                      //   // homeController.selectedTab =
-                                                      //   //     SelectedTab.home;
-                                                      // });
-                                                    }
-                                                  });
-                                                }
+                                                        // tablesController
+                                                        //     .reserveTable(
+                                                        //         index,
+                                                        //         tablesController
+                                                        //             .departments[
+                                                        //                 index]
+                                                        //             .tables![i],
+                                                        //         value,
+                                                        //         context,false,
+                                                        //     cartController.orderDetails)
+                                                        //     .then((value) {
+                                                        //   // homeController.selectedTab =
+                                                        //   //     SelectedTab.home;
+                                                        // });
+                                                      }
+                                                    });
+                                                  }
                                                   else if(tablesController.departments[index].tables![i].currentOrder!=null){
+                                                    setState(() {
+                                                      chosenOrder = tablesController.departments[index].tables![i].currentOrder;
+                                                      chosenDepartment = tablesController.departments[index];
+                                                      chosenTable = tablesController.departments[index].tables![i];
+                                                    });
                                                     tablesController.getCurrentOrder( index, i);
                                                   }
 
                                                   else{
 
-                                                    tablesController.displayToastMessage('No order found', true);
+                                                    ConstantStyles.displayToastMessage('No order found', true);
                                                   }
-                                                // tablesController.confirmOrderPrinter(index, i, context, size, cartController, printerController);
+                                                  // tablesController.confirmOrderPrinter(index, i, context, size, cartController, printerController);
                                                 },
                                                 child: Container(
                                                   decoration: BoxDecoration(
@@ -165,7 +188,7 @@ class TablesScreen extends ConsumerWidget {
                                                       borderRadius:
                                                       BorderRadius.circular(10.0),
                                                       border: Border.all(
-                                                          color: Constants.mainColor,)),
+                                                        color: Constants.mainColor,)),
                                                   child: Center(
                                                     child: Text(
                                                       tablesController
@@ -186,40 +209,48 @@ class TablesScreen extends ConsumerWidget {
                                                     ),
                                                   ),
                                                 ),
-                                              );
-                                            }
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ],
-                                );
-                              }),
+                                              )
+                                            );
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  }),
+                            ),
+                            SizedBox(
+                              height: 100,
+                            ),
+                          ],
                         ),
-                        SizedBox(
-                          height: 100,
-                        ),
+                        if(tablesController.loading)
+                          Container(
+                            height: size.height,
+                            width: size.width,
+                            color: Colors.white.withOpacity(0.5),
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                color: Constants.mainColor,
+                              ),
+                            ),
+                          )
                       ],
-                    ),
-                    if(tablesController.loading)
-                      Container(
-                        height: size.height,
-                        width: size.width,
-                        color: Colors.white.withOpacity(0.5),
-                        child: Center(
-                          child: CircularProgressIndicator(
-                            color: Constants.mainColor,
-                          ),
-                        ),
-                      )
-                  ],
-                )
-              )
-            ],
+                    )
+                  )
+                ],
+              );
+            }
           ),
 
         ],
       ),
+    );
+  }
+
+  Widget _buildOrderInvoiceScreen({required CurrentOrder order,required Tables table , required Department department}) {
+    return TableOrder(
+      order: order,
+      table: table,
+        department: department,
     );
   }
 }

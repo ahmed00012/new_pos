@@ -1,5 +1,3 @@
-
-
 import 'dart:convert';
 
 import 'package:easy_localization/easy_localization.dart';
@@ -24,94 +22,156 @@ import '../models/tables_model.dart';
 import '../repositories/products_repository.dart';
 
 final cartFuture = ChangeNotifierProvider.autoDispose<CartController>(
-        (ref) => CartController());
+    (ref) => CartController());
 
 class CartController extends ChangeNotifier {
-
   ProductsRepo productsRepo = ProductsRepo();
-   OrderDetails orderDetails= OrderDetails(cart: [],payMethods: []);
+  OrderDetails orderDetails = OrderDetails(cart: [], payMethods: []);
   bool clientsLoading = false;
   List<ClientModel> clients = [];
+  List<ClientModel> clientsFiltered = [];
   List<CouponModel> coupons = [];
 
-
-  double getTotal(){
+  double getTotal() {
     orderDetails.total = 0;
 
     orderDetails.cart.forEach((element) {
       orderDetails.total = orderDetails.total + element.total;
     });
     orderDetails.tax = orderDetails.total * getTax() / 100;
-      orderDetails.total = orderDetails.total + orderDetails.deliveryFee;
+    orderDetails.total = orderDetails.total + orderDetails.deliveryFee;
 
-      if(orderDetails.orderUpdatedId!=null) {
-        orderDetails.discountValue = orderDetails.discount;
-      }
+    if (orderDetails.orderUpdatedId != null) {
+      orderDetails.discountValue = orderDetails.discount;
+    }
 
-      if(orderDetails.discount < orderDetails.total){
-        orderDetails.total = orderDetails.total - orderDetails.discount;
-      }
-      else {
-        orderDetails.total = 0;
-      }
+    if (orderDetails.discount < orderDetails.total) {
+      orderDetails.total = orderDetails.total - orderDetails.discount;
+    } else {
+      orderDetails.total = 0;
+    }
+
+    orderDetails.remaining = orderDetails.paid - orderDetails.total;
 
     // total = total + tax!;
     return orderDetails.total;
   }
 
-
-
-  // void setDiscount(bool percentage,double currentDiscountValue){
-  //   orderDetails.discountValue = currentDiscountValue ;
-  //   orderDetails.discountPercentage = percentage;
-  //   if(percentage) {
-  //     // print(currentDiscountValue *0.01 * HomeController.orderDetails.getTotal());
-  //     if(orderDetails.deliveryFee!=null)
-  //       orderDetails.discount = (currentDiscountValue *0.01 * (getTotal() - orderDetails.deliveryFee!)).toStringAsFixed(2);
-  //     else if(orderDetails.delivery!=null)
-  //       orderDetails.discount = (currentDiscountValue *0.01 * (getTotal() - orderDetails.delivery!)).toStringAsFixed(2);
-  //     else
-  //       orderDetails.discount = (currentDiscountValue *0.01 * getTotal()).toStringAsFixed(2);
-  //     // discount = currentDiscountValue.toString();
-  //   }
-  //   else{
-  //     orderDetails.discount= currentDiscountValue.toString();
-  //   }
+  // void insertIntoCart(ProductModel product){
+  //
+  //
+  //   orderDetails.departmentId= product.departmentId;
+  //
+  //   orderDetails.cart.add(CartModel(
+  //       id: product.id!,
+  //       price: orderDetails.customer==null? product.price!: product.customerPrice!,
+  //       title: product.titleMix,
+  //       mainName: product.title!.en,
+  //       extra: [],
+  //       count: 1,
+  //       total: orderDetails.customer==null? product.price!: product.customerPrice!,
+  //       updated: orderDetails.orderUpdatedId!=null,
+  //       itemName: product.itemName,
+  //       itemCode: product.itemCode,
+  //       allAttributesValuesID: [],
+  //       attributes: [],
+  //       newInCart: true,
+  //   ));
+  //
   //   getTotal();
+  //
   // }
 
-  void insertIntoCart(ProductModel product){
+  void minusController(int i) {
+    if (orderDetails.cart[i].count! > 1) {
+      double itemPrice =
+          orderDetails.cart[i].total / orderDetails.cart[i].count!;
 
-    orderDetails.departmentId= product.departmentId;
-    orderDetails.cart.add(CartModel(
-        id: product.id!,
-        price: orderDetails.customer==null? product.price!: product.customerPrice!,
-        title: product.titleMix,
-        mainName: product.title!.en,
-        extra: [],
-        count: 1,
-        total: orderDetails.customer==null? product.price!: product.customerPrice!,
-        updated: orderDetails.orderUpdatedId!=null,
-        itemName: product.itemName,
-        itemCode: product.itemCode,
-        allAttributesID: [],
-        attributes: [],
-        newInCart: true
-    ));
+      orderDetails.cart[i].count = orderDetails.cart[i].count! - 1;
+      orderDetails.cart[i].total = orderDetails.cart[i].total - itemPrice;
 
-    getTotal();
-      orderDetails.total = orderDetails.total- orderDetails.discount;
+      if (orderDetails.orderUpdatedId != null) {
+        orderDetails.cart[i].updated = true;
+        orderDetails.cart[i].updatedQuantity =
+            orderDetails.cart[i].updatedQuantity! - 1;
+      }
+      getTotal();
+    }
+    notifyListeners();
   }
 
+  void plusController(int index, List<Attributes> attributes) {
+    //  double totalOptions = 0.0;
+    //  double totalAttributes = 0.0;
+    //  List<AttributeItem> productAttributes = [];
+    //  List<AttributeItem> cartProductAttributes = [];
+    // orderDetails.cart[index].extra!.forEach((element) {
+    //    totalOptions = totalOptions + element.price!;
+    //  });
+    //
+    // for(int i = 0 ; i< attributes.length ; i++){
+    //   productAttributes= attributes[i].values!.map((e) => e).toList();
+    // }
+    // if(orderDetails.cart[index].attributes!=null) {
+    //    for (int i = 0; i < orderDetails.cart[index].attributes!.length; i++) {
+    //      cartProductAttributes = orderDetails.cart[index].attributes![i].values!.map((e) => e).toList();
+    //    }
+    //  }
 
-  void addOption( NotesModel note , int index){
+    // productAttributes.forEach((element) {
+    //   cartProductAttributes.forEach((element2) {
+    //     if(element.id == element2.id) {
+    //       element2.price = element.realPrice;
+    //       totalAttributes = totalAttributes + element.realPrice!;
+    //     }
+    //   });
+    //
+    // });
 
+    //
+    // orderDetails.cart[index].attributes!.forEach((element) {
+    //   element.values!.forEach((value2) {
+    //     if(orderDetails.cart[index].allAttributesID!.contains(value2.id)) {
+    //       totalAttributes = totalAttributes + value2.price!;
+    //       if(element.overridePrice==1) {
+    //        orderDetails.cart[index].price = 0;
+    //       }
+    //
+    //     }
+    //   });
+    // });
 
-    if(orderDetails.orderUpdatedId!=null){
+    orderDetails.cart[index].count = orderDetails.cart[index].count! + 1;
+    orderDetails.cart[index].total =
+        orderDetails.cart[index].total * orderDetails.cart[index].count!;
+
+    if (orderDetails.orderUpdatedId != null) {
+      orderDetails.cart[index].updated = true;
+      orderDetails.cart[index].updatedQuantity =
+          orderDetails.cart[index].updatedQuantity! + 1;
+    }
+    getTotal();
+    notifyListeners();
+  }
+
+  void textCountController(int i, int qty) {
+    if (orderDetails.orderUpdatedId != null) {
+      orderDetails.cart[i].updated = true;
+      orderDetails.cart[i].updatedQuantity = qty - orderDetails.cart[i].count!;
+    }
+
+    orderDetails.cart[i].count = qty;
+    // (cart[i].price! + totalOptions)
+    orderDetails.cart[i].total = orderDetails.cart[i].total * qty;
+    getTotal();
+  }
+
+  void addOption(NotesModel note, int index) {
+    if (orderDetails.orderUpdatedId != null) {
       orderDetails.cart[index].updated = true;
     }
 
-    List notesID= [];
+    List notesID = [];
 
     orderDetails.cart[index].extra!.forEach((element) {
       notesID.add(element.id);
@@ -119,83 +179,79 @@ class CartController extends ChangeNotifier {
 
     if (!notesID.contains(note.id!)) {
       orderDetails.cart[index].extra!.add(note);
-      orderDetails.cart[index].total =
-          orderDetails.cart[index].total + note.price! * orderDetails.cart[index].count!;
-
-    }
-    else
-    {
+      orderDetails.cart[index].total = orderDetails.cart[index].total +
+          note.price! * orderDetails.cart[index].count!;
+    } else {
       orderDetails.cart[index].extra!.remove(note);
-      orderDetails.cart[index].total =
-          orderDetails.cart[index].total -(note.price! * orderDetails.cart[index].count!);
-
+      orderDetails.cart[index].total = orderDetails.cart[index].total -
+          (note.price! * orderDetails.cart[index].count!);
     }
-
 
     getTotal();
-
   }
 
+  void addAttributes(
+    Attributes attribute,
+    int productIndex,
+    AttributeItem value,
+  ) {
+    if (orderDetails.orderUpdatedId != null) {
+      orderDetails.cart[productIndex].updated = true;
+    }
 
-  void addAttributes(Attributes attribute , int productIndex , AttributeItem value ) {
-
-    orderDetails.cart[productIndex].total =orderDetails.cart[productIndex].total /orderDetails.cart[productIndex].count!;
+    orderDetails.cart[productIndex].total =
+        orderDetails.cart[productIndex].total /
+            orderDetails.cart[productIndex].count!;
     orderDetails.cart[productIndex].count = 1;
 
-    if(orderDetails.customer!= null)
-      value.realPrice = value.customerPrice;
-    else
-      value.realPrice = value.price;
+    if (orderDetails.customer != null) {
+      value.price = value.customerPrice;
+    }
     bool inList = false;
+
     orderDetails.cart[productIndex].attributes!.forEach((element) {
-      if(element.id == attribute.id) {
+      if (element.id == attribute.id) {
         inList = true;
       }
     });
 
-
-    if (!orderDetails.cart[productIndex].allAttributesID!.contains(value.id!)) {
+    if (!orderDetails.cart[productIndex].allAttributesValuesID!
+        .contains(value.id!)) {
       if (attribute.overridePrice == 1) {
-        if(inList) {
+        if (inList) {
           attribute.values!.forEach((element2) {
-            orderDetails.cart[productIndex].allAttributesID!.forEach((element3) {
-              if(element2.id == element3)
+            orderDetails.cart[productIndex].allAttributesValuesID!
+                .forEach((element3) {
+              if (element2.id == element3)
                 orderDetails.cart[productIndex].total =
-                    orderDetails.cart[productIndex].total - element2.realPrice!;
+                    orderDetails.cart[productIndex].total - element2.price!;
             });
-
           });
-        }
-        else
+        } else
           orderDetails.cart[productIndex].total =
-             orderDetails.cart[productIndex].total -orderDetails.cart[productIndex].price!;
-
+              orderDetails.cart[productIndex].total -
+                  orderDetails.cart[productIndex].price!;
       }
-     orderDetails.cart[productIndex].total =orderDetails.cart[productIndex].total + value.realPrice!;
+      orderDetails.cart[productIndex].total =
+          orderDetails.cart[productIndex].total + value.price!;
 
       if (attribute.multiSelect == 1) {
         if (!inList) {
-         orderDetails.cart[productIndex].attributes!.add(attribute);
-         orderDetails.cart[productIndex].allAttributesID!.add(value.id!);
+          orderDetails.cart[productIndex].attributes!.add(attribute);
+          orderDetails.cart[productIndex].allAttributesValuesID!.add(value.id!);
         } else {
-         orderDetails.cart[productIndex].allAttributesID!.add(value.id!);
+          orderDetails.cart[productIndex].allAttributesValuesID!.add(value.id!);
         }
-
-      }
-
-      else {
-
+      } else {
         if (!inList) {
-
-         orderDetails.cart[productIndex].attributes!.add(attribute);
-         orderDetails.cart[productIndex].allAttributesID!.add(value.id!);
+          orderDetails.cart[productIndex].attributes!.add(attribute);
+          orderDetails.cart[productIndex].allAttributesValuesID!.add(value.id!);
         } else {
-
           attribute.values!.forEach((element) {
-           orderDetails.cart[productIndex].allAttributesID!.remove(element.id!);
+            orderDetails.cart[productIndex].allAttributesValuesID!
+                .remove(element.id!);
           });
-         orderDetails.cart[productIndex].allAttributesID!.add(value.id!);
-
+          orderDetails.cart[productIndex].allAttributesValuesID!.add(value.id!);
         }
       }
 
@@ -203,122 +259,71 @@ class CartController extends ChangeNotifier {
     }
   }
 
-  void removeAttributes(Attributes attribute, int productIndex, AttributeItem value,
-      int attributeIndex) {
-   orderDetails.cart[productIndex].total =orderDetails.cart[productIndex].total /orderDetails.cart[productIndex].count!;
-   orderDetails.cart[productIndex].count = 1;
+  void removeAttributes(Attributes attribute, int productIndex,
+      AttributeItem value, int attributeIndex) {
+    if (orderDetails.orderUpdatedId != null)
+      orderDetails.cart[productIndex].updated = true;
 
-    if(orderDetails.customer!= null)
+    orderDetails.cart[productIndex].total =
+        orderDetails.cart[productIndex].total /
+            orderDetails.cart[productIndex].count!;
+    orderDetails.cart[productIndex].count = 1;
+
+    if (orderDetails.customer != null)
       value.realPrice = value.customerPrice;
     else
       value.realPrice = value.price;
 
     if (attribute.multiSelect == 1) {
-      if (orderDetails.cart[productIndex].attributes![attributeIndex].values!.length == 1)
-       orderDetails.cart[productIndex].attributes!.remove(attribute);
-     orderDetails.cart[productIndex].allAttributesID!.remove(value.id!);
+      if (orderDetails
+              .cart[productIndex].attributes![attributeIndex].values!.length ==
+          1) orderDetails.cart[productIndex].attributes!.remove(attribute);
+      orderDetails.cart[productIndex].allAttributesValuesID!.remove(value.id!);
       if (attribute.overridePrice == 1) {
-       orderDetails.cart[productIndex].total =
-           orderDetails.cart[productIndex].total +orderDetails.cart[productIndex].price!;
+        orderDetails.cart[productIndex].total =
+            orderDetails.cart[productIndex].total +
+                orderDetails.cart[productIndex].price!;
       }
-     orderDetails.cart[productIndex].total =orderDetails.cart[productIndex].total - value.realPrice!;
+      orderDetails.cart[productIndex].total =
+          orderDetails.cart[productIndex].total - value.realPrice!;
     } else {
       if (attribute.required == 0) {
-       orderDetails.cart[productIndex].allAttributesID!.remove(value.id!);
+        orderDetails.cart[productIndex].allAttributesValuesID!
+            .remove(value.id!);
         if (attribute.overridePrice == 1) {
-         orderDetails.cart[productIndex].total =
-             orderDetails.cart[productIndex].total +orderDetails.cart[productIndex].price!;
+          orderDetails.cart[productIndex].total =
+              orderDetails.cart[productIndex].total +
+                  orderDetails.cart[productIndex].price!;
         }
-       orderDetails.cart[productIndex].total =orderDetails.cart[productIndex].total - value.realPrice!;
+        orderDetails.cart[productIndex].total =
+            orderDetails.cart[productIndex].total - value.realPrice!;
       }
     }
 
     getTotal();
   }
 
-
-  void minusController(int i) {
-    if (orderDetails.cart[i].count! > 1) {
-      double itemPrice =orderDetails.cart[i].total /orderDetails.cart[i].count! ;
-
-     orderDetails.cart[i].count = orderDetails.cart[i].count! - 1;
-     orderDetails.cart[i].total =orderDetails.cart[i].total - itemPrice ;
-
-      if (orderDetails.orderUpdatedId!=null) {
-       orderDetails.cart[i].updated = true;
-       orderDetails.cart[i].updatedQuantity =orderDetails.cart[i].updatedQuantity!-1;
-      }
-      getTotal();
-
-    }
-    notifyListeners();
-  }
-  void plusController(int i) {
-    double totalOptions = 0.0;
-    double totalAttributes = 0.0;
-   orderDetails.cart[i].extra!.forEach((element) {
-      totalOptions = totalOptions + element.price!;
-    });
-   orderDetails.cart[i].attributes!.forEach((element) {
-      element.values!.forEach((value2) {
-        if(orderDetails.cart[i].allAttributesID!.contains(value2.id)) {
-          totalAttributes = totalAttributes + value2.realPrice!;
-          if(element.overridePrice==1) {
-           orderDetails.cart[i].price = 0;
-          }
-
-        }
-      });
-
-    });
-
-
-   orderDetails.cart[i].count =orderDetails.cart[i].count! + 1;
-   orderDetails.cart[i].total = (orderDetails.cart[i].price! + totalOptions +
-       totalAttributes)*orderDetails.cart[i].count!;
-
-    if (orderDetails.orderUpdatedId!=null) {
-     orderDetails.cart[i].updated = true;
-     orderDetails.cart[i].updatedQuantity =orderDetails.cart[i].updatedQuantity!+1;
-    }
-    getTotal();
-    notifyListeners();
-
-  }
-  void textCountController(int i,int qty) {
-
-
-    if (orderDetails.orderUpdatedId!=null) {
-     orderDetails.cart[i].updated = true;
-     orderDetails.cart[i].updatedQuantity =  qty -orderDetails.cart[i].count!;
-    }
-
-   orderDetails.cart[i].count =qty;
-    // (cart[i].price! + totalOptions)
-   orderDetails.cart[i].total = orderDetails.cart[i].total *qty;
-    getTotal();
-  }
-  void removeOption(int i,int chosenCartItem){
-
-   orderDetails.cart[chosenCartItem].total =orderDetails.cart[chosenCartItem].total -
-        (orderDetails.cart[chosenCartItem].extra![i].price! *orderDetails.cart[chosenCartItem].count!) ;
-   orderDetails.cart[chosenCartItem].extra!.removeAt(i);
-    getTotal();
-    if (orderDetails.orderUpdatedId!=null) {
-     orderDetails.cart[chosenCartItem].updated = true;
-    }
-
-  }
+  // void removeOption(int i,int chosenCartItem){
+  //
+  //  orderDetails.cart[chosenCartItem].total =orderDetails.cart[chosenCartItem].total -
+  //       (orderDetails.cart[chosenCartItem].extra![i].price! *orderDetails.cart[chosenCartItem].count!) ;
+  //  orderDetails.cart[chosenCartItem].extra!.removeAt(i);
+  //   getTotal();
+  //   if (orderDetails.orderUpdatedId!=null) {
+  //    orderDetails.cart[chosenCartItem].updated = true;
+  //   }
+  //
+  // }
 
   OrderDetails editOrder(OrdersModel order) {
     orderDetails.orderUpdatedId = order.id;
-    orderDetails. total = order.total!;
+    orderDetails.total = order.total!;
     orderDetails.tax = orderDetails.total * getTax() / 100;
-   orderDetails.cart = [];
-    orderDetails.paid = order.paidAmount??0.0;
+    orderDetails.cart = [];
+    orderDetails.paid = order.paidAmount ?? 0.0;
     orderDetails.paymentStatus = order.paymentStatus;
     orderDetails.orderStatusID = order.orderStatusId;
-
+    print(order.toJson());
     order.details!.forEach((element) {
       List<NotesModel> notes = [];
       for (int i = 0; i < element.notes!.length; i++) {
@@ -330,8 +335,7 @@ class CartController extends ChangeNotifier {
             titleMix: element.notesMix![i]));
       }
 
-
-     orderDetails.cart.add(
+      orderDetails.cart.add(
         CartModel(
           id: element.productId,
           rowId: element.id,
@@ -347,55 +351,46 @@ class CartController extends ChangeNotifier {
           itemCode: element.itemCode,
           orderAttributes: element.attributes,
           attributes: [],
-          allAttributesID: [],
-          newInCart: false,
-
+          allAttributesValuesID: [],
         ),
       );
 
       element.attributes!.forEach((element2) {
-       orderDetails.cart.last.allAttributesID!.add(element2.id!);
-       orderDetails.cart.last.attributes!.add(
-            Attributes(
-                title: ProductTitle(
-                    en: element2.attribute!
-                ),
-                values: [AttributeItem(attributeValue: ProductTitle(en: element2.value),id: element2.id)]
-            )
-        );
+        orderDetails.cart.last.allAttributesValuesID!.add(element2.id!);
+        orderDetails.cart.last.attributes!.add(
+            Attributes(title: ProductTitle(en: element2.attribute!), values: [
+          AttributeItem(
+            attributeValue: ProductTitle(en: element2.value),
+            id: element2.id,
+          )
+        ]));
       });
     });
 
     orderDetails.clientName = order.clientName;
     orderDetails.clientPhone = order.clientPhone;
-    orderDetails.deliveryFee = order.deliveryFee ;
+    orderDetails.deliveryFee = order.deliveryFee;
     orderDetails.orderMethod = order.orderMethod;
     orderDetails.orderMethodId = order.orderMethodId;
     orderDetails.orderStatus = order.orderStatusId;
-    orderDetails.discount = order.discount ;
-    if(order.paymentCustomerId!=null) {
+    orderDetails.discount = order.discount;
+    if (order.paymentCustomerId != null) {
       orderDetails.customer = CustomerModel(
           title: order.paymentCustomer,
           id: order.paymentCustomerId,
           image: order.paymentCustomerImage,
-          chosen: true
-      );
+          chosen: true);
     }
     orderDetails.department = order.department;
-    orderDetails.orderMethodModel = OrderMethodModel(id: order.orderMethodId,
-        title: OrderMethodTitle(
-            en: orderDetails.orderMethod
-        ));
+    orderDetails.orderMethodModel = OrderMethodModel(
+        id: order.orderMethodId,
+        title: OrderMethodTitle(en: orderDetails.orderMethod));
     orderDetails.updateWithCoupon = order.discount != 0;
-    orderDetails.owner = OwnerModel(
-        id: order.ownerId,
-        chosen: true
-    );
+    orderDetails.owner = OwnerModel(id: order.ownerId, chosen: true);
     orderDetails.tableTitle = order.table;
     orderDetails.payMethods = order.paymentMethods!;
-    if(orderDetails.payMethods.isNotEmpty)
-    orderDetails.paymentId = orderDetails.payMethods[0].id;
-
+    if (orderDetails.payMethods.isNotEmpty)
+      orderDetails.paymentId = orderDetails.payMethods[0].id;
 
     // if(order.paymentMethods!=null) {
     //   orderDetails.payment1 =
@@ -416,16 +411,17 @@ class CartController extends ChangeNotifier {
     return orderDetails;
   }
 
+  OrderDetails editOrderTable(
+      {required CurrentOrder order,
+      required Tables table,
+      required Department department}) {
+    orderDetails.orderUpdatedId = order.id;
+    orderDetails.total = order.total!;
+    orderDetails.tax = order.total! * getTax() / 100;
+    // orderDetails.amount1 = 0.0;
+    // orderDetails.amount2 = 0.0;
 
-  void editOrderTable(Department department , int tableIndex) {
-    orderDetails.orderUpdatedId = department.tables![tableIndex].currentOrder!.id;
-    orderDetails.total = department.tables![tableIndex].currentOrder!.total!;
-    orderDetails. tax = orderDetails.total * double.parse(LocalStorage.getData(key: 'tax').toString()) / 100;
-    orderDetails.amount1 = 0.0;
-    orderDetails.amount2 = 0.0;
-   orderDetails.cart = [];
-    orderDetails.paid = 0.0;
-    department.tables![tableIndex].currentOrder!.details!.forEach((element) {
+    order.details!.forEach((element) {
       List<NotesModel> notes = [];
       for (int i = 0; i < element.notes!.length; i++) {
         notes.add(NotesModel(
@@ -435,8 +431,7 @@ class CartController extends ChangeNotifier {
             titleMix: element.notes![i].title));
       }
 
-
-     orderDetails.cart.add(
+      orderDetails.cart.add(
         CartModel(
             id: element.productId,
             rowId: element.id,
@@ -451,48 +446,44 @@ class CartController extends ChangeNotifier {
             itemName: element.itemName,
             itemCode: element.itemCode,
             attributes: [],
-            allAttributesID: [],
-            newInCart: false
-        ),
+            allAttributesValuesID: [],
+            ),
       );
 
       element.attributes!.forEach((element2) {
-       orderDetails.cart.last.allAttributesID!.add(element2.attributeValue!.id!);
-       orderDetails.cart.last.attributes!.add(
-            Attributes(
-                title: ProductTitle(
-                    en: element2.attribute!.title!.en!
-                ),
-                values: [AttributeItem(attributeValue: ProductTitle(en: element2.attributeValue!
-                    .attributeValueTitle!.en!),
-                    id: element2.attributeValue!.id)]
-            )
-        );
+        orderDetails.cart.last.allAttributesValuesID!
+            .add(element2.attributeValue!.id!);
+        orderDetails.cart.last.attributes!.add(Attributes(
+            title: ProductTitle(en: element2.attribute!.title!.en!),
+            values: [
+              AttributeItem(
+                  attributeValue: ProductTitle(
+                      en: element2.attributeValue!.attributeValueTitle!.en!),
+                  id: element2.attributeValue!.id)
+            ]));
       });
     });
-
     orderDetails.orderMethod = 'restaurant';
     orderDetails.orderMethodId = 2;
-    orderDetails.orderStatus = department.tables![tableIndex].currentOrder!.orderStatusId;
-
-    orderDetails.tableTitle = department.tables![tableIndex].title!.toString();
-    department = department;
-    orderDetails.orderMethodModel = OrderMethodModel(id: 2,
-        title: OrderMethodTitle(
-            en: 'restaurant'.tr()
-        ));
+    orderDetails.orderStatus = order.orderStatusId;
+    orderDetails.tableTitle = table.title;
+    orderDetails.tableId = table.id;
+    orderDetails.department = department.title;
+    orderDetails.departmentId = department.id;
+    orderDetails.orderMethodModel =
+        OrderMethodModel(id: 2, title: OrderMethodTitle(en: 'restaurant'.tr()));
     orderDetails.updateWithCoupon = false;
-    department = department;
+    notifyListeners();
+    return orderDetails;
   }
 
-
-   emptyCardList(){
-    orderDetails = OrderDetails(cart: [],payMethods: []);
+  emptyCardList() {
+    orderDetails = OrderDetails(cart: [], payMethods: []);
     notifyListeners();
-   }
+  }
 
-   void removeCartItem({required int index}) {
-    if(orderDetails.cart.length > 1 ) {
+  void removeCartItem({required int index}) {
+    if (orderDetails.cart.length > 1) {
       if (orderDetails.orderUpdatedId != null &&
           orderDetails.cart[index].rowId != null) {
         deleteFromOrder(orderDetails.cart[index].rowId!);
@@ -503,47 +494,46 @@ class CartController extends ChangeNotifier {
       getTotal();
     }
     notifyListeners();
-   }
+  }
 
-
-   Future deleteFromOrder(int itemId) async {
+  Future deleteFromOrder(int itemId) async {
     try {
       var data = await productsRepo.deleteFromOrder(itemId);
-    }
-    catch(e){
+    } catch (e) {
       ConstantStyles.displayToastMessage(e.toString(), true);
     }
-     notifyListeners();
-   }
+    notifyListeners();
+  }
 
-  void insertCart(ProductModel product){
-       // orderDetails.insertIntoCart(product);
-       orderDetails.departmentId = product.departmentId;
-       orderDetails.cart.add(
-           CartModel(
-           id: product.id!,
-           price: orderDetails.customer==null? product.price!: product.customerPrice!,
-           title: product.titleMix,
-           mainName: product.title!.en,
-           extra: [],
-           count: 1,
-           total: orderDetails.customer==null? product.price!: product.customerPrice!,
-           updated: orderDetails.orderUpdatedId!=null,
-           itemName: product.itemName,
-           itemCode: product.itemCode,
-           allAttributesID: [],
-           attributes: [],
-           newInCart: true
-       ));
+  void insertCart(ProductModel product) {
+    // orderDetails.insertIntoCart(product);
+    orderDetails.departmentId = product.departmentId;
+    orderDetails.cart.add(CartModel(
+        id: product.id!,
+        price: orderDetails.customer == null
+            ? product.price!
+            : product.customerPrice!,
+        title: product.titleMix,
+        mainName: product.title!.en,
+        extra: [],
+        count: 1,
+        total: orderDetails.customer == null
+            ? product.price!
+            : product.customerPrice!,
+        updated: orderDetails.orderUpdatedId != null,
+        itemName: product.itemName,
+        itemCode: product.itemCode,
+        allAttributesValuesID: [],
+        attributes: [],));
 
-       getTotal();
-       // getProductDetails(int.parse(products[i].id!));
-       notifyListeners();
-   }
+    getTotal();
+    // getProductDetails(int.parse(products[i].id!));
+    notifyListeners();
+  }
 
-  void insertOption({required int indexOfProduct, required NotesModel note}){
-    List notesID= [];
-    if(orderDetails.orderUpdatedId!=null){
+  void insertOption({required int indexOfProduct, required NotesModel note}) {
+    List notesID = [];
+    if (orderDetails.orderUpdatedId != null) {
       orderDetails.cart[indexOfProduct].updated = true;
     }
     orderDetails.cart[indexOfProduct].extra!.forEach((element) {
@@ -553,94 +543,115 @@ class CartController extends ChangeNotifier {
     if (!notesID.contains(note.id!)) {
       orderDetails.cart[indexOfProduct].extra!.add(note);
       orderDetails.cart[indexOfProduct].total =
-          orderDetails.cart[indexOfProduct].total + note.price! * orderDetails.cart[indexOfProduct].count!;
-
+          orderDetails.cart[indexOfProduct].total +
+              note.price! * orderDetails.cart[indexOfProduct].count!;
     }
     getTotal();
     notifyListeners();
   }
 
-
-  addAnotherOption({ int ?index, required String anotherOption, required bool itemWidget}){
-
-    if(itemWidget)
-    {
+  addAnotherOption(
+      {int? index, required String anotherOption, required bool itemWidget}) {
+    if (itemWidget) {
       orderDetails.cart[index!].extraNotes = anotherOption;
-      orderDetails.cart[index].updated=true;
-    }
-
-    else {
+      orderDetails.cart[index].updated = true;
+    } else {
       orderDetails.cart.last.extraNotes = anotherOption;
       orderDetails.cart.last.updated = true;
     }
     notifyListeners();
   }
 
+  void itemCount({
+    required int index,
+    required int value,
+  }) {
+    if (orderDetails.orderUpdatedId != null) {
+      orderDetails.cart[index].updated = true;
+      orderDetails.cart[index].updatedQuantity =
+          value - orderDetails.cart[index].count!;
+    }
+    orderDetails.cart[index].count = value;
+    orderDetails.cart[index].total = orderDetails.cart[index].total * value;
+    getTotal();
 
-
-void itemCount({required int index ,required int value,}){
-
-  if (orderDetails.orderUpdatedId!=null) {
-    orderDetails.cart[index].updated = true;
-    orderDetails.cart[index].updatedQuantity =  value - orderDetails.cart[index].count!;
+    notifyListeners();
   }
-  orderDetails.cart[index].count = value;
-  orderDetails.cart[index].total = orderDetails.cart[index].total * value;
-  getTotal();
 
-  notifyListeners();
-}
-
-  bool inList({ required Attributes attribute , required int productIndex}){
+  bool inList({required Attributes attribute, required int productIndex}) {
     bool x = false;
     attribute.values!.forEach((element) {
-      if(orderDetails.cart[productIndex].allAttributesID!.contains(element.id))
-        x = true;
+      if (orderDetails.cart[productIndex].allAttributesValuesID!
+          .contains(element.id)) x = true;
     });
     return x;
   }
 
-
   void editAttributes(
-      {required Attributes attribute, required AttributeItem attributeValue,
-        required int attributeIndex ,required int productIndex}){
+      {required Attributes attribute,
+      required AttributeItem attributeValue,
+      required int attributeIndex,
+      required int productIndex}) {
+    if (!attributeValue.chosen!) {
+      addAttributes(attribute, productIndex, attributeValue);
+    } else if (attributeValue.chosen!) {
+      removeAttributes(attribute, productIndex, attributeValue, attributeIndex);
+    }
+    notifyListeners();
+  }
 
-
-if(!attributeValue.chosen!) {
-
-addAttributes(attribute, productIndex, attributeValue);
-}
-
-else if(attributeValue.chosen!){
-removeAttributes(attribute, productIndex, attributeValue ,attributeIndex);
-}
-notifyListeners();
-}
-
- Future onSearchClientTextChanged(String text) async {
+  Future onSearchClientTextChanged(String text) async {
     try {
       clientsLoading = true;
       final data = await productsRepo.searchClient(text);
       clients = List<ClientModel>.from(
           data['data'].map((client) => ClientModel.fromJson(client)));
       clientsLoading = false;
-    }
-    catch(e){
+    } catch (e) {
       ConstantStyles.displayToastMessage(e.toString(), true);
     }
     // notifyListeners();
     return clients;
   }
 
-
-
-chooseClient({required String name ,required String phone}){
-      orderDetails.clientPhone = phone;
-      orderDetails.clientName = name;
+  Future onSearchClientLocally(String text) async {
+    clientsFiltered = [];
+    if (text.isNotEmpty) {
+      clientsFiltered.addAll(clients
+          .where((element) => element.name!.toLowerCase().contains(text))
+          .toList());
+      clientsFiltered.addAll(clients
+          .where((element) => element.phone!.toLowerCase().contains(text))
+          .toList());
+    } else
+      clientsFiltered = clients;
 
     notifyListeners();
   }
 
+  Future getAllClients() async {
+    if (clients.isEmpty) {
+      try {
+        clientsLoading = true;
+        final data = await productsRepo.searchClient('');
+        clients = List<ClientModel>.from(
+            data['data'].map((client) => ClientModel.fromJson(client)));
+
+        clientsLoading = false;
+      } catch (e) {
+        ConstantStyles.displayToastMessage(e.toString(), true);
+      }
+    }
+    clientsFiltered = clients;
+    notifyListeners();
+  }
+
+  chooseClient({required String name, required String phone}) {
+    orderDetails.clientPhone = phone;
+    orderDetails.clientName = name;
+
+    notifyListeners();
+  }
 
   // void getCoupons() async {
   //   coupons = List<CouponModel>.from(json
@@ -649,13 +660,11 @@ chooseClient({required String name ,required String phone}){
   //   notifyListeners();
   // }
 
-
   void checkCoupon(String code) {
-    coupons = List<CouponModel>.from(json
-        .decode(getCouponsPrefs())
-        .map((e) => CouponModel.fromJson(e)));
+    coupons = List<CouponModel>.from(
+        json.decode(getCouponsPrefs()).map((e) => CouponModel.fromJson(e)));
 
-    CouponModel ?couponUse ;
+    CouponModel? couponUse;
     bool inBranch = false;
     bool valid = true;
     coupons.forEach((element) {
@@ -664,38 +673,34 @@ chooseClient({required String name ,required String phone}){
       }
     });
 
-    if (couponUse== null) {
+    if (couponUse == null) {
       ConstantStyles.displayToastMessage('couponNotFound'.tr(), true);
       valid = false;
-    }
-    else if (couponUse!.branches!= null){
+    } else if (couponUse!.branches != null) {
       couponUse!.branches!.forEach((element) {
-        if (element.id == getBranch())
-          inBranch = true;
+        if (element.id == getBranch()) inBranch = true;
       });
-    }
-    else if (couponUse!.isActive == 0) {
+    } else if (couponUse!.isActive == 0) {
       ConstantStyles.displayToastMessage('couponNotValid'.tr(), true);
       valid = false;
-    }
-    else if (couponUse!.counter! >= couponUse!.numOfUses!) {
+    } else if (couponUse!.counter! >= couponUse!.numOfUses!) {
       ConstantStyles.displayToastMessage('couponHasEnded'.tr(), true);
       valid = false;
-    }
-    else if (!inBranch) {
-      ConstantStyles.displayToastMessage('couponNotAvailableForThisBranch'.tr(), true);
+    } else if (!inBranch) {
+      ConstantStyles.displayToastMessage(
+          'couponNotAvailableForThisBranch'.tr(), true);
       valid = false;
     }
-     if (couponUse!= null && couponUse!.dateFrom != null) {
-
-      if (DateTime.parse('${couponUse!.dateFrom} ${couponUse!.timeFrom??'00:00'}')
+    if (couponUse != null && couponUse!.dateFrom != null) {
+      if (DateTime.parse(
+              '${couponUse!.dateFrom} ${couponUse!.timeFrom ?? '00:00'}')
           .isAfter(DateTime.now())) {
-        ConstantStyles.displayToastMessage('couponStillNotAvailable'.tr(), true);
+        ConstantStyles.displayToastMessage(
+            'couponStillNotAvailable'.tr(), true);
         valid = false;
       }
-    }
-   else if (couponUse!= null && couponUse!.dateTo != null ) {
-      if (DateTime.parse('${couponUse!.dateTo} ${couponUse!.timeTo??'23:59'}')
+    } else if (couponUse != null && couponUse!.dateTo != null) {
+      if (DateTime.parse('${couponUse!.dateTo} ${couponUse!.timeTo ?? '23:59'}')
           .isBefore(DateTime.now())) {
         ConstantStyles.displayToastMessage('couponHasEnded'.tr(), true);
         valid = false;
@@ -705,39 +710,36 @@ chooseClient({required String name ,required String phone}){
       ConstantStyles.displayToastMessage('couponAdded'.tr(), false);
       if (couponUse!.type == 1) {
         orderDetails.discountValue = couponUse!.value!;
-        String discount = (getTotal() - couponUse!.value! - orderDetails.deliveryFee)
-            .toStringAsFixed(2);
+        String discount =
+            (getTotal() - couponUse!.value! - orderDetails.deliveryFee)
+                .toStringAsFixed(2);
         orderDetails.discount = double.parse(discount);
         orderDetails.coupon = code;
         // orderDetails.setDiscount(false, couponUse.value!);
       } else {
         orderDetails.discountValue = couponUse!.value!;
-        String discount = (couponUse!.value! * 0.01 * (getTotal()
-            - orderDetails.deliveryFee)).toStringAsFixed(2);
+        String discount =
+            (couponUse!.value! * 0.01 * (getTotal() - orderDetails.deliveryFee))
+                .toStringAsFixed(2);
         orderDetails.discount = double.parse(discount);
-
       }
     }
   }
 
-  void setPayment(PaymentModel paymentMethod, String total){
+  void setPayment(PaymentModel paymentMethod, String total) {
     print(total);
     orderDetails.payMethods.add(OrderPaymentMethods(
-      id: paymentMethod.id,
-      value: total,
-      title: paymentMethod.title!.en
-    ));
+        id: paymentMethod.id, value: total, title: paymentMethod.title!.en));
     orderDetails.paid = orderDetails.paid + double.parse(total);
     orderDetails.remaining = orderDetails.paid - orderDetails.total;
-    print( orderDetails.paid );
-      // notifyListeners();
+    print(orderDetails.paid);
+    // notifyListeners();
     // orderDetails.payMethods.last.value = paymentAmount.toString();
     // orderDetails.paid = double.parse(paymentAmount);
   }
 
-  void removePayment({ PaymentModel? paymentModel,required bool clear}){
-    if(!clear)
-    {
+  void removePayment({PaymentModel? paymentModel, required bool clear}) {
+    if (!clear) {
       int? index;
       orderDetails.payMethods.asMap().forEach((i, element) {
         if (element.id == paymentModel!.id) index = i;
@@ -746,27 +748,20 @@ chooseClient({required String name ,required String phone}){
           double.parse(orderDetails.payMethods[index!].value!);
       orderDetails.remaining = orderDetails.paid - orderDetails.total;
       orderDetails.payMethods.removeAt(index!);
-    }
-  else{
+    } else {
       orderDetails.payMethods.clear();
       orderDetails.paid = 0;
-      orderDetails.remaining = orderDetails.total;
+      orderDetails.remaining = -orderDetails.total;
     }
   }
 
-  closeOrder(){
-    orderDetails = OrderDetails(cart: [],payMethods: []);
+  closeOrder() {
+    orderDetails = OrderDetails(cart: [], payMethods: []);
   }
 
-  setOrderMethod(OrderMethodModel orderMethod){
-    orderDetails.orderMethod  = orderMethod.title!.en;
-    orderDetails.orderMethodId  = orderMethod.id;
+  setOrderMethod(OrderMethodModel orderMethod) {
+    orderDetails.orderMethod = orderMethod.title!.en;
+    orderDetails.orderMethodId = orderMethod.id;
     notifyListeners();
   }
-
-
-
-
-
-
 }

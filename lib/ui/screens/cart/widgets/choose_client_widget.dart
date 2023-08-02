@@ -1,15 +1,15 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shormeh_pos_new_28_11_2022/constants/styles.dart';
 import 'package:shormeh_pos_new_28_11_2022/models/client_model.dart';
+import 'package:shormeh_pos_new_28_11_2022/ui/widgets/custom_button.dart';
+import 'package:shormeh_pos_new_28_11_2022/ui/widgets/custom_progress_indicator.dart';
+import 'package:shormeh_pos_new_28_11_2022/ui/widgets/custom_text_field.dart';
 import '../../../../constants/colors.dart';
 import '../../../../data_controller/cart_controller.dart';
 
 class ChooseClientWidget extends ConsumerWidget {
-  const ChooseClientWidget({
-    Key? key,
-  }) : super(key: key);
-
   @override
   Widget build(BuildContext context, ref) {
     final cartController = ref.watch(cartFuture);
@@ -17,41 +17,69 @@ class ChooseClientWidget extends ConsumerWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-
-
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
-          child: Container(
-            height: size.height * 0.07,
-            decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(color: Colors.black12, width: 1.2),
-                borderRadius: BorderRadius.circular(10)),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: TextField(
-                // controller: viewModel.customerPhone,
-                decoration: InputDecoration(
-                  contentPadding: EdgeInsets.all(10),
-                  label: Text(
-                    'searchHere'.tr(),
-                    style: TextStyle(
-                      fontSize: size.height * 0.02,
-                      color: Colors.black45,
-                    ),
-                  ),
-                  border: InputBorder.none,
-                  icon: Icon(
-                    Icons.search,
-                    color: Colors.black45,
-                  ),
+        Row(
+          children: [
+            Expanded(
+              child: CustomTextField(
+                controller: TextEditingController(),
+                label: 'searchHere'.tr(),
+                suffixIcon: Icon(
+                  Icons.search,
+                  color: Colors.black45,
                 ),
-                onChanged: (text) {
-                  cartController.onSearchClientTextChanged(text);
+                onChange: (text) {
+                  cartController.onSearchClientLocally(text!);
                 },
               ),
             ),
-          ),
+            SizedBox(
+              width: 20,
+            ),
+            CustomButton(
+                height: size.height * 0.06,
+                title: 'addNew'.tr(),
+                onTap: () {
+                  ConstantStyles.showPopup(
+                    context: context,
+                    height: size.height*0.4,
+                    content: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        CustomTextField(
+                          controller: TextEditingController(),
+                          label: 'name'.tr(),
+                          suffixIcon: Icon(
+                            Icons.person,
+                            color: Colors.black45,
+                          ),
+                          onChange: (text) {
+                            cartController.orderDetails.clientName = text;
+                          },
+                        ),
+                        CustomTextField(
+                          controller: TextEditingController(),
+                          label: 'phone'.tr(),
+                           numerical:true,
+                          suffixIcon: Icon(
+                            Icons.phone,
+                            color: Colors.black45,
+                          ),
+                          onChange: (text) {
+                            cartController.onSearchClientLocally(text!);
+                          },
+                        ),
+                        CustomButton(
+                            title: 'save'.tr(),
+                            onTap: () {
+                              Navigator.pop(context);
+                              Navigator.pop(context);
+                            })
+                      ],
+                    ),
+                    title: 'addNew'.tr(),
+                  );
+                })
+          ],
         ),
 
         SizedBox(
@@ -111,12 +139,13 @@ class ChooseClientWidget extends ConsumerWidget {
                   color: Constants.mainColor,
                 ))
               : ListView.separated(
-                  itemCount: cartController.clients.length,
+                  itemCount: cartController.clientsFiltered.length,
                   itemBuilder: (context, i) {
-                    ClientModel client = cartController.clients[i];
+                    ClientModel client = cartController.clientsFiltered[i];
                     return InkWell(
                       onTap: () {
-                        cartController.chooseClient(name: client.name! , phone: client.phone! );
+                        cartController.chooseClient(
+                            name: client.name!, phone: client.phone!);
                         Navigator.pop(context);
                       },
                       child: Container(
@@ -127,7 +156,7 @@ class ChooseClientWidget extends ConsumerWidget {
                             SizedBox(
                               width: 30,
                             ),
-                            if (client.allowCreateOrder)
+                            if (!client.allowCreateOrder)
                               const Icon(
                                 Icons.block,
                                 color: Colors.red,

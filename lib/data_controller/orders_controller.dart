@@ -33,6 +33,7 @@ class OrdersController extends ChangeNotifier {
   List<ComplainReasons> reasons = [];
   List<CustomerModel> paymentCustomer = [];
   List<OwnerModel> owners = [];
+
   bool loading = false;
   bool isVisible = true;
   StreamController<String> _eventData = StreamController<String>.broadcast();
@@ -84,6 +85,8 @@ class OrdersController extends ChangeNotifier {
     notifyListeners();
   }
 
+
+
   Future getOrders(
       {required int page,
       required bool mobileOrders,
@@ -97,10 +100,13 @@ class OrdersController extends ChangeNotifier {
       int? ownerId,
       bool? paid,
       bool? notPaid}) async {
+    print(page);
+    print(client);
+    if (page == 1) {
+      switchLoading(true);
+      orders= [];
 
-    if (page == 1) switchLoading(true);
-
-    if(filter) orders.clear();
+    }
 
     var data = await repo.getOrders(page,
         mobileOrders: mobileOrders,
@@ -114,6 +120,7 @@ class OrdersController extends ChangeNotifier {
     if (!data['status']) {
       ConstantStyles.displayToastMessage(data['msg'], true);
     } else {
+
       if (page <= data['data']['meta']['last_page']) {
         List list = List<OrdersModel>.from(
             data['data']['data'].map((order) => OrdersModel.fromJson(order)));

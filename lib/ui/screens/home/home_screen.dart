@@ -1,7 +1,6 @@
 import 'package:easy_localization/src/public_ext.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lottie/lottie.dart';
 import 'package:shormeh_pos_new_28_11_2022/constants/colors.dart';
 import 'package:shormeh_pos_new_28_11_2022/data_controller/home_controller.dart';
 import 'package:shormeh_pos_new_28_11_2022/ui/screens/home/widgets/branch_close_widget.dart';
@@ -9,8 +8,6 @@ import 'package:shormeh_pos_new_28_11_2022/ui/screens/home/widgets/category_item
 import 'package:shormeh_pos_new_28_11_2022/ui/screens/home/widgets/product_item.dart';
 import 'package:shormeh_pos_new_28_11_2022/ui/screens/home/widgets/single_item.dart';
 import 'package:shormeh_pos_new_28_11_2022/ui/screens/home/widgets/upper_row.dart';
-import 'package:shormeh_pos_new_28_11_2022/ui/widgets/custom_progress_indicator.dart';
-
 import '../../../constants/styles.dart';
 import '../../../data_controller/cart_controller.dart';
 import '../../widgets/custom_text_field.dart';
@@ -165,7 +162,8 @@ class NewHomeState extends ConsumerState<Home> {
                                                               if(element.required == 1) {
                                                                 cartController.addAttributes(element,
                                                                     cartController.orderDetails.cart.length - 1,
-                                                                    element.values![0]);
+                                                                    element.values![0],
+                                                                );
                                                               }
                                                             });
 
@@ -173,8 +171,8 @@ class NewHomeState extends ConsumerState<Home> {
                                                                 .showPopup(
                                                                     context:
                                                                         context,
-                                                                    height: size.height*0.9,
-                                                                    width: size.width*0.8,
+                                                                    height: size.height*0.8,
+                                                                    width: size.width*0.65,
                                                                     content: SingleItem(
                                                                       index: cartController
                                                                               .orderDetails

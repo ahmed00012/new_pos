@@ -129,7 +129,7 @@ final VoidCallback onTapTables;
                             Container(
                               width: size.width * 0.08,
                               child: Text(
-                                clientName ??    'customer'.tr(),
+                                clientName ?? 'customer'.tr(),
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                     color: Constants.mainColor,

@@ -1,3 +1,5 @@
+import 'package:shormeh_pos_new_28_11_2022/constants/prefs_utils.dart';
+
 import '../local_storage.dart';
 
 class CategoriesModel {
@@ -52,7 +54,7 @@ class Title {
   Title({this.en, this.ar});
 
   Title.fromJson(Map<String, dynamic> json) {
-    en = LocalStorage.getData(key: 'language')=='en'? json['en']:json['ar'];
+    en = getLanguage()=='en'? json['en']:json['ar'];
     ar = json['ar'];
   }
 

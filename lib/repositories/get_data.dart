@@ -159,7 +159,8 @@ class GetData {
   }
 
   Future getCategories() async {
-    // try {
+    try {
+
       String categoriesPrefs = getAllCategoriesPrefs();
       List<String> categoriesId = getCategoriesIdPrefs();
       var response = await http.get(Uri.parse(ApiEndPoints.GetCategories),
@@ -173,16 +174,18 @@ class GetData {
           });
           setCategoriesIdPrefs(categoriesId);
           setAllCategoriesPrefs(json.encode(data['data']));
-          return data;
+          return data['data'];
         } else if (response.statusCode == 403) {
           return 'branchClosed';
         } else {
           return data;
         }
       }
-    // } catch (e) {
-    //   return e.toString();
-    // }
+      else return true;
+
+    } catch (e) {
+      return e.toString();
+    }
   }
 
   Future getProducts(int id) async {

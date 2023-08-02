@@ -1,28 +1,18 @@
 import 'dart:convert';
 
-import 'dart:io';
 import 'dart:math';
-import 'dart:typed_data';
-import 'package:easy_localization/src/public_ext.dart';
-import 'package:enough_convert/enough_convert.dart';
-import 'package:esc_pos_printer/esc_pos_printer.dart';
-import 'package:esc_pos_utils/esc_pos_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:image/image.dart' as img;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shormeh_pos_new_28_11_2022/constants/printing_services/printing_service.dart';
 import 'package:shormeh_pos_new_28_11_2022/constants/styles.dart';
 import 'package:shormeh_pos_new_28_11_2022/constants/prefs_utils.dart';
-import 'package:shormeh_pos_new_28_11_2022/local_storage.dart';
 import 'package:shormeh_pos_new_28_11_2022/models/cart_model.dart';
-import 'package:shormeh_pos_new_28_11_2022/models/coupon_model.dart';
 import 'package:shormeh_pos_new_28_11_2022/models/orders_model.dart';
 import 'package:shormeh_pos_new_28_11_2022/models/owner_model.dart';
 import 'package:shormeh_pos_new_28_11_2022/models/payment_model.dart';
 import 'package:shormeh_pos_new_28_11_2022/repositories/new_order_repository.dart';
-import '../constants/constant_keys.dart';
 import '../models/integration_model.dart';
-import '../models/printers_model.dart';
+import '../ui/screens/reciept/widgets/products_table.dart';
 
 
 final newOrderFuture = ChangeNotifierProvider.autoDispose<NewOrderController>(
@@ -31,29 +21,30 @@ final newOrderFuture = ChangeNotifierProvider.autoDispose<NewOrderController>(
 class NewOrderController extends ChangeNotifier {
   NewOrderRepository repo = NewOrderRepository();
   List<PaymentModel> paymentMethods = [];
-  List<PaymentModel> paymentCustomers = [];
   List<OwnerModel> owners = [];
-  List<CouponModel> coupons = [];
   bool loading = false;
-  bool selectCustomerChosen = false;
 
-  TextEditingController coupon = TextEditingController();
-  List<PrinterModel> printers = [];
+
   int? collapseKey;
   double? predict1;
   double? predict2;
   double? predict3;
   double? predict4;
-  // img.Image? productsScreenshot;
-  // Uint8List? productsImage;
-  double remaining = 0.0;
+
+
 
 
   NewOrderController() {
     getPaymentMethods();
-    collapse();
     getOwners();
-    getPrinters();
+    collapse();
+
+    // getPrinters();
+  }
+
+  void switchLoading(bool load) {
+    loading = load;
+    notifyListeners();
   }
 
   // testToken()async{
@@ -86,32 +77,24 @@ class NewOrderController extends ChangeNotifier {
     notifyListeners();
   }
 
-  // void getCoupons() async {
-  //     coupons = List<CouponModel>.from(json
-  //         .decode(getCouponsPrefs())
-  //         .map((e) => CouponModel.fromJson(e)));
+  // Future getPrinters() async {
+  //   List<PrinterModel> sortPrinters = [];
+  //   sortPrinters = List<PrinterModel>.from(
+  //       json.decode(getPrintersPrefs()).map((e) => PrinterModel.fromJson(e)));
+  //
+  //   sortPrinters.forEach((element) {
+  //     if (element.typeName != 'CASHIER') {
+  //       printers.add(element);
+  //     }
+  //   });
+  //   sortPrinters.forEach((element) {
+  //     if (element.typeName == 'CASHIER') {
+  //       printers.add(element);
+  //     }
+  //   });
   //
   //   notifyListeners();
   // }
-
-  Future getPrinters() async {
-    List<PrinterModel> sortPrinters = [];
-    sortPrinters = List<PrinterModel>.from(
-        json.decode(getPrintersPrefs()).map((e) => PrinterModel.fromJson(e)));
-
-    sortPrinters.forEach((element) {
-      if (element.typeName != 'CASHIER') {
-        printers.add(element);
-      }
-    });
-    sortPrinters.forEach((element) {
-      if (element.typeName == 'CASHIER') {
-        printers.add(element);
-      }
-    });
-
-    notifyListeners();
-  }
 
   void selectOwner(OrderDetails order ,OwnerModel owner) {
     owners.forEach((element) {
@@ -190,35 +173,15 @@ class NewOrderController extends ChangeNotifier {
     notifyListeners();
   }
 
-  // double totalFromAmount() {
-  //
-  //   remaining =
-  //       currentOrder!.getTotalAmount() -  currentOrder!.getTotal();
-  //
-  //   return remaining;
-  // }
 
-  void switchLoading(bool load) {
-    loading = load;
-    notifyListeners();
-  }
 
-  // void closeOrder() {
-  //   coupon.text = '';
-  //   currentOrder = OrderDetails();
-  //   paymentMethods.forEach((element) {
-  //     element.chosen = false;
-  //   });
-  //   switchLoading(false);
-  //   chosenOwner = null;
-  //   notifyListeners();
-  // }
+
 
   countingIntegration(OrderDetails orderDetails, dynamic orderResponse) {
+
     IntegrationModel integrationModel = IntegrationModel(orderDetail: []);
     orderDetails.cart.asMap().forEach((i, element) {
       OrderDetail countingIntegrationBody = OrderDetail(
-          postingDate: DateTime.now().toString(),
           quantity: element.count.toString(),
           description: element.itemName.toString(),
           tax: (element.total * getTax() / 100).toString(),
@@ -226,7 +189,6 @@ class NewOrderController extends ChangeNotifier {
           amount: element.total.toString(),
           paymentType: '',
           itemNo: element.itemCode,
-          locationCode: getBranchCode(),
           type: 'Sale',
           unitOfMeasure: 'PCS',
           lineNo: orderResponse['id'].toString() + i.toString(),
@@ -237,7 +199,6 @@ class NewOrderController extends ChangeNotifier {
 
     orderDetails.payMethods.asMap().forEach((i, element) {
       integrationModel.orderDetail!.add(OrderDetail(
-          postingDate: DateTime.now().toString(),
           quantity: '1',
           description: '',
           tax: orderDetails.tax.toString(),
@@ -245,7 +206,6 @@ class NewOrderController extends ChangeNotifier {
           amount: element.value,
           paymentType: element.title,
           itemNo: '',
-          locationCode: getBranchCode(),
           type: 'Payment',
           unitOfMeasure: '',
           lineNo: '${orderResponse['id']}${i * 10}',
@@ -257,8 +217,9 @@ class NewOrderController extends ChangeNotifier {
   }
 
   Future confirmOrder({required OrderDetails orderDetails}) async {
+    String? orderNo;
     if(orderDetails.orderUpdatedId != null){
-      updateOrder(orderDetails);
+    orderNo =   await updateOrder(orderDetails);
     }
     else {
       switchLoading(true);
@@ -272,13 +233,12 @@ class NewOrderController extends ChangeNotifier {
             quantity: element.count,
             note: element.extraNotes,
             notes: element.extra!.map((e) => e.id!).toList(),
-            attributes: element.allAttributesID));
+            attributes: element.allAttributesValuesID));
       });
       orderDetails.finalOrder = details;
       var responseValue = await repo.confirmOrder(orderDetails.toJson());
+
       if (responseValue['status']) {
-        PrintingService.printInvoice(
-            order: orderDetails, orderNo: responseValue['data']['uuid']);
         if (getBranchCode().isNotEmpty) {
           countingIntegration(
             orderDetails,
@@ -286,11 +246,13 @@ class NewOrderController extends ChangeNotifier {
           );
         }
         ConstantStyles.displayToastMessage(responseValue['msg'], false);
+
+        orderNo = responseValue['data']['uuid'];
       } else {
         ConstantStyles.displayToastMessage('${responseValue['msg']}', true);
       }
       switchLoading(false);
-      return responseValue['status'];
+      return orderNo;
     }
   }
 
@@ -304,23 +266,27 @@ class NewOrderController extends ChangeNotifier {
       if(element.updated) {
         details.add(Order(
             productId: element.id,
+            rowId: element.rowId,
             quantity: element.count,
             note: element.extraNotes,
             notes: element.extra!.map((e) => e.id!).toList(),
-            attributes: element.allAttributesID));
+            attributes: element.allAttributesValuesID));
       }
     });
+
+    orderDetails.finalOrder = details;
+
     var responseValue = await repo.updateFromOrder(
         orderDetails.orderUpdatedId!, orderDetails.toJson());
     if (responseValue['status']) {
-      PrintingService.printInvoice(order: orderDetails,orderNo: responseValue['data']['uuid']);
-        if (getBranchCode().isNotEmpty) {
+      if (getBranchCode().isNotEmpty) {
           countingIntegration(
             orderDetails,
             responseValue['data'],
           );
         }
         ConstantStyles.displayToastMessage(responseValue['msg'], false);
+        return responseValue['data']['uuid'];
 
     } else {
       ConstantStyles.displayToastMessage('${responseValue['msg']}', true);

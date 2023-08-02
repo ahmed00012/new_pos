@@ -74,8 +74,8 @@ class TablesDialog extends ConsumerWidget {
                               //     count: value,
                               //     table: tablesController
                               //         .departments[index].tables![i]);
-                                  cartController.orderDetails.table = tablesController.departments[index].
-                                  tables![i].id.toString();
+                                  cartController.orderDetails.tableId = tablesController.departments[index].
+                                  tables![i].id;
                                   cartController.orderDetails.tableTitle =  tablesController.departments[index].
                                   tables![i].title;
                                   cartController.orderDetails.department = tablesController.departments[index].title;
@@ -87,12 +87,12 @@ class TablesDialog extends ConsumerWidget {
 
                         }
                         else if(tablesController.departments[index].tables![i].currentOrder!=null){
-                          tablesController.displayToastMessage('Table Busy', true);
+                          ConstantStyles.displayToastMessage('Table Busy', true);
                         }
 
                         else{
 
-                          tablesController.displayToastMessage('No order found', true);
+                          ConstantStyles.displayToastMessage('No order found', true);
                         }
                         // tablesController.confirmOrderPrinter(index, i, context, size, homeController, printerController);
                       },

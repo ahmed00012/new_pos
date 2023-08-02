@@ -33,20 +33,11 @@ class _OrdersScreenState extends State<OrdersScreen> {
   bool? paid;
   bool? notPaid;
   OrdersModel? chosenOrder;
+  bool filter = false;
+  
+  
 
-  clearFilter() {
-    setState(() {
-      clientSearch = TextEditingController();
-      orderNumSearch = '';
-      orderStatusIdFilter = null;
-      orderMethodIdFilter = null;
-      paymentIdFilter = null;
-      ownerIdFilter = null;
-      customerIdFilter = null;
-      paid = null;
-      notPaid = null;
-    });
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -68,18 +59,28 @@ class _OrdersScreenState extends State<OrdersScreen> {
                   return InkWell(
                       onTap: () {
                         if (!ordersController.loading) {
-                          if (ordersController.orderStatus[i].id != null) {
+                          if (ordersController.orderStatus[i].id != 0) {
                             orderStatusIdFilter =
                                 ordersController.orderStatus[i].id;
+                            filter = true;
                             ordersController.getOrders(
                                 page: 1,
-                                mobileOrders: false,
+                                mobileOrders: widget.mobileOrders,
                                 orderStatus: orderStatusIdFilter,
                                 filter: true);
                           } else {
-                            clearFilter();
+                              clientSearch = TextEditingController();
+                              orderNumSearch = '';
+                              orderStatusIdFilter = null;
+                              orderMethodIdFilter = null;
+                              paymentIdFilter = null;
+                              ownerIdFilter = null;
+                              customerIdFilter = null;
+                              paid = null;
+                              notPaid = null;
+                              filter = false;
                             ordersController.getOrders(
-                                page: 1, mobileOrders: false, filter: true);
+                                page: 1, mobileOrders:widget.mobileOrders,filter: false);
                           }
                         }
                       },
@@ -164,9 +165,10 @@ class _OrdersScreenState extends State<OrdersScreen> {
                                       alignment: Alignment.centerRight,
                                       child: InkWell(
                                         onTap: () {
+                                          filter = true;
                                           ordersController.getOrders(
                                               page: 1,
-                                              mobileOrders: false,
+                                              mobileOrders: widget.mobileOrders,
                                               filter: true,
                                               client: clientSearch.text);
                                         },
@@ -204,16 +206,17 @@ class _OrdersScreenState extends State<OrdersScreen> {
                                             title: '')
                                         .then((value) {
                                           print(value);
-                                      if (value != null)
+                                      if (value != null) {
+                                        orderNumSearch = value;
+                                        filter = true;
                                         ordersController.getOrders(
                                             page: 1,
-                                            mobileOrders: false,
-                                            orderId: int.parse(value),
-                                        filter: true);
+                                            mobileOrders:widget.mobileOrders,
+                                            orderId: int.tryParse(orderNumSearch),
+                                            filter: true);
 
-                                      setState(() {
-                                        orderNumSearch = value;
-                                      });
+
+                                      }
                                     });
                                   },
                                   child: Container(
@@ -221,7 +224,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                                       decoration: BoxDecoration(
                                         color: Colors.white,
                                         borderRadius: BorderRadius.circular(10),
-                                        border: Border.all(),
+                                        border: Border.all(color: Constants.mainColor),
                                       ),
                                       child: Padding(
                                         padding: const EdgeInsets.symmetric(
@@ -283,6 +286,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                                          clientSearch.clear();
                                          orderNumSearch = '';
                                        });
+
                                         orderMethodIdFilter =
                                             customizedOrder.orderMethodId;
                                         paymentIdFilter =
@@ -303,13 +307,12 @@ class _OrdersScreenState extends State<OrdersScreen> {
                                         ordersController.getOrders(
                                             page: 1,
                                             filter: true,
-                                            mobileOrders: false,
-                                            orderStatus: orderStatusIdFilter,
+                                            mobileOrders:widget.mobileOrders,
                                             ownerId: ownerIdFilter,
                                             paymentMethod: paymentIdFilter,
-                                            customer: customerIdFilter,
                                             orderMethod: orderMethodIdFilter,
                                             notPaid: notPaid,
+                                            customer: customerIdFilter,
                                             paid: paid);
                                       }
                                     });
@@ -378,88 +381,51 @@ class _OrdersScreenState extends State<OrdersScreen> {
                                         crossAxisCount: 5,
                                         childAspectRatio: 1),
                                 itemBuilder: (context, i) {
-                                  bool filter = orderStatusIdFilter != null ||  ownerIdFilter!=null||
-                                      paymentIdFilter!=null || clientSearch.text.isNotEmpty ||
-                                      customerIdFilter!=null || orderMethodIdFilter!=null ;
 
-                                  if (i == ordersController.orders.length - 1 &&
+                                  if (i == ordersController.orders.length -1 &&
                                       ordersController.currentPage <
                                           ordersController.lastPage) {
                                     ordersController.getOrders(
                                         page: ordersController.currentPage + 1,
-                                        filter: filter,
-                                        mobileOrders: false,
+                                        filter: false,
+                                        mobileOrders: widget.mobileOrders,
                                         orderStatus: orderStatusIdFilter,
                                         ownerId: ownerIdFilter,
                                         paymentMethod: paymentIdFilter,
                                         client: clientSearch.text,
                                         customer: customerIdFilter,
                                         orderMethod: orderMethodIdFilter,
-                                        orderId: int.parse(orderNumSearch),
+                                        orderId: int.tryParse(orderNumSearch),
                                         notPaid: notPaid,
                                         paid: paid);
                                   }
-                                  return Stack(
-                                    children: [
-                                      Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: size.height * 0.022),
-                                        child: Card(
-                                          clipBehavior:
-                                              Clip.antiAliasWithSaveLayer,
-                                          elevation: 2,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10.0),
-                                          ),
-                                          child: InkWell(
-                                            onTap: () {
-                                              // ordersController.chosenOrder = i;
-                                              // ordersController.chosenOrderNum =
-                                              //     ordersController
-                                              //         .orders[i].uuid;
-                                              setState(() {
-                                                chosenOrder =
-                                                    ordersController.orders[i];
-                                              });
-                                            },
-                                            child: OrderWidget(
-                                                order:
-                                                    ordersController.orders[i]),
-                                          ),
-                                        ),
+                                  return Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 5),
+                                    child: Card(
+                                      clipBehavior:
+                                          Clip.antiAliasWithSaveLayer,
+                                      elevation: 2,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10.0),
                                       ),
-                                      // if (ordersController
-                                      //         .orders[i].orderMethodId ==
-                                      //     2)
-                                      //   Container(
-                                      //     height: 40,
-                                      //     decoration: BoxDecoration(
-                                      //         shape: BoxShape.circle,
-                                      //         color: Colors.white,
-                                      //         border: Border.all(
-                                      //           color: ordersController.orders[i]
-                                      //                       .ownerName !=
-                                      //                   null
-                                      //               ? Constants.secondryColor
-                                      //               : ordersController.orders[i]
-                                      //                           .paymentStatus ==
-                                      //                       0
-                                      //                   ? Colors.red
-                                      //                   : Constants.mainColor,
-                                      //         )),
-                                      //     child: Center(
-                                      //       child: Image.asset(
-                                      //         'assets/images/chair(2).png',
-                                      //         height: 30,
-                                      //         color: ordersController.orders[i]
-                                      //                     .paymentStatus == 0
-                                      //             ? Colors.red
-                                      //             : Constants.mainColor,
-                                      //       ),
-                                      //     ),
-                                      //   ),
-                                    ],
+                                      child: InkWell(
+                                        onTap: () {
+                                          // ordersController.chosenOrder = i;
+                                          // ordersController.chosenOrderNum =
+                                          //     ordersController
+                                          //         .orders[i].uuid;
+                                          setState(() {
+                                            chosenOrder =
+                                                ordersController.orders[i];
+                                          });
+                                        },
+                                        child: OrderWidget(
+                                            order:
+                                                ordersController.orders[i]),
+                                      ),
+                                    ),
                                   );
                                 },
                               ),
@@ -481,7 +447,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
   Widget _buildOrderInvoiceScreen({required OrdersModel order}) {
     return OrderItems(
       order: order,
-      mobileOrders: false,
+      mobileOrders: widget.mobileOrders,
     );
   }
 }

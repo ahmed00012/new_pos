@@ -102,7 +102,7 @@ class _DeliveryOrderState extends State<DeliveryOrder> {
                       ),
                     ),
                     suggestionsCallback: (pattern) async {
-                      return await cartController.onSearchClientTextChanged(pattern);
+                      return await cartController.onSearchClientTextChanged( pattern);
                     },
                     itemBuilder: (context, suggestion) {
                       return Column(

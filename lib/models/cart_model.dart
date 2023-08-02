@@ -1,21 +1,14 @@
 
-import 'package:shormeh_pos_new_28_11_2022/local_storage.dart';
-import 'package:shormeh_pos_new_28_11_2022/models/confirm_order_model.dart';
 import 'package:shormeh_pos_new_28_11_2022/models/notes_model.dart';
 import 'package:shormeh_pos_new_28_11_2022/models/order_method_model.dart';
 import 'package:shormeh_pos_new_28_11_2022/models/owner_model.dart';
-import 'package:shormeh_pos_new_28_11_2022/models/payment_model.dart';
 import 'package:shormeh_pos_new_28_11_2022/models/product_details_model.dart';
-import 'package:shormeh_pos_new_28_11_2022/models/products_model.dart';
-import 'package:shormeh_pos_new_28_11_2022/models/tables_model.dart';
-
 import 'customer_model.dart';
 import 'orders_model.dart';
 
 class CartModel {
   int? id;
   int? rowId;
-
   String? title;
  String? mainName;
   double? price;
@@ -27,11 +20,11 @@ class CartModel {
   int? updatedQuantity;
   String? itemCode;
   String? itemName;
-  List<int>? allAttributesID;
+  List<int>? allAttributesValuesID;
   List<Attributes>? attributes;
-  List<AttributeValue>? values;
+  // List<AttributeValue>? values;
   List<OrderAttribute>? orderAttributes;
-  bool? newInCart;
+
 
   CartModel(
       {this.id,
@@ -44,14 +37,14 @@ class CartModel {
       this.extra,
       this.extraNotes,
       this.total = 0.0,
-      this.allAttributesID,
+      this.allAttributesValuesID,
       this.updated = false,
       this.updatedQuantity,
       this.itemCode,
       this.itemName,
       this.attributes,
       this.orderAttributes,
-      this.newInCart
+
       });
 }
 
@@ -69,9 +62,8 @@ class OrderDetails {
   OwnerModel? owner;
   String? orderMethod;
   int? orderMethodId;
-  String? table;
+  int? tableId;
   int? tableCount;
-  String? time;
   int? orderStatus;
   String? payment;
   // String? selectCustomer ;
@@ -85,20 +77,17 @@ class OrderDetails {
   double deliveryFee = 0.0;
   List<CartModel> cart = [];
   List<Order> ?finalOrder;
-  String? departmentId;
+  int? departmentId;
   List<OrderPaymentMethods> payMethods = [];
   int? paymentId;
   double remaining = 0;
-
-  PaymentModel? payment1;
-  PaymentModel? payment2;
-  double amount1 = 0.0;
-  double amount2 = 0.0;
   double paid = 0.0;
   int? orderStatusID;
   int? paymentStatus;
   int hold = 0;
   bool payLater = false;
+  String? orderQr;
+  String? orderNumber;
 
 
 
@@ -118,17 +107,12 @@ class OrderDetails {
     this.tableTitle,
     this.department,
     this.orderMethod,
-    this.time,
-    this.table,
+    this.tableId,
     this.discountValue,
     required this.cart,
     this.tax = 0.0,
     this.total = 0.0,
     this.departmentId,
-    this.payment1,
-    this.payment2,
-    this.amount1 = 0.0,
-    this.amount2 = 0.0,
     this.paid = 0.0,
     this.paymentId,
     this.paymentStatus,
@@ -140,7 +124,9 @@ class OrderDetails {
     this.tableCount,
     this.finalOrder,
     this.remaining = 0,
-    this.payLater = false
+    this.payLater = false,
+    this.orderQr,
+    this.orderNumber
   });
 
   Map<String, dynamic> toJson() {
@@ -148,15 +134,15 @@ class OrderDetails {
 
     data['phone'] = this.clientPhone;
     data['name'] = this.clientName;
-    data['payment_method_id'] = this.paymentId;
+    data['payment_method_id'] = this.customer != null? 2: payMethods.isNotEmpty ? payMethods[0].id : null;
     data['order_method_id'] = this.orderMethodId;
     data['paid_amount'] = this.paid;
-    data['payment_status'] = this.payMethods.isEmpty ? 0 : 1;
+    data['payment_status'] =  this.payMethods.isEmpty ? 0 : 1;
     data['finish'] = payMethods.isNotEmpty;
-    data['table_id'] = this.table;
+    data['table_id'] = this.tableId;
     data['coupon'] = this.coupon;
     data['hold'] = this.hold;
-    data['payment_customer_id'] =this.customer != null? this.customer!.id : null;
+    data['payment_customer_id'] = this.customer != null? this.customer!.id : null;
     data['clients_count'] = this.tableCount;
     data['notes'] = this.notes;
     data['owner_id'] = this.owner != null? this.owner!.id : null;

@@ -40,7 +40,7 @@ class UserModel {
       });
     }
     branch = json['branch'];
-    branchCode = json['branch_code'].toString();
+    branchCode = json['branch_code']!=null ? json['branch_code'].toString() : null;
     taxNumber = json['tax_number'];
     webLinks = json['web_links'] != null
         ? new WebLinks.fromJson(json['web_links'])

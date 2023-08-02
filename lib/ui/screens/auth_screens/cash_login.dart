@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shormeh_pos_new_28_11_2022/data_controller/auth_controller.dart';
+import 'package:shormeh_pos_new_28_11_2022/ui/widgets/bottom_nav_bar.dart';
 import '../../../constants/colors.dart';
 import '../../../constants/styles.dart';
 import '../home/home_screen.dart';
@@ -224,7 +225,7 @@ class _FinanceState extends State<Finance> {
                                       if (value != null && value == true) {
                                         Navigator.pushAndRemoveUntil(
                                             context,
-                                            MaterialPageRoute(builder: (_) => Home()),
+                                            MaterialPageRoute(builder: (_) => BottomNavBar()),
                                                 (route) => false);
                                       }
                                     });

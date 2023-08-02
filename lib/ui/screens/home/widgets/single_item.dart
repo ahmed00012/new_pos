@@ -12,7 +12,7 @@ import 'package:shormeh_pos_new_28_11_2022/ui/widgets/numpad.dart';
 
 import '../../../../constants/colors.dart';
 import '../../../../data_controller/cart_controller.dart';
-import '../../../widgets/attributes.dart';
+import 'attributes.dart';
 import '../../../widgets/custom_text_field.dart';
 
 
@@ -62,7 +62,8 @@ class SingleItem extends ConsumerWidget {
                     SingleItemUpperRow(
                       icon:  Icons.add,
                       onTap: (){
-                        cartController.plusController(index);
+
+                          cartController.plusController(index, attributes);
                       },
                     ),
 

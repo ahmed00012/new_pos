@@ -1,5 +1,6 @@
 
 
+import '../constants/prefs_utils.dart';
 import '../local_storage.dart';
 
 class PaymentModel {
@@ -42,7 +43,7 @@ class PaymentTitle {
   PaymentTitle({this.en, this.ar});
 
   PaymentTitle.fromJson(Map<String, dynamic> json) {
-    en = LocalStorage.getData(key: 'language')=='en'? json['en']:json['ar'];
+    en = getLanguage()=='en'? json['en']:json['ar'];
     ar = json['ar'];
   }
 

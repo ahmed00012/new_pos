@@ -1,20 +1,18 @@
 
-import 'dart:async';
 import 'dart:io';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:overlay_support/overlay_support.dart';
-import 'package:shormeh_pos_new_28_11_2022/ui/screens/home/home_screen.dart';
+import 'package:shormeh_pos_new_28_11_2022/constants/prefs_utils.dart';
 import 'package:shormeh_pos_new_28_11_2022/ui/screens/auth_screens/login.dart';
 import 'package:shormeh_pos_new_28_11_2022/ui/widgets/bottom_nav_bar.dart';
 import 'constants/colors.dart';
 import 'local_storage.dart';
 
-import 'package:timezone/data/latest.dart' as tz;
+
 
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -30,7 +28,6 @@ void main()async{
  WidgetsFlutterBinding.ensureInitialized();
  await LocalStorage.init();
  await EasyLocalization.ensureInitialized();
- tz.initializeTimeZones();
  HttpOverrides.global = new MyHttpOverrides();
 
   runApp(ProviderScope(child:  EasyLocalization(
@@ -98,7 +95,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft,DeviceOrientation.landscapeRight]);
      SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-      LocalStorage.saveData(key: 'language', value: context.locale.languageCode);
+      setLanguage(context.locale.languageCode);
         return OverlaySupport.global(
           child: MaterialApp(
             debugShowCheckedModeBanner: false,
@@ -119,7 +116,7 @@ class _MyAppState extends State<MyApp> {
                 selectionHandleColor:Constants.mainColor,
               ),
             ),
-            home:LocalStorage.getData(key: 'token')==null? Login():BottomNavBar(),
+            home: getUserToken().isEmpty ? Login():BottomNavBar(),
           ),
         );
 

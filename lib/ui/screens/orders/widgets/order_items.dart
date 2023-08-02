@@ -1,8 +1,6 @@
 import 'package:easy_localization/src/public_ext.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:screenshot/screenshot.dart';
-import 'package:shormeh_pos_new_28_11_2022/constants/printing_services/printing_service.dart';
 import 'package:shormeh_pos_new_28_11_2022/constants/prefs_utils.dart';
 import 'package:shormeh_pos_new_28_11_2022/constants/styles.dart';
 import 'package:shormeh_pos_new_28_11_2022/data_controller/cart_controller.dart';
@@ -10,13 +8,13 @@ import 'package:shormeh_pos_new_28_11_2022/data_controller/orders_controller.dar
 import 'package:shormeh_pos_new_28_11_2022/ui/screens/orders/widgets/cancel_widget.dart';
 import 'package:shormeh_pos_new_28_11_2022/ui/screens/orders/widgets/complain_widget.dart';
 import '../../../../constants/colors.dart';
-import '../../../../constants/printing_services/invoice_widget.dart';
 import '../../../../models/cart_model.dart';
 import '../../../../models/orders_model.dart';
 import '../../../widgets/bottom_nav_bar.dart';
 
+
 class OrderItems extends StatelessWidget {
-  final ScreenshotController screenshotController = ScreenshotController();
+
   final OrdersModel order;
   final bool mobileOrders;
 
@@ -43,8 +41,9 @@ class OrderItems extends StatelessWidget {
                       onTap: () {
                         OrderDetails orderDetails =
                         cartController.editOrder(order);
-                        PrintingService.printInvoice(
-                            order: orderDetails);
+                        // PrintingService.printInvoice(
+                        //     order: orderDetails,
+                        // table: ProductsTable(cart: orderDetails.cart));
                       },
                       child: Icon(
                         Icons.print,
@@ -359,26 +358,26 @@ class OrderItems extends StatelessWidget {
                               SizedBox(
                                 height: 5,
                               ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    'orderMethod'.tr(),
-                                    style: TextStyle(
-                                        fontSize: size.height * 0.02,
-                                        fontWeight: FontWeight.bold,
-                                        color: Constants.mainColor),
-                                  ),
-                                  Text(
-                                    order.orderMethod!,
-                                    style: TextStyle(
-                                        fontSize: size.height * 0.02,
-                                        fontWeight: FontWeight.bold,
-                                        color: Constants.mainColor),
-                                  ),
-                                ],
-                              ),
-                              if (order.table != 'null')
+                              // Row(
+                              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              //   children: [
+                              //     Text(
+                              //       'orderMethod'.tr(),
+                              //       style: TextStyle(
+                              //           fontSize: size.height * 0.02,
+                              //           fontWeight: FontWeight.bold,
+                              //           color: Constants.mainColor),
+                              //     ),
+                              //     Text(
+                              //       order.orderMethod!,
+                              //       style: TextStyle(
+                              //           fontSize: size.height * 0.02,
+                              //           fontWeight: FontWeight.bold,
+                              //           color: Constants.mainColor),
+                              //     ),
+                              //   ],
+                              // ),
+                              if (order.table != null)
                                 Text(
                                   'table'.tr() + order.table!,
                                   style: TextStyle(
@@ -400,8 +399,17 @@ class OrderItems extends StatelessWidget {
                                               fontWeight: FontWeight.bold,
                                               color: Constants.mainColor),
                                         ),
+                                        if(paymentMethod.value! != '0')
                                         Text(
-                                          paymentMethod.value!,
+                                          '${paymentMethod.value!} SAR',
+                                          style: TextStyle(
+                                              fontSize: size.height * 0.02,
+                                              fontWeight: FontWeight.bold,
+                                              color: Constants.mainColor),
+                                        ),
+                                        if(paymentMethod.value! == '0')
+                                        Text(
+                                          'notPaid'.tr(),
                                           style: TextStyle(
                                               fontSize: size.height * 0.02,
                                               fontWeight: FontWeight.bold,

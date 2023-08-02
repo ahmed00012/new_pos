@@ -2,11 +2,12 @@
 
 import 'package:shormeh_pos_new_28_11_2022/models/product_details_model.dart';
 
+import '../constants/prefs_utils.dart';
 import '../local_storage.dart';
 
 class ProductModel {
   int? id;
-  String? departmentId;
+  int? departmentId;
   double? price;
   // String? newPrice;
   ProductTitle? title;
@@ -36,7 +37,7 @@ class ProductModel {
 
   ProductModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    departmentId = json['department_id'].toString() ;
+    departmentId = json['department_id'] ;
     price = json['new_price'] == 0 ?double.parse(json['price'].toString())
         : double.parse(json['new_price'].toString());
     // newPrice = json['new_price'].toString() ;
@@ -56,7 +57,7 @@ class ProductTitle {
   ProductTitle({this.en, this.ar});
 
   ProductTitle.fromJson(Map<String, dynamic> json) {
-    en = LocalStorage.getData(key: 'language')=='en'? json['en']:json['ar'];
+    en = getLanguage()=='en'? json['en']:json['ar'];
     ar = json['ar'];
   }
 

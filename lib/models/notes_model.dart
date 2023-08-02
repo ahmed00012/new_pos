@@ -1,3 +1,4 @@
+import '../constants/prefs_utils.dart';
 import '../local_storage.dart';
 
 class NotesModel{
@@ -12,7 +13,7 @@ class NotesModel{
   factory NotesModel.fromJson(Map<String, dynamic> json) => NotesModel(
     id: json["id"],
     title: json["title"],
-    titleEn: LocalStorage.getData(key: 'language')=='en'? json["title_en"]:json["title_ar"],
+    titleEn: getLanguage()=='en'? json["title_en"]:json["title_ar"],
     titleMix: '${json["title_en"]} - ${json["title_ar"]}',
     price: double.parse(json["price"].toString()),
   );

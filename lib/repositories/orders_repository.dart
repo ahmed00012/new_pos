@@ -16,15 +16,28 @@ class OrdersRepository {
       required bool mobileOrders}) async {
     try {
       String uri = mobileOrders? ApiEndPoints.MobileOrders : ApiEndPoints.CashierOrders;
+      String finalQuery = '';
 
-      print( "$uri?paginate=15&page=$page&order_method_id=${orderMethod ?? ''}&"
-          "payment_method_id=${paymentMethod ?? ''}&order_pos_status_id=${orderStatus ?? ''}&date=${getLoginDate()}"
-          "&query=${orderId ?? ''}&payment_customer_id=${customer ?? ''}&owner_id=${owner ?? ''}&client=$client");
+      Map queries ={
+        'order_method_id':orderMethod,
+        'payment_method_id':paymentMethod,
+        'order_pos_status_id':orderStatus,
+        'payment_customer_id':customer,
+        'owner_id':owner,
+        'client':client,
+        'query':orderId
+      };
+
+
+      queries.forEach((key, value) {
+        if(value!=null)
+          finalQuery = finalQuery+'&${key}=${value}';
+      });
+
+      print('$uri?paginate=15&page=$page$finalQuery&date=${getLoginDate()}');
+      print(getUserToken());
       var response = await http.get(
-          Uri.parse(
-              "$uri?paginate=15&page=$page&order_method_id=${orderMethod ?? ''}&"
-              "payment_method_id=${paymentMethod ?? ''}&order_pos_status_id=${orderStatus ?? ''}&date=${getLoginDate()}"
-              "&query=${orderId ?? ''}&payment_customer_id=${customer ?? ''}&owner_id=${owner ?? ''}&client=$client"),
+          Uri.parse("$uri?paginate=15&page=1$finalQuery&date=${getLoginDate()}"),
           headers: ApiEndPoints.headerWithToken(token:getUserToken() ,language: getLanguage()));
 
       var data = json.decode(response.body);

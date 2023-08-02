@@ -237,53 +237,53 @@ class HomeController extends ChangeNotifier {
 
 
 
-  void selectCustomer({required OrderDetails orderDetails,required int index}) {
-
-    /// select customer upper row
-    if (orderDetails.customer==null) {
-      emptyCardList(orderDetails: orderDetails);
-      paymentCustomers[index].chosen = true;
-      orderDetails.customer = paymentCustomers[index];
-      orderDetails.orderMethodId = 3;
-      orderDetails.orderMethod = 'take away';
-      orderDetails.paymentId = 2;
-    }
-
-    else if(orderDetails.customer!.id == paymentCustomers[index].id)
-      {
-        emptyCardList(orderDetails: orderDetails);
-        paymentCustomers[index].chosen = false;
-        orderDetails.customer = null;
-        orderDetails.orderMethodId = null;
-        orderDetails.paymentId = null;
-      }
-    /// select another payment customer
-    else {
-      paymentCustomers[index].chosen = true;
-      orderDetails.customer = paymentCustomers[index];
-      orderDetails.orderMethodId = 1;
-      orderDetails.orderMethod = 'take away';
-      orderDetails.paymentId = 2;
-    }
-
-    notifyListeners();
-  }
-
-
+  // void selectCustomer({required OrderDetails orderDetails,required int index}) {
+  //
+  //   /// select customer upper row
+  //   if (orderDetails.customer==null) {
+  //     emptyCardList(orderDetails: orderDetails);
+  //     paymentCustomers[index].chosen = true;
+  //     orderDetails.customer = paymentCustomers[index];
+  //     orderDetails.orderMethodId = 3;
+  //     orderDetails.orderMethod = 'take away';
+  //     orderDetails.paymentId = 2;
+  //   }
+  //
+  //   else if(orderDetails.customer!.id == paymentCustomers[index].id)
+  //     {
+  //       emptyCardList(orderDetails: orderDetails);
+  //       paymentCustomers[index].chosen = false;
+  //       orderDetails.customer = null;
+  //       orderDetails.orderMethodId = null;
+  //       orderDetails.paymentId = null;
+  //     }
+  //   /// select another payment customer
+  //   else {
+  //     paymentCustomers[index].chosen = true;
+  //     orderDetails.customer = paymentCustomers[index];
+  //     orderDetails.orderMethodId = 1;
+  //     orderDetails.orderMethod = 'take away';
+  //     orderDetails.paymentId = 2;
+  //   }
+  //
+  //   notifyListeners();
+  // }
 
 
-  void emptyCardList({required OrderDetails orderDetails }) {
-    itemWidget = false;
-    orderDetails = OrderDetails(cart: [],payMethods: []);
-    notifyListeners();
-  }
 
-  void switchToCardItemWidget(bool switchTo, {int? i}) {
-    itemWidget = switchTo;
-    chosenItem = i;
-    notifyListeners();
-  }
-
+  //
+  // void emptyCardList({required OrderDetails orderDetails }) {
+  //   itemWidget = false;
+  //   orderDetails = OrderDetails(cart: [],payMethods: []);
+  //   notifyListeners();
+  // }
+  //
+  // void switchToCardItemWidget(bool switchTo, {int? i}) {
+  //   itemWidget = switchTo;
+  //   chosenItem = i;
+  //   notifyListeners();
+  // }
+  //
 
 
 
@@ -294,8 +294,6 @@ class HomeController extends ChangeNotifier {
 
   Future getCategories() async {
   var data = await allData.getCategories();
-
-  print('sdfdsf'+getAllCategoriesPrefs().toString());
   if(data == 'branchClosed'){
    branchClosed = true;
 
@@ -310,8 +308,6 @@ class HomeController extends ChangeNotifier {
     categories[0].chosen = true;
     branchClosed = false;
   }
-
-
     notifyListeners();
   }
 
@@ -378,13 +374,20 @@ class HomeController extends ChangeNotifier {
   }
 
   getAllData(){
+    if(getProductsIdPrefs().isEmpty) {
       allData.getAll().then((value) {
         getCategories();
         getNotes();
         getPaymentCustomers();
-        switchLoading(false);
       });
+    }
+    else{
 
+      getCategories();
+      getNotes();
+      getPaymentCustomers();
+    }
+    switchLoading(false);
   }
 
   // String getLanguage() {
@@ -412,7 +415,8 @@ class HomeController extends ChangeNotifier {
 
   Future getProducts(int id) async {
     // , bool clear
-    products = [];
+    // products = [];
+
     var data = await allData.getProducts(id);
     products = List<ProductModel>.from(json.decode(getProductsPrefs(id))
         .map((e) => ProductModel.fromJson(e)));
@@ -458,7 +462,7 @@ class HomeController extends ChangeNotifier {
 
   Future getNotes() async {
       optionsList = List<NotesModel>.from(json
-          .decode(LocalStorage.getData(key: 'options'))
+          .decode(getOptionsPrefs())
           .map((e) => NotesModel.fromJson(e)));
     notifyListeners();
   }

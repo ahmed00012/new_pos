@@ -3,6 +3,8 @@
 
 
 
+import '../constants/prefs_utils.dart';
+
 class IntegrationModel {
   List<OrderDetail>? orderDetail;
 
@@ -83,7 +85,7 @@ class OrderDetail {
     data['Document No.'] = this.documentNo;
     data['LineNo'] = this.lineNo;
     data['Type'] =  this.type;
-    data['PostingDate'] = this.postingDate.toString().substring(0,10);
+    data['PostingDate'] = DateTime.now.toString().substring(0,10);
     data['ItemNo'] = this.itemNo;
     data['Description'] = this.description;
     data['Unit_of_Measure'] = this.unitOfMeasure;
@@ -91,7 +93,7 @@ class OrderDetail {
     data['Amount'] = this.amount;
     data['Payment_Type'] = this.paymentType;
     data['Customer_No'] = this.customerNo;
-    data['Location_Code'] = this.locationCode;
+    data['Location_Code'] = '12';
     data['Tax'] = this.tax;
     data['Discount'] = this.discount;
     data['TIP_Amount'] = '0';

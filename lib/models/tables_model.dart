@@ -4,6 +4,7 @@
 
 import 'package:shormeh_pos_new_28_11_2022/models/products_model.dart';
 
+import '../constants/prefs_utils.dart';
 import '../local_storage.dart';
 
 class Department {
@@ -78,7 +79,6 @@ class CurrentOrder {
   int? paymentStatus;
   int? finished;
   double? paidAmount;
-
   int? orderStatusId;
   int? branchId;
   int? employeeId;
@@ -471,7 +471,7 @@ class TableOrderTitle {
   TableOrderTitle({this.en, this.ar});
 
   TableOrderTitle.fromJson(Map<String, dynamic> json) {
-    en = LocalStorage.getData(key: 'language')=='en'? json['en']:json['ar'];
+    en = getLanguage()=='en'? json['en']:json['ar'];
     ar = json['ar'];
   }
 
