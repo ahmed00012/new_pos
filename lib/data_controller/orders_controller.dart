@@ -100,7 +100,7 @@ class OrdersController extends ChangeNotifier {
       int? ownerId,
       bool? paid,
       bool? notPaid}) async {
-    print(page);
+    print(page.toString()+'pppppage');
     print(client);
     if (page == 1) {
       switchLoading(true);
@@ -137,6 +137,8 @@ class OrdersController extends ChangeNotifier {
         list = [];
         currentPage = data['data']['meta']['current_page'];
         lastPage = data['data']['meta']['last_page'];
+        print(currentPage.toString()+'sfsdfsd');
+        print(lastPage.toString()+'sfsdfsd');
       }
     }
     switchLoading(false);

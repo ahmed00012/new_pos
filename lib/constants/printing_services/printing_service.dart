@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:davinci/core/davinci_capture.dart';
+import 'package:davinci/core/davinci_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image/image.dart' as img;
@@ -25,18 +26,18 @@ class PrintingService{
  static printInvoice({String ?orderNo,required OrderDetails order,
    required Uint8List pic}) async {
    img.Image? productsImage;
-   img.Image? logoImage;
-   final ByteData bytes = await rootBundle.load('assets/images/logo.png');
-   final Uint8List logoList = bytes.buffer.asUint8List();
-    deviceReceipt(order: order ,orderNo: orderNo,products: pic , logo: logoList);
+   // img.Image? logoImage;
+   // final ByteData bytes = await rootBundle.load('assets/images/logo.png');
+   // final Uint8List logoList = bytes.buffer.asUint8List();
+    deviceReceipt(order: order ,orderNo: orderNo,products: pic );
 
 
 
     productsImage = img.decodePng(pic);
-    logoImage = img.decodePng(logoList);
-   logoImage = img.copyResize(logoImage!, width: 250);
+   //  logoImage = img.decodePng(logoList);
+   // logoImage = img.copyResize(logoImage!, width: 250);
     productsImage!.setPixelRgba(0, 0, 255,255,255);
-    productsImage = img.copyResize(productsImage, width: 550);
+    productsImage = img.copyResize(productsImage, width: 560);
 
     const PaperSize paper = PaperSize.mm80;
     final profile = await CapabilityProfile.load();
@@ -45,8 +46,7 @@ class PrintingService{
       PosPrintResult res = await printer.connect(element.ip!, port: 9100);
       if (res == PosPrintResult.success) {
         await printReceipt(printer:  printer ,products: productsImage!,
-            order: order ,kitchen: element.typeName == 'Kitchen' ,orderNo: orderNo ,
-        logo : logoImage);
+            order: order ,kitchen: element.typeName == 'Kitchen' ,orderNo: orderNo);
         printer.disconnect();
       }
 
@@ -56,8 +56,9 @@ class PrintingService{
   static receiptToImage(
       {required OrderDetails orderDetails,
         required GlobalKey imageKey,
-        required   BuildContext context,
+        required BuildContext context,
       String? orderNo}) async {
+
     Uint8List uints = await DavinciCapture.click(
       returnImageUint8List: true,
       imageKey,
@@ -67,25 +68,25 @@ class PrintingService{
   }
 
 
-  static printReceipt({required NetworkPrinter printer,required img.Image products,
-   required  OrderDetails order,required bool kitchen, String? orderNo,
-  required logo}) async {
+
+  static printReceipt({required NetworkPrinter printer , required img.Image products,
+   required  OrderDetails order,required bool kitchen, String? orderNo}) async {
    printer.setGlobalCodeTable('CP775');
    //
    //
    // printer.image(logo, align: PosAlign.center);
 
-   if (orderNo != null) printer.hr(ch: '_');
    if (orderNo != null) {
      printer.text('Order Number $orderNo',
          styles: const PosStyles(
              align: PosAlign.center,
              bold: true,
              height: PosTextSize.size2,
-             width: PosTextSize.size2));
+             width: PosTextSize.size2,
+         underline: true));
    }
 
-   if (orderNo != null) printer.hr(ch: '_');
+
    // if (order.clientName != null) {
    //   printer.textEncoded(
    //       textEncoder('${'clientName'.tr()} : ${order.clientName!}'),
@@ -166,20 +167,13 @@ class PrintingService{
 
 
  static deviceReceipt({required OrderDetails order,required Uint8List products,
-   String? orderNo ,  required Uint8List logo}) async {
+   String? orderNo}) async {
    channel.invokeMethod("sdkInit");
 
-   channel.invokeMethod(iminPrintBitmap,
-       {
-         'image': logo,
-         'type': 'image/png',
-       });
-
-   channel.invokeMethod(iminFeed);
 
    if (orderNo != null)
      channel.invokeMethod(iminPrintText, iminPrintTextChannel(text: 'Order Number $orderNo',
-         fontSize: '50'));
+         fontSize: '40'));
    // channel.invokeMethod(iminFeed);
    //
    // if (order.clientName != null)

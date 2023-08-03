@@ -9,6 +9,7 @@ class TableHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Table(
       border: TableBorder.all(),
       columnWidths: const <int, TableColumnWidth>{
@@ -27,8 +28,8 @@ class TableHeader extends StatelessWidget {
                 child: Center(
                   child: Text(
                     'qty'.tr(),
-                    style:const TextStyle(
-                        fontSize: 15,
+                    style: TextStyle(
+                        fontSize: size.height*0.02,
                         fontWeight: FontWeight.w500,
                         fontStyle: FontStyle.italic),
                   ),
@@ -42,8 +43,8 @@ class TableHeader extends StatelessWidget {
                 child: Center(
                   child: Text(
                     'item'.tr(),
-                    style: const TextStyle(
-                        fontSize: 17,
+                    style:  TextStyle(
+                        fontSize: size.height*0.02,
                         fontWeight: FontWeight.w500,
                         fontStyle: FontStyle.italic),
                   ),
@@ -57,8 +58,8 @@ class TableHeader extends StatelessWidget {
                 child: Center(
                   child: Text(
                     'price'.tr(),
-                    style: const TextStyle(
-                        fontSize: 17,
+                    style:  TextStyle(
+                        fontSize: size.height*0.02,
                         fontWeight: FontWeight.w500,
                         fontStyle: FontStyle.italic),
                   ),
@@ -72,8 +73,8 @@ class TableHeader extends StatelessWidget {
                 child: Center(
                   child: Text(
                     'total'.tr(),
-                    style: const TextStyle(
-                        fontSize: 17,
+                    style:  TextStyle(
+                        fontSize: size.height*0.02,
                         fontWeight: FontWeight.w500,
                         fontStyle: FontStyle.italic),
                   ),

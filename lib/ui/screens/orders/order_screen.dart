@@ -1,3 +1,4 @@
+import 'package:davinci/core/davinci_core.dart';
 import 'package:easy_localization/src/public_ext.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +11,11 @@ import 'package:shormeh_pos_new_28_11_2022/ui/screens/orders/widgets/order_statu
 import 'package:shormeh_pos_new_28_11_2022/ui/screens/orders/widgets/filter_widget.dart';
 import 'package:shormeh_pos_new_28_11_2022/ui/screens/orders/widgets/order_widget.dart';
 import 'package:shormeh_pos_new_28_11_2022/ui/widgets/numpad.dart';
+import '../../../constants/printing_services/printing_service.dart';
+import '../../../data_controller/cart_controller.dart';
+import '../../../models/cart_model.dart';
 import '../../../models/orders_model.dart';
+import '../reciept/receipt_screen.dart';
 import 'widgets/order_items.dart';
 
 class OrdersScreen extends StatefulWidget {
@@ -34,6 +39,9 @@ class _OrdersScreenState extends State<OrdersScreen> {
   bool? notPaid;
   OrdersModel? chosenOrder;
   bool filter = false;
+  GlobalKey? imageKey;
+  GlobalKey repaintBoundaryKey = GlobalKey();
+
   
   
 
@@ -45,6 +53,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
 
     return Scaffold(body: Consumer(builder: (context, ref, child) {
       final ordersController = ref.watch(ordersFuture(widget.mobileOrders));
+      final cartController = ref.watch(cartFuture);
       return Column(
         children: [
           Container(
@@ -96,20 +105,36 @@ class _OrdersScreenState extends State<OrdersScreen> {
           Expanded(
             child: Row(
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: SizedBox(
-                      height: size.height,
-                      width: size.width * 0.28,
-                      child: Card(
-                          elevation: 5,
-                          clipBehavior: Clip.antiAliasWithSaveLayer,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                          child: chosenOrder != null
-                              ? _buildOrderInvoiceScreen(order: chosenOrder!)
-                              : Container())),
+                Container(
+                  height: size.height,
+                  width: size.width * 0.28,
+                  child: Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        if(chosenOrder!=null)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 5),
+                          child: Davinci(builder: (key) {
+                            imageKey = key;
+                            return RepaintBoundary(
+                                key: repaintBoundaryKey,
+                                child: Receipt(order: cartController.editOrder(chosenOrder!)));
+                          }),
+                        ),
+                        Card(
+                            elevation: 5,
+                            clipBehavior: Clip.antiAliasWithSaveLayer,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            child: chosenOrder != null
+                                ? _buildOrderInvoiceScreen(order: chosenOrder!)
+                                : Container()),
+                      ],
+                    ),
+                  ),
                 ),
                 Expanded(
                   child: Column(
@@ -382,6 +407,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                                         childAspectRatio: 1),
                                 itemBuilder: (context, i) {
 
+
                                   if (i == ordersController.orders.length -1 &&
                                       ordersController.currentPage <
                                           ordersController.lastPage) {
@@ -448,6 +474,14 @@ class _OrdersScreenState extends State<OrdersScreen> {
     return OrderItems(
       order: order,
       mobileOrders: widget.mobileOrders,
+      onScreenshot: (order){
+        PrintingService.receiptToImage(
+            orderDetails: order,
+            imageKey: imageKey!,
+            context: context,
+            orderNo: order.orderNumber
+        );
+      },
     );
   }
 }

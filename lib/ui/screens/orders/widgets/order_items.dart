@@ -17,8 +17,10 @@ class OrderItems extends StatelessWidget {
 
   final OrdersModel order;
   final bool mobileOrders;
+  final Function(OrderDetails) onScreenshot;
 
-  OrderItems({super.key, required this.order, required this.mobileOrders});
+
+  OrderItems({super.key, required this.order, required this.mobileOrders,required this.onScreenshot});
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +43,7 @@ class OrderItems extends StatelessWidget {
                       onTap: () {
                         OrderDetails orderDetails =
                         cartController.editOrder(order);
+                        onScreenshot(orderDetails);
                         // PrintingService.printInvoice(
                         //     order: orderDetails,
                         // table: ProductsTable(cart: orderDetails.cart));
@@ -528,15 +531,8 @@ class OrderItems extends StatelessWidget {
                           Flexible(
                             child: InkWell(
                               onTap: () {
-                                // Navigator.pushAndRemoveUntil(
-                                //     context,
-                                //     MaterialPageRoute(
-                                //         builder: (context) => Home(
-                                //               order: viewModel
-                                //                   .orders[viewModel.chosenOrder!],
-                                //             )),
-                                //     (route) => false);
-                                cartController.editOrder(order);
+
+                              cartController.orderDetails =  cartController.editOrder(order);
                                 Navigator.pushAndRemoveUntil(
                                     context,
                                     MaterialPageRoute(
@@ -562,53 +558,56 @@ class OrderItems extends StatelessWidget {
                       ),
                     ),
 
-                  if (order.orderStatusId == 1 && mobileOrders)
-                    Container(
-                      height: 50,
-                      child: Row(
-                        children: [
-                          Flexible(
-                            child: InkWell(
-                              onTap: () {
-                                // viewModel.complain( size, context,false, orderId: viewModel
-                                //     .orders[viewModel.chosenOrder!].id!);
-                              },
-                              child: Container(
-                                color: Constants.secondryColor,
-                                child: Center(
-                                  child: Text(
-                                    'cancelOrder'.tr(),
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: size.height * 0.025,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          Flexible(
-                            child: InkWell(
-                              onTap: () {
-                                // viewModel.acceptOrder();
-                              },
-                              child: Container(
-                                color: Constants.mainColor,
-                                child: Center(
-                                  child: Text(
-                                    'acceptOrder'.tr(),
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: size.height * 0.025,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                  // // if (order.orderStatusId == 1 && mobileOrders)
+                  //   Container(
+                  //     height: 50,
+                  //     child: Row(
+                  //       children: [
+                  //         Flexible(
+                  //           child: InkWell(
+                  //             onTap: () {
+                  //
+                  //
+                  //
+                  //               // viewModel.complain( size, context,false, orderId: viewModel
+                  //               //     .orders[viewModel.chosenOrder!].id!);
+                  //             },
+                  //             child: Container(
+                  //               color: Constants.secondryColor,
+                  //               child: Center(
+                  //                 child: Text(
+                  //                   'cancelOrder'.tr(),
+                  //                   style: TextStyle(
+                  //                     color: Colors.white,
+                  //                     fontSize: size.height * 0.025,
+                  //                   ),
+                  //                 ),
+                  //               ),
+                  //             ),
+                  //           ),
+                  //         ),
+                  //         Flexible(
+                  //           child: InkWell(
+                  //             onTap: () {
+                  //               ordersController.acceptOrder(order.id!);
+                  //             },
+                  //             child: Container(
+                  //               color: Constants.mainColor,
+                  //               child: Center(
+                  //                 child: Text(
+                  //                   'acceptOrder'.tr(),
+                  //                   style: TextStyle(
+                  //                     color: Colors.white,
+                  //                     fontSize: size.height * 0.025,
+                  //                   ),
+                  //                 ),
+                  //               ),
+                  //             ),
+                  //           ),
+                  //         ),
+                  //       ],
+                  //     ),
+                  //   ),
 
                   if (order.orderStatusId !=1 &&
                       order.orderStatusId != 8 &&
@@ -621,9 +620,12 @@ class OrderItems extends StatelessWidget {
                       height: 50,
                       child: InkWell(
                         onTap: () {
-                          // cartController.editOrder(viewModel.orders[viewModel.chosenOrder!]);
-                          // homeController.selectedTab = SelectedTab.home;
-                          // homeController.notifyListeners();
+                          cartController.orderDetails =  cartController.editOrder(order);
+                          Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => BottomNavBar()),
+                                  (route) => false);
                         },
                         child: Container(
                           color: Constants.mainColor,

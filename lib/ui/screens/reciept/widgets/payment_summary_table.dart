@@ -17,6 +17,7 @@ class PaymentSummaryTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+  Size size =  MediaQuery.of(context).size;
     return  Table(
       border: TableBorder.all(),
       children: [
@@ -27,7 +28,7 @@ class PaymentSummaryTable extends StatelessWidget {
               child: Text(
                 'paid'.tr(),
                 style: TextStyle(
-                    fontSize: 17,
+                    fontSize: size.height*0.022,
                     fontWeight: FontWeight.w500),
               ),
             ),
@@ -39,8 +40,8 @@ class PaymentSummaryTable extends StatelessWidget {
             child: Center(
               child: Text(
                 '${paidAmount} SAR ',
-                style:const TextStyle(
-                    fontSize: 17,
+                style: TextStyle(
+                    fontSize: size.height*0.022,
                     fontWeight: FontWeight.w500),
               ),
             ),
@@ -53,7 +54,7 @@ class PaymentSummaryTable extends StatelessWidget {
               child: Text(
                 'remaining'.tr(),
                 style: TextStyle(
-                    fontSize: 17,
+                    fontSize: size.height*0.022,
                     fontWeight: FontWeight.w500),
               ),
             ),
@@ -64,7 +65,7 @@ class PaymentSummaryTable extends StatelessWidget {
               child: Text(
                 '$remainingAmount SAR ',
                 style: TextStyle(
-                    fontSize: 17,
+                    fontSize: size.height*0.022,
                     fontWeight: FontWeight.w500),
               ),
             ),
@@ -77,7 +78,7 @@ class PaymentSummaryTable extends StatelessWidget {
               child: Text(
                 'tax'.tr(),
                 style: TextStyle(
-                    fontSize: 15,
+                    fontSize: size.height*0.022,
                     fontWeight: FontWeight.w500),
               ),
             ),
@@ -88,7 +89,7 @@ class PaymentSummaryTable extends StatelessWidget {
               child: Text(
                 '${tax.toStringAsFixed(2)} SAR ',
                 style: TextStyle(
-                    fontSize: 17,
+                    fontSize: size.height*0.022,
                     fontWeight: FontWeight.w500),
               ),
             ),
@@ -102,7 +103,7 @@ class PaymentSummaryTable extends StatelessWidget {
                 child: Text(
                   'delivery'.tr(),
                   style: TextStyle(
-                      fontSize: 17,
+                      fontSize: size.height*0.022,
                       fontWeight: FontWeight.w500),
                 ),
               ),
@@ -112,7 +113,7 @@ class PaymentSummaryTable extends StatelessWidget {
               child: Center(
                 child: Text('$deliveryFee SAR',
                   style: TextStyle(
-                      fontSize: 17,
+                      fontSize: size.height*0.022,
                       fontWeight: FontWeight.w500),
                 ),
               ),
@@ -127,7 +128,7 @@ class PaymentSummaryTable extends StatelessWidget {
                 child: Text(
                   'discount'.tr(),
                   style: TextStyle(
-                      fontSize: 17,
+                      fontSize: size.height*0.022,
                       fontWeight: FontWeight.w500),
                 ),
               ),
@@ -138,7 +139,7 @@ class PaymentSummaryTable extends StatelessWidget {
                 child: Text(
                   '$deliveryFee SAR',
                   style: TextStyle(
-                      fontSize: 17,
+                      fontSize: size.height*0.022,
                       fontWeight: FontWeight.w500),
                 ),
               ),
@@ -151,7 +152,7 @@ class PaymentSummaryTable extends StatelessWidget {
               child: Text(
                 'total'.tr(),
                 style: TextStyle(
-                    fontSize: 20,
+                    fontSize: size.height*0.025,
                     fontWeight: FontWeight.w500),
               ),
             ),
@@ -162,7 +163,7 @@ class PaymentSummaryTable extends StatelessWidget {
               child: Text(
                 '${total.toStringAsFixed(2)} SAR ',
                 style: TextStyle(
-                    fontSize: 20,
+                    fontSize: size.height*0.025,
                     fontWeight: FontWeight.w500),
               ),
             ),

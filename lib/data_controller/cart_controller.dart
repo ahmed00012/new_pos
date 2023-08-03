@@ -316,13 +316,13 @@ class CartController extends ChangeNotifier {
   // }
 
   OrderDetails editOrder(OrdersModel order) {
-    orderDetails.orderUpdatedId = order.id;
-    orderDetails.total = order.total!;
-    orderDetails.tax = orderDetails.total * getTax() / 100;
-    orderDetails.cart = [];
-    orderDetails.paid = order.paidAmount ?? 0.0;
-    orderDetails.paymentStatus = order.paymentStatus;
-    orderDetails.orderStatusID = order.orderStatusId;
+    OrderDetails editedOrder = OrderDetails(cart: [], payMethods: []);
+    editedOrder.orderUpdatedId = order.id;
+    editedOrder.total = order.total!;
+    editedOrder.tax = editedOrder.total * getTax() / 100;
+    editedOrder.paid = order.paidAmount ?? 0.0;
+    editedOrder.paymentStatus = order.paymentStatus;
+    editedOrder.orderStatusID = order.orderStatusId;
     print(order.toJson());
     order.details!.forEach((element) {
       List<NotesModel> notes = [];
@@ -335,7 +335,7 @@ class CartController extends ChangeNotifier {
             titleMix: element.notesMix![i]));
       }
 
-      orderDetails.cart.add(
+      editedOrder.cart.add(
         CartModel(
           id: element.productId,
           rowId: element.id,
@@ -356,8 +356,8 @@ class CartController extends ChangeNotifier {
       );
 
       element.attributes!.forEach((element2) {
-        orderDetails.cart.last.allAttributesValuesID!.add(element2.id!);
-        orderDetails.cart.last.attributes!.add(
+        editedOrder.cart.last.allAttributesValuesID!.add(element2.id!);
+        editedOrder.cart.last.attributes!.add(
             Attributes(title: ProductTitle(en: element2.attribute!), values: [
           AttributeItem(
             attributeValue: ProductTitle(en: element2.value),
@@ -367,30 +367,34 @@ class CartController extends ChangeNotifier {
       });
     });
 
-    orderDetails.clientName = order.clientName;
-    orderDetails.clientPhone = order.clientPhone;
-    orderDetails.deliveryFee = order.deliveryFee;
-    orderDetails.orderMethod = order.orderMethod;
-    orderDetails.orderMethodId = order.orderMethodId;
-    orderDetails.orderStatus = order.orderStatusId;
-    orderDetails.discount = order.discount;
+    editedOrder.clientName = order.clientName;
+    editedOrder.clientPhone = order.clientPhone;
+    editedOrder.deliveryFee = order.deliveryFee;
+    editedOrder.orderMethod = order.orderMethod;
+    editedOrder.orderMethodId = order.orderMethodId;
+    editedOrder.orderStatus = order.orderStatusId;
+    editedOrder.discount = order.discount;
     if (order.paymentCustomerId != null) {
-      orderDetails.customer = CustomerModel(
+      editedOrder.customer = CustomerModel(
           title: order.paymentCustomer,
           id: order.paymentCustomerId,
           image: order.paymentCustomerImage,
           chosen: true);
     }
-    orderDetails.department = order.department;
-    orderDetails.orderMethodModel = OrderMethodModel(
+    editedOrder.department = order.department;
+    editedOrder.orderMethodModel = OrderMethodModel(
         id: order.orderMethodId,
-        title: OrderMethodTitle(en: orderDetails.orderMethod));
-    orderDetails.updateWithCoupon = order.discount != 0;
-    orderDetails.owner = OwnerModel(id: order.ownerId, chosen: true);
-    orderDetails.tableTitle = order.table;
-    orderDetails.payMethods = order.paymentMethods!;
-    if (orderDetails.payMethods.isNotEmpty)
-      orderDetails.paymentId = orderDetails.payMethods[0].id;
+        title: OrderMethodTitle(en: editedOrder.orderMethod));
+    editedOrder.updateWithCoupon = order.discount != 0;
+    editedOrder.owner = order.ownerId!=null?
+        OwnerModel(id: order.ownerId, chosen: true,title: order.ownerName ??''):null;
+    editedOrder.tableTitle = order.table;
+    editedOrder.payMethods = order.paymentMethods!;
+    if (editedOrder.payMethods.isNotEmpty)
+      editedOrder.paymentId = editedOrder.payMethods[0].id;
+    editedOrder.orderNumber = order.uuid;
+    editedOrder.orderTime = order.createdAt;
+
 
     // if(order.paymentMethods!=null) {
     //   orderDetails.payment1 =
@@ -408,16 +412,17 @@ class CartController extends ChangeNotifier {
     //
     // }
 
-    return orderDetails;
+    return editedOrder;
   }
 
   OrderDetails editOrderTable(
       {required CurrentOrder order,
       required Tables table,
       required Department department}) {
-    orderDetails.orderUpdatedId = order.id;
-    orderDetails.total = order.total!;
-    orderDetails.tax = order.total! * getTax() / 100;
+    OrderDetails editedOrder =OrderDetails(cart: [], payMethods: []);
+    editedOrder.orderUpdatedId = order.id;
+    editedOrder.total = order.total!;
+    editedOrder.tax = order.total! * getTax() / 100;
     // orderDetails.amount1 = 0.0;
     // orderDetails.amount2 = 0.0;
 
@@ -431,7 +436,7 @@ class CartController extends ChangeNotifier {
             titleMix: element.notes![i].title));
       }
 
-      orderDetails.cart.add(
+      editedOrder.cart.add(
         CartModel(
             id: element.productId,
             rowId: element.id,
@@ -451,9 +456,9 @@ class CartController extends ChangeNotifier {
       );
 
       element.attributes!.forEach((element2) {
-        orderDetails.cart.last.allAttributesValuesID!
+        editedOrder.cart.last.allAttributesValuesID!
             .add(element2.attributeValue!.id!);
-        orderDetails.cart.last.attributes!.add(Attributes(
+        editedOrder.cart.last.attributes!.add(Attributes(
             title: ProductTitle(en: element2.attribute!.title!.en!),
             values: [
               AttributeItem(
@@ -463,18 +468,18 @@ class CartController extends ChangeNotifier {
             ]));
       });
     });
-    orderDetails.orderMethod = 'restaurant';
-    orderDetails.orderMethodId = 2;
-    orderDetails.orderStatus = order.orderStatusId;
-    orderDetails.tableTitle = table.title;
-    orderDetails.tableId = table.id;
-    orderDetails.department = department.title;
-    orderDetails.departmentId = department.id;
-    orderDetails.orderMethodModel =
+    editedOrder.orderMethod = 'restaurant';
+    editedOrder.orderMethodId = 2;
+    editedOrder.orderStatus = order.orderStatusId;
+    editedOrder.tableTitle = table.title;
+    editedOrder.tableId = table.id;
+    editedOrder.department = department.title;
+    editedOrder.departmentId = department.id;
+    editedOrder.orderMethodModel =
         OrderMethodModel(id: 2, title: OrderMethodTitle(en: 'restaurant'.tr()));
-    orderDetails.updateWithCoupon = false;
-    notifyListeners();
-    return orderDetails;
+    editedOrder.updateWithCoupon = false;
+
+    return editedOrder;
   }
 
   emptyCardList() {

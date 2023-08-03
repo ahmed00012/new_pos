@@ -1,7 +1,9 @@
 
+import 'package:davinci/core/davinci_capture.dart';
 import 'package:davinci/core/davinci_core.dart';
 import 'package:easy_localization/src/public_ext.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -38,8 +40,12 @@ class PaymentScreen extends StatefulWidget {
 
 class _PaymentScreenState extends State<PaymentScreen> {
   GlobalKey? imageKey;
+  GlobalKey repaintBoundaryKey = GlobalKey();
   TextEditingController coupon = TextEditingController();
-  String? orderNo ;
+
+  // Function()
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -419,17 +425,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
                             height: size.height * 0.9,
                             child: Davinci(builder: (key) {
                               imageKey = key;
-                              return Receipt(
-                                // screenshotController: screenshotController,
-                                order: cartController.orderDetails,
-                                orderNo: orderNo,
-                                // onScreenShot: () {
-                                //   PrintingService.printInvoice(
-                                //     order: cartController.orderDetails,
-                                //       table: ProductsTable(cart: cartController.orderDetails.cart)
-                                //   );
-                                // }
-                              );
+                              return RepaintBoundary(
+                                  key: repaintBoundaryKey,
+                                  child: Receipt(order: cartController.orderDetails));
                             }),
                           ),
                         ),
@@ -543,9 +541,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                                             cartController
                                                                 .orderDetails)
                                                     .then((value) {
-                                                      setState(() {
-                                                        orderNo = value;
-                                                      });
                                                       PrintingService.receiptToImage(
                                                         orderDetails:  cartController.orderDetails,
                                                        imageKey: imageKey!,

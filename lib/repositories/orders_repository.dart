@@ -33,11 +33,11 @@ class OrdersRepository {
         if(value!=null)
           finalQuery = finalQuery+'&${key}=${value}';
       });
-
-      print('$uri?paginate=15&page=$page$finalQuery&date=${getLoginDate()}');
-      print(getUserToken());
+      //
+      // print('$uri?paginate=15&page=$page$finalQuery&date=${getLoginDate()}');
+      // print(getUserToken());
       var response = await http.get(
-          Uri.parse("$uri?paginate=15&page=1$finalQuery&date=${getLoginDate()}"),
+          Uri.parse("$uri?paginate=15&page=$page$finalQuery&date=${getLoginDate()}"),
           headers: ApiEndPoints.headerWithToken(token:getUserToken() ,language: getLanguage()));
 
       var data = json.decode(response.body);

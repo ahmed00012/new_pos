@@ -88,6 +88,7 @@ class OrderDetails {
   bool payLater = false;
   String? orderQr;
   String? orderNumber;
+  String? orderTime;
 
 
 
@@ -126,7 +127,8 @@ class OrderDetails {
     this.remaining = 0,
     this.payLater = false,
     this.orderQr,
-    this.orderNumber
+    this.orderNumber,
+    this.orderTime
   });
 
   Map<String, dynamic> toJson() {

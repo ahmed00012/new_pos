@@ -12,6 +12,7 @@ class ProductsTable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
+    Size size =MediaQuery.of(context).size;
     return Table(
       border: TableBorder.all(),
       columnWidths: const <int, TableColumnWidth>{
@@ -32,8 +33,8 @@ class ProductsTable extends StatelessWidget {
               child: Center(
                 child: Text(
                   e.count.toString(),
-                  style:const TextStyle(
-                      fontSize: 18,
+                  style: TextStyle(
+                      fontSize: size.height*0.022,
                       fontWeight: FontWeight.w500),
                 ),
               ),
@@ -56,7 +57,7 @@ class ProductsTable extends StatelessWidget {
                           child: Text(
                             e.title!,
                             style: TextStyle(
-                                fontSize: 18,
+                                fontSize: size.height*0.025,
                                 height: 1,
                                 fontWeight:
                                 FontWeight.w500),
@@ -67,7 +68,7 @@ class ProductsTable extends StatelessWidget {
                         Text(
                           '${e.price} SAR',
                           style: TextStyle(
-                              fontSize: 16,
+                              fontSize: size.height*0.02,
                               fontWeight:
                               FontWeight.w500),
                         ),
@@ -102,14 +103,14 @@ class ProductsTable extends StatelessWidget {
                                           child: Text(
                                               '- ${value.attributeValue!.en!}',
 
-                                              style:const TextStyle(fontSize: 14,)),
+                                              style: TextStyle(fontSize: size.height*0.022,)),
                                         ),
                                         SizedBox(width: 5,),
 
                                         if(value.realPrice!=null && value.realPrice!= 0)
                                           Text(
                                               '${value.realPrice} SAR',
-                                              style:const TextStyle(fontSize: 16,))
+                                              style: TextStyle(fontSize: size.height*0.022,))
                                     ],
                                   ),
                                       )
@@ -134,7 +135,7 @@ class ProductsTable extends StatelessWidget {
                                 Expanded(
                                   child: Text(
                                     '- ${extra.titleEn!}',
-                                    style: const TextStyle(fontSize: 16,),
+                                    style:  TextStyle(fontSize: size.height*0.022,),
                                   ),
                                 ),
 
@@ -142,7 +143,7 @@ class ProductsTable extends StatelessWidget {
                                 if(extra.price!=0)
                                 Text(
                                   '${extra.price} SAR',
-                                  style: TextStyle(fontSize: 16),
+                                  style: TextStyle(fontSize: size.height*0.022),
                                 )
                               ],
                             ),
@@ -159,7 +160,7 @@ class ProductsTable extends StatelessWidget {
                           child: Text(
                            '- ${e.extraNotes!}',
                             textAlign: TextAlign.left,
-                            style: TextStyle(fontSize: 16,),
+                            style: TextStyle(fontSize: size.height*0.022,),
                           ),
                         ),
                       )
@@ -174,8 +175,8 @@ class ProductsTable extends StatelessWidget {
               child: Center(
                 child: Text(
                   '${e.total} SAR',
-                  style: const TextStyle(
-                      fontSize: 17,),
+                  style:  TextStyle(
+                      fontSize: size.height*0.022,),
                 ),
               ),
             ),
