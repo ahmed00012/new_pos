@@ -1,9 +1,8 @@
-import 'package:davinci/core/davinci_core.dart';
+
 import 'package:easy_localization/src/public_ext.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shormeh_pos_new_28_11_2022/constants/colors.dart';
 import 'package:shormeh_pos_new_28_11_2022/constants/styles.dart';
 import 'package:shormeh_pos_new_28_11_2022/data_controller/orders_controller.dart';
@@ -13,7 +12,6 @@ import 'package:shormeh_pos_new_28_11_2022/ui/screens/orders/widgets/order_widge
 import 'package:shormeh_pos_new_28_11_2022/ui/widgets/numpad.dart';
 import '../../../constants/printing_services/printing_service.dart';
 import '../../../data_controller/cart_controller.dart';
-import '../../../models/cart_model.dart';
 import '../../../models/orders_model.dart';
 import '../reciept/receipt_screen.dart';
 import 'widgets/order_items.dart';
@@ -41,6 +39,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
   bool filter = false;
   GlobalKey? imageKey;
   GlobalKey repaintBoundaryKey = GlobalKey();
+
 
   
   
@@ -116,12 +115,8 @@ class _OrdersScreenState extends State<OrdersScreen> {
                         if(chosenOrder!=null)
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 5),
-                          child: Davinci(builder: (key) {
-                            imageKey = key;
-                            return RepaintBoundary(
-                                key: repaintBoundaryKey,
-                                child: Receipt(order: cartController.editOrder(chosenOrder!)));
-                          }),
+                          child:  Receipt(order: cartController.editOrder(chosenOrder!),
+                          scr: repaintBoundaryKey,),
                         ),
                         Card(
                             elevation: 5,
@@ -475,12 +470,19 @@ class _OrdersScreenState extends State<OrdersScreen> {
       order: order,
       mobileOrders: widget.mobileOrders,
       onScreenshot: (order){
-        PrintingService.receiptToImage(
-            orderDetails: order,
-            imageKey: imageKey!,
+        PrintingService.captureImage(
+            order: order,
             context: context,
-            orderNo: order.orderNumber
+            globalKey: repaintBoundaryKey,
+            orderNo:order.orderNumber
         );
+
+        // PrintingService.receiptToImage(
+        //     orderDetails: order,
+        //     imageKey: imageKey!,
+        //     context: context,
+        //     orderNo: order.orderNumber
+        // );
       },
     );
   }

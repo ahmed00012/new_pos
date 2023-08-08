@@ -34,18 +34,23 @@ class NewHomeState extends ConsumerState<Home> {
       resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
+
           Row(
             children: [
               Padding(
                 padding: const EdgeInsets.fromLTRB(10, 0, 4, 5),
                 child: Cart(navigate: true),
               ),
+              if (viewModel.loading)
+                Expanded(child: ConstantStyles.circularLoading()),
+              if (!viewModel.loading)
               Expanded(
                 child: Column(children: [
                   UpperRow(),
                   SizedBox(
                     height: 20,
                   ),
+
                   if (viewModel.branchClosed == false)
                     Expanded(
                       child: Padding(
@@ -167,13 +172,19 @@ class NewHomeState extends ConsumerState<Home> {
                                                               }
                                                             });
 
+                                                            if( viewModel.attributes.isNotEmpty) {
                                                             ConstantStyles
                                                                 .showPopup(
                                                                     context:
                                                                         context,
-                                                                    height: size.height*0.8,
-                                                                    width: size.width*0.65,
-                                                                    content: SingleItem(
+                                                                    height: size
+                                                                            .height *
+                                                                        0.8,
+                                                                    width: size
+                                                                            .width *
+                                                                        0.65,
+                                                                    content:
+                                                                        SingleItem(
                                                                       index: cartController
                                                                               .orderDetails
                                                                               .cart
@@ -187,7 +198,8 @@ class NewHomeState extends ConsumerState<Home> {
                                                                               .attributes,
                                                                     ),
                                                                     title: '');
-                                                          });
+                                                          }
+                                                        });
                                                         },
                                                         title: viewModel
                                                             .products[i]
@@ -215,7 +227,7 @@ class NewHomeState extends ConsumerState<Home> {
               ),
             ],
           ),
-          if (viewModel.loading) ConstantStyles.circularLoading()
+
         ],
       ),
     );

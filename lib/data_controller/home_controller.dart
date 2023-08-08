@@ -6,26 +6,14 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:overlay_support/overlay_support.dart';
-import 'package:pusher_client/pusher_client.dart';
 import 'package:shormeh_pos_new_28_11_2022/constants/styles.dart';
 import 'package:shormeh_pos_new_28_11_2022/repositories/get_data.dart';
-import 'package:shormeh_pos_new_28_11_2022/models/client_model.dart';
 import 'package:shormeh_pos_new_28_11_2022/models/customer_model.dart';
 import 'package:shormeh_pos_new_28_11_2022/models/notes_model.dart';
 import 'package:shormeh_pos_new_28_11_2022/models/products_model.dart';
-import 'package:shormeh_pos_new_28_11_2022/ui/screens/auth_screens/login.dart';
-import 'package:shormeh_pos_new_28_11_2022/ui/screens/mobile_orders.dart';
-import 'package:shormeh_pos_new_28_11_2022/ui/screens/order_method/order_method_screen.dart';
-import 'package:shormeh_pos_new_28_11_2022/ui/screens/payment/payment_screen.dart';
 import 'package:soundpool/soundpool.dart';
-import '../constants/colors.dart';
 import '../constants/constant_keys.dart';
-import '../constants/enums.dart';
 import '../constants/prefs_utils.dart';
-import '../local_storage.dart';
-import '../main.dart';
-import '../models/cart_model.dart';
 import '../models/categories_model.dart';
 import '../models/product_details_model.dart';
 import '../repositories/products_repository.dart';
@@ -74,17 +62,9 @@ class HomeController extends ChangeNotifier {
   int secondScreenDuration = 0;
 
 
-  // List<Widget> pages = [
-  //   OrdersScreen(mobileOrders: false),
-  //   Home(),
-  //   OrdersScreen(mobileOrders: true),
-  //   TablesScreen(),
-  // ];
 
   HomeController() {
-    // getLanguage();
     getAllData();
-    // refreshBaseUrl();
     initPusher( );
     getSecondScreenImages();
 
@@ -367,10 +347,11 @@ class HomeController extends ChangeNotifier {
     optionsList = [];
     attributes = [];
     switchLoading(true);
+    print(loading);
     syncAppData();
     getSecondScreenImages();
     getAllData();
-
+    print(loading);
   }
 
   getAllData(){
@@ -379,15 +360,16 @@ class HomeController extends ChangeNotifier {
         getCategories();
         getNotes();
         getPaymentCustomers();
+        switchLoading(false);
       });
     }
     else{
-
       getCategories();
       getNotes();
       getPaymentCustomers();
+      switchLoading(false);
     }
-    switchLoading(false);
+
   }
 
   // String getLanguage() {
@@ -486,7 +468,7 @@ class HomeController extends ChangeNotifier {
 
 
   changeBranchImage(){
-    if(branchScreenImages.isNotEmpty) {
+    if(branchScreenImages.isNotEmpty && !Platform.isWindows) {
       branchImagesTimer = Timer.periodic(Duration(seconds: secondScreenDuration), (timer) {
         channel.invokeMethod(iminShowImage,
             [branchScreenImages[Random().nextInt(branchScreenImages.length)]]);
@@ -563,7 +545,7 @@ class HomeController extends ChangeNotifier {
 
   Future getNewMobileOrders() async{
       var data = await productsRepo.getNewMobileOrdersCount();
-      if(data!=false && data!=0){
+      if(data['status']!=false && data['data'].toString()!='0'){
         setMobileOrdersCount(data['data']);
         playSound();
       }

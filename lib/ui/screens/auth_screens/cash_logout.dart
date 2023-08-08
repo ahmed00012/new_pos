@@ -168,7 +168,7 @@ class FinanceOut extends ConsumerWidget {
                 //       )),
                 // ),
                 SizedBox(
-                  height: 30,
+                  height: 20,
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -176,8 +176,8 @@ class FinanceOut extends ConsumerWidget {
                     Padding(
                       padding: const EdgeInsets.all(10.0),
                       child: Container(
-                        height: 80,
-                        width: 370,
+                        height: size.height*0.075,
+                        width: 380,
                         decoration: BoxDecoration(
                           color: Colors.white,
                         ),
@@ -197,12 +197,12 @@ class FinanceOut extends ConsumerWidget {
 
                                     },
                                     child: Container(
-                                      height: 80,
+                                      height: size.height*0.075,
                                       width: 60,
                                       color: Colors.red[500],
                                       child: Icon(
                                         Icons.backspace_outlined,
-                                        size: size.height * 0.04,
+                                        size: size.height * 0.03,
                                         color: Colors.white,
                                       ),
                                     )))
@@ -220,7 +220,7 @@ class FinanceOut extends ConsumerWidget {
                                 child: Padding(
                                   padding: const EdgeInsets.all(5.0),
                                   child: Container(
-                                    height: 80,
+                                    height: size.height*0.075,
                                     width: 120,
                                     color: Colors.white,
                                     child: Center(
@@ -245,7 +245,7 @@ class FinanceOut extends ConsumerWidget {
                                 child: Padding(
                                   padding: const EdgeInsets.all(5.0),
                                   child: Container(
-                                    height: 80,
+                                    height: size.height*0.075,
                                     width: 120,
                                     color: Colors.white,
                                     child: Center(
@@ -270,7 +270,7 @@ class FinanceOut extends ConsumerWidget {
                                 child: Padding(
                                   padding: const EdgeInsets.all(5.0),
                                   child: Container(
-                                    height: 80,
+                                    height: size.height*0.075,
                                     width: 120,
                                     color: Colors.white,
                                     child: Center(
@@ -295,7 +295,7 @@ class FinanceOut extends ConsumerWidget {
                           child: Padding(
                             padding: const EdgeInsets.all(5.0),
                             child: Container(
-                              height: 80,
+                              height: size.height*0.075,
                               width: 120,
                               color: Colors.white,
                               child: Center(
@@ -315,7 +315,7 @@ class FinanceOut extends ConsumerWidget {
                           child: Padding(
                             padding: const EdgeInsets.all(5.0),
                             child: Container(
-                              height: 80,
+                              height: size.height*0.075,
                               width: 120,
                               color: Colors.white,
                               child: Center(
@@ -338,7 +338,7 @@ class FinanceOut extends ConsumerWidget {
                               //   viewModel.visaInDone();
                             },
                             child: Container(
-                              height: 80,
+                              height: size.height*0.075,
                               width: 120,
                               color: Colors.white,
                               // child: Center(
@@ -354,75 +354,117 @@ class FinanceOut extends ConsumerWidget {
                       ],
                     ),
                     SizedBox(
-                      height: 30,
+                      height: 10,
                     ),
                   ],
-                )
+                ),
+                Spacer(),
+
+                InkWell(
+                  onTap: () {
+                    if(viewModel.endShiftCash.isEmpty)
+                      ConstantStyles.displayToastMessage('cashCanNotBeEmpty'.tr(),true);
+                    else {
+
+                      viewModel.endShift(true).then((value) {
+                        if (value != null && value == true) {
+                          Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(builder: (_) => Login()),
+                                  (route) => false);
+                        }
+                      });
+                    }
+                    // .then((value) {
+                    // homeController.synchronize(context);
+                    // homeController.categories=[];
+                    // homeController.products=[];
+                    // homeController.optionsList=[];
+                    // homeController.emptyCardList();
+                    // });
+                  },
+                  child: Container(
+                      height: size.height * 0.07,
+                      width: size.width,
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'logout'.tr(),
+                            style: TextStyle(
+                                fontSize: size.height * 0.025,
+                                color: Colors.white),
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Icon(
+                            Icons.logout,
+                            color: Colors.white,
+                            size: size.height * 0.03,
+                          )
+                        ],
+                      )),
+                ),
               ],
             ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: InkWell(
-                onTap: () {
-                  if(viewModel.endShiftCash.isEmpty)
-                    ConstantStyles.displayToastMessage('cashCanNotBeEmpty'.tr(),true);
-                  else {
-                    viewModel.endShift(true).then((value) {
-                      if (value != null && value == true) {
-                        Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(builder: (_) => Login()),
-                            (route) => false);
-                      }
-                    });
-                  }
-                  // .then((value) {
-                      // homeController.synchronize(context);
-                      // homeController.categories=[];
-                      // homeController.products=[];
-                      // homeController.optionsList=[];
-                      // homeController.emptyCardList();
-                    // });
-                },
-                child: Container(
-                    height: size.height * 0.08,
-                    width: size.width,
-                    decoration: BoxDecoration(
-                      color: Colors.red,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'logout'.tr(),
-                          style: TextStyle(
-                              fontSize: size.height * 0.025,
-                              color: Colors.white),
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Icon(
-                          Icons.logout,
-                          color: Colors.white,
-                          size: size.height * 0.03,
-                        )
-                      ],
-                    )),
-              ),
-            ),
+            // Align(
+            //   alignment: Alignment.bottomCenter,
+            //   child: InkWell(
+            //     onTap: () {
+            //       if(viewModel.endShiftCash.isEmpty)
+            //         ConstantStyles.displayToastMessage('cashCanNotBeEmpty'.tr(),true);
+            //       else {
+            //         print('dsfsdfsdf');
+            //         viewModel.endShift(true).then((value) {
+            //           if (value != null && value == true) {
+            //             Navigator.pushAndRemoveUntil(
+            //                 context,
+            //                 MaterialPageRoute(builder: (_) => Login()),
+            //                 (route) => false);
+            //           }
+            //         });
+            //       }
+            //       // .then((value) {
+            //           // homeController.synchronize(context);
+            //           // homeController.categories=[];
+            //           // homeController.products=[];
+            //           // homeController.optionsList=[];
+            //           // homeController.emptyCardList();
+            //         // });
+            //     },
+            //     child: Container(
+            //         height: size.height * 0.08,
+            //         width: size.width,
+            //         decoration: BoxDecoration(
+            //           color: Colors.red,
+            //         ),
+            //         child: Row(
+            //           mainAxisAlignment: MainAxisAlignment.center,
+            //           children: [
+            //             Text(
+            //               'logout'.tr(),
+            //               style: TextStyle(
+            //                   fontSize: size.height * 0.025,
+            //                   color: Colors.white),
+            //             ),
+            //             SizedBox(
+            //               width: 10,
+            //             ),
+            //             Icon(
+            //               Icons.logout,
+            //               color: Colors.white,
+            //               size: size.height * 0.03,
+            //             )
+            //           ],
+            //         )),
+            //   ),
+            // ),
             if(viewModel.loading)
-              Container(
-                height: size.height,
-                width: size.width,
-                color: Colors.white.withOpacity(0.5),
-                child: Center(
-                  child: CircularProgressIndicator(
-                    color: Constants.mainColor,
-                    strokeWidth: 4,
-                  ),
-                ),
-              )
+             ConstantStyles.circularLoading()
           ],
         ));
   }

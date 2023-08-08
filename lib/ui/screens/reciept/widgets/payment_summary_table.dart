@@ -29,7 +29,8 @@ class PaymentSummaryTable extends StatelessWidget {
                 'paid'.tr(),
                 style: TextStyle(
                     fontSize: size.height*0.022,
-                    fontWeight: FontWeight.w500),
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: 1.2),
               ),
             ),
           ),
@@ -55,7 +56,8 @@ class PaymentSummaryTable extends StatelessWidget {
                 'remaining'.tr(),
                 style: TextStyle(
                     fontSize: size.height*0.022,
-                    fontWeight: FontWeight.w500),
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: 1.2),
               ),
             ),
           ),
@@ -79,7 +81,8 @@ class PaymentSummaryTable extends StatelessWidget {
                 'tax'.tr(),
                 style: TextStyle(
                     fontSize: size.height*0.022,
-                    fontWeight: FontWeight.w500),
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: 1.2),
               ),
             ),
           ),
@@ -104,7 +107,8 @@ class PaymentSummaryTable extends StatelessWidget {
                   'delivery'.tr(),
                   style: TextStyle(
                       fontSize: size.height*0.022,
-                      fontWeight: FontWeight.w500),
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: 1.2),
                 ),
               ),
             ),
@@ -129,7 +133,8 @@ class PaymentSummaryTable extends StatelessWidget {
                   'discount'.tr(),
                   style: TextStyle(
                       fontSize: size.height*0.022,
-                      fontWeight: FontWeight.w500),
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: 1.2),
                 ),
               ),
             ),
@@ -153,7 +158,8 @@ class PaymentSummaryTable extends StatelessWidget {
                 'total'.tr(),
                 style: TextStyle(
                     fontSize: size.height*0.025,
-                    fontWeight: FontWeight.w500),
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: 1.2),
               ),
             ),
           ),

@@ -60,7 +60,8 @@ class ProductsTable extends StatelessWidget {
                                 fontSize: size.height*0.025,
                                 height: 1,
                                 fontWeight:
-                                FontWeight.w500),
+                                FontWeight.w500,
+                            letterSpacing: 1.2),
                           ),
                         ),
                         const SizedBox(width: 5,),
@@ -70,7 +71,8 @@ class ProductsTable extends StatelessWidget {
                           style: TextStyle(
                               fontSize: size.height*0.02,
                               fontWeight:
-                              FontWeight.w500),
+                              FontWeight.w500,
+                              letterSpacing: 1.2),
                         ),
                       ],
                     ),
@@ -103,14 +105,16 @@ class ProductsTable extends StatelessWidget {
                                           child: Text(
                                               '- ${value.attributeValue!.en!}',
 
-                                              style: TextStyle(fontSize: size.height*0.022,)),
+                                              style: TextStyle(fontSize: size.height*0.022,
+                                                  letterSpacing: 1.2)),
                                         ),
                                         SizedBox(width: 5,),
 
                                         if(value.realPrice!=null && value.realPrice!= 0)
                                           Text(
                                               '${value.realPrice} SAR',
-                                              style: TextStyle(fontSize: size.height*0.022,))
+                                              style: TextStyle(fontSize: size.height*0.022,
+                                                  letterSpacing: 1.2))
                                     ],
                                   ),
                                       )
@@ -135,7 +139,8 @@ class ProductsTable extends StatelessWidget {
                                 Expanded(
                                   child: Text(
                                     '- ${extra.titleEn!}',
-                                    style:  TextStyle(fontSize: size.height*0.022,),
+                                    style:  TextStyle(fontSize: size.height*0.022,
+                                        letterSpacing: 1.2),
                                   ),
                                 ),
 
@@ -160,7 +165,8 @@ class ProductsTable extends StatelessWidget {
                           child: Text(
                            '- ${e.extraNotes!}',
                             textAlign: TextAlign.left,
-                            style: TextStyle(fontSize: size.height*0.022,),
+                            style: TextStyle(fontSize: size.height*0.022,
+                                letterSpacing: 1.2),
                           ),
                         ),
                       )

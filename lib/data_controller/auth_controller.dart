@@ -7,7 +7,6 @@ import 'package:esc_pos_printer/esc_pos_printer.dart';
 import 'package:esc_pos_utils/esc_pos_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:overlay_support/overlay_support.dart';
 import 'package:shormeh_pos_new_28_11_2022/constants/styles.dart';
 import 'package:shormeh_pos_new_28_11_2022/constants/prefs_utils.dart';
 import 'package:shormeh_pos_new_28_11_2022/local_storage.dart';
@@ -16,7 +15,6 @@ import 'package:shormeh_pos_new_28_11_2022/models/printers_model.dart';
 import 'package:shormeh_pos_new_28_11_2022/models/user_model.dart';
 import 'package:shormeh_pos_new_28_11_2022/repositories/auth_repository.dart';
 import '../constants/constant_keys.dart';
-import 'home_controller.dart';
 
 final financeFuture = ChangeNotifierProvider.autoDispose<FinanceController>(
     (ref) => FinanceController());
@@ -38,6 +36,10 @@ class FinanceController extends ChangeNotifier {
   double? actualTotalNotPaidOrders = 0.0;
   List<PaymentDetailsModel> paymentDetails = [];
   List<PaymentDetailsModel> customerDetails = [];
+
+  FinanceController(){
+    getPrinters();
+  }
 
   void loadingSwitch(bool load) {
     loading = load;
@@ -125,13 +127,16 @@ class FinanceController extends ChangeNotifier {
 
   Future login({required VoidCallback onSuccess , required String email ,
   required String password}) async {
+
     loadingSwitch(true);
     try {
 
       var data = await _authRepository.loginCashier(email:email, password: password);
+      print('sdfsdfsd'+data.toString());
       if (data['status']) {
         UserModel user = UserModel.fromJson(data['data']);
         setUserData(user);
+        print(DateTime.now().toUtc().toString());
         onSuccess();
       } else {
         ConstantStyles.displayToastMessage(data['msg'],true);
@@ -145,8 +150,10 @@ class FinanceController extends ChangeNotifier {
   }
 
   getPrinters() {
-      printers = List<PrinterModel>.from(json.decode(getPrinters())
+    if(getPrintersPrefs().isNotEmpty)
+      printers = List<PrinterModel>.from(json.decode(getPrintersPrefs())
           .map((e) => PrinterModel.fromJson(e)));
+      notifyListeners();
   }
 
 
@@ -205,10 +212,12 @@ class FinanceController extends ChangeNotifier {
   }
 
   Future endShift(bool logoutEmployee) async {
+
     loadingSwitch(true);
     try{
       var data = await _authRepository.endShiftCash(
           cash: endShiftCash.join().toString());
+
       if (!data['status']) {
         ConstantStyles.displayToastMessage(data['msg'],true);
         return false;
@@ -363,10 +372,11 @@ class FinanceController extends ChangeNotifier {
         required String ownerCount,
         required String ownerTotal,
       }) {
+
     printer.setGlobalCodeTable('CP775');
     printer.textEncoded(textEncoder(getUserName()), styles: ConstantStyles.centerBold);
     printer.textEncoded(textEncoder('Logged Out Successfully'), styles: ConstantStyles.center);
-    printer.text(time, styles: ConstantStyles.center);
+    printer.text(time.substring(0,19), styles: ConstantStyles.center);
     printer.textEncoded(textEncoder(getBranchName()), styles:ConstantStyles.center);
     printer.emptyLines(2);
 
@@ -605,7 +615,7 @@ class FinanceController extends ChangeNotifier {
 
     channel.invokeMethod(iminPrintText, iminPrintTextChannel(text: getUserName()));
     channel.invokeMethod(iminPrintText, iminPrintTextChannel(text: 'loggedOutSuccessfully'.tr()));
-    channel.invokeMethod(iminPrintText, iminPrintTextChannel(text: time));
+    channel.invokeMethod(iminPrintText, iminPrintTextChannel(text: time.substring(0,19)));
     channel.invokeMethod(iminPrintText, iminPrintTextChannel(text: getBranchName()));
     channel.invokeMethod(iminFeed);
     channel.invokeMethod(iminPrintText, iminPrintTextChannel(text: '${'startCash'.tr()} :  $startCash',alignment: '0'));
@@ -711,6 +721,7 @@ class FinanceController extends ChangeNotifier {
         required String ownerTotal,
    }) async {
 
+
     internalPrinterZReport(time : time,
         employeeCash:employeeCash,
         startCash:startCash,
@@ -725,7 +736,6 @@ class FinanceController extends ChangeNotifier {
     final printer = NetworkPrinter(paper, profile);
     printers.forEach((element) async {
       PosPrintResult res = await printer.connect(element.ip!, port: 9100);
-      print(element.typeName);
       if (element.typeName == 'CASHIER') {
         if (res == PosPrintResult.success) {
           await externalPrinterZReport(printer :printer,

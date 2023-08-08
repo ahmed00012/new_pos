@@ -258,7 +258,6 @@ syncAppData() {
 }
 
 setUserData(UserModel user) {
-  print(user.toJson().toString());
   setUserToken(user.accessToken!);
   setBranch(user.employee!.branchId!);
   LocalStorage.saveData(
@@ -270,7 +269,7 @@ setUserData(UserModel user) {
     value: user.employee!.showMobileOrders,
   );
   LocalStorage.saveData(
-    key: kBranchCode,
+    key: kBranchCode??'',
     value: user.branchCode,
   );
   LocalStorage.saveData(

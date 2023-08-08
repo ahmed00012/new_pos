@@ -78,6 +78,7 @@ class OrderMethodController extends ChangeNotifier {
 
 
 
+
   getClients(String query) async {
       final data =
           await repo.searchClient(query);
@@ -124,6 +125,7 @@ class OrderMethodController extends ChangeNotifier {
       var responseValue = await repo.confirmOrder(order.toJson());
       if (responseValue['status']) {
         ConstantStyles.displayToastMessage(responseValue['msg'], false);
+        return  responseValue['data']['uuid'];
       } else {
         ConstantStyles.displayToastMessage(responseValue['msg'], true);
         switchLoading(false);

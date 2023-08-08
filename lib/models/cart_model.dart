@@ -149,10 +149,10 @@ class OrderDetails {
     data['notes'] = this.notes;
     data['owner_id'] = this.owner != null? this.owner!.id : null;
     data['delivery_fee'] = this.deliveryFee;
-      data['pay_methods'] = this.payMethods.map((v) => {
+      data['pay_methods'] =this.payMethods.length>1 ? this.payMethods.map((v) => {
         'payment_method_id': v.id,
         'value':v.value
-      }).toList();
+      }).toList() : null;
     if (this.finalOrder != null) {
       data['details'] = this.finalOrder!.map((v) => v.toJson()).toList();
     }

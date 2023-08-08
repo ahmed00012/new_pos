@@ -251,7 +251,7 @@ class NewOrderController extends ChangeNotifier {
       } else {
         ConstantStyles.displayToastMessage('${responseValue['msg']}', true);
       }
-      switchLoading(false);
+
       return orderNo;
     }
   }
