@@ -3,8 +3,6 @@ import 'package:easy_localization/src/public_ext.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-
 import 'package:shormeh_pos_new_28_11_2022/constants/styles.dart';
 import 'package:shormeh_pos_new_28_11_2022/constants/prefs_utils.dart';
 
@@ -25,13 +23,13 @@ import '../tables/widgets/tables_dialog.dart';
 import '../cart/cart_screen.dart';
 
 class OrderMethod extends StatefulWidget {
+  const OrderMethod({super.key});
+
   @override
   State<OrderMethod> createState() => _OrderMethodState();
 }
 
 class _OrderMethodState extends State<OrderMethod> {
-// GlobalKey? imageKey;
-
 
   GlobalKey repaintBoundaryKey = GlobalKey();
 
@@ -92,7 +90,7 @@ class _OrderMethodState extends State<OrderMethod> {
                                         index: i,
                                         orderMethods:
                                             orderController.orderMethods,
-                                        onTap: () {
+                                        onTap: () async {
                                           cartController.setOrderMethod(
                                               orderController
                                                   .orderMethods[i]);
@@ -141,7 +139,9 @@ class _OrderMethodState extends State<OrderMethod> {
                                             });
                                           }
                                           if (orderMethod.id == 3) {
-                                            // imageProductsPrinter();
+
+
+
                                             orderController
                                                 .confirmOrder(cartController
                                                     .orderDetails)

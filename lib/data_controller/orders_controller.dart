@@ -244,7 +244,7 @@ class OrdersController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void complainOrder({
+  Future complainOrder({
     required int id,
     required String secretId,
     required String secretCode,
@@ -259,6 +259,7 @@ class OrdersController extends ChangeNotifier {
         reasonId: reasonId,
         mobile: mobile,
         reason: reason);
+
     if (data['status'] == false) {
       ConstantStyles.displayToastMessage(data['msg'], true);
     } else {
@@ -272,6 +273,7 @@ class OrdersController extends ChangeNotifier {
       reasons.forEach((element) {
         element.chosen = false;
       });
+      return true;
     }
     notifyListeners();
   }

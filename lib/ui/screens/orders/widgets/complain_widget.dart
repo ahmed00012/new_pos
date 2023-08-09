@@ -220,7 +220,10 @@ class _ComplainWidgetState extends State<ComplainWidget> {
                         secretCode: secretCode.text,
                         reasonId: reasonId!,
                         mobile: mobile.text,
-                        reason: reasonTitle);
+                        reason: reasonTitle).then((value) {
+                          if(value==true)
+                            Navigator.pop(context);
+                    });
                   }
                 },
                 child: Container(

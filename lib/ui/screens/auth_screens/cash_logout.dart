@@ -373,6 +373,9 @@ class FinanceOut extends ConsumerWidget {
                               MaterialPageRoute(builder: (_) => Login()),
                                   (route) => false);
                         }
+                        else{
+                          Navigator.pop(context);
+                        }
                       });
                     }
                     // .then((value) {

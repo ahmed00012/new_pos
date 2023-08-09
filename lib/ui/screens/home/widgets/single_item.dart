@@ -76,10 +76,12 @@ class SingleItem extends ConsumerWidget {
                     SingleItemUpperRow(
                       icon:  Icons.keyboard,
                       onTap: (){
+
                        ConstantStyles.showPopup(
                            context: context,
                            title: 'qty'.tr(),
                            content: Numpad()).then((value) {
+                             if(value!=null)
                          cartController.itemCount(index: index , value: int.parse(value));
                        });
                       },

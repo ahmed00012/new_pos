@@ -132,11 +132,10 @@ class FinanceController extends ChangeNotifier {
     try {
 
       var data = await _authRepository.loginCashier(email:email, password: password);
-      print('sdfsdfsd'+data.toString());
+
       if (data['status']) {
         UserModel user = UserModel.fromJson(data['data']);
         setUserData(user);
-        print(DateTime.now().toUtc().toString());
         onSuccess();
       } else {
         ConstantStyles.displayToastMessage(data['msg'],true);
@@ -220,6 +219,8 @@ class FinanceController extends ChangeNotifier {
 
       if (!data['status']) {
         ConstantStyles.displayToastMessage(data['msg'],true);
+        loadingSwitch(false);
+
         return false;
       } else {
         preparePaymentMethodsData(data['data']);
@@ -738,12 +739,13 @@ class FinanceController extends ChangeNotifier {
       PosPrintResult res = await printer.connect(element.ip!, port: 9100);
       if (element.typeName == 'CASHIER') {
         if (res == PosPrintResult.success) {
+
           await externalPrinterZReport(printer :printer,
               time:time, employeeCash : employeeCash, startCash : startCash,
               expenses:expenses, complains:complains, cancelled:cancelled,
               ownerCount:ownerCount, ownerTotal:ownerTotal);
 
-          printer.disconnect();
+         Future.delayed(Duration(seconds: 1),(){ printer.disconnect();});
         }
       } else {
         if (res == PosPrintResult.success) {

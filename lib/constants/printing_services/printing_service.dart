@@ -62,9 +62,11 @@ class PrintingService{
 
         await printReceipt(printer:  printer ,products: productsImage!,
             order: order ,kitchen: element.typeName == 'Kitchen' ,orderNo: orderNo);
+        Future.delayed(Duration(seconds: 1),(){
+          printer.disconnect();
+        });
 
-
-        printer.disconnect();
+        // printer.disconnect();
       }
 
     });

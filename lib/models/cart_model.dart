@@ -10,6 +10,7 @@ class CartModel {
   int? id;
   int? rowId;
   String? title;
+  String? titleNew;
  String? mainName;
   double? price;
   int? count;
@@ -32,6 +33,7 @@ class CartModel {
       // this.departmentId,
       this.mainName,
       this.title,
+        this.titleNew,
       this.price,
       this.count,
       this.extra,
