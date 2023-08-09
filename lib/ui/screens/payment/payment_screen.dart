@@ -197,7 +197,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                                                     .paymentMethods[i],
                                                                 value);
                                                             setState(() {});
-                                                          } else {
+                                                          }
+                                                          else {
                                                             setState(() {
                                                               orderController
                                                                   .paymentMethods[i]
@@ -205,7 +206,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                                             });
                                                           }
                                                         });
-                                                      } else {
+                                                      }
+                                                      else {
                                                         ConstantStyles.showPopup(
                                                           context: context,
                                                           height: size.height * .5,

@@ -74,35 +74,31 @@ class UpperRowState extends ConsumerState {
               if (cartController.orderDetails.cart.isNotEmpty) {
                 ConstantStyles.showPopup(
                         context: context,
-                        height: size.height*0.5,
+                        height: size.height*0.65,
                         title: 'notes'.tr(),
-                        content: Container(
-                          width: size.width * 0.4,
-                          height: size.height * 0.35,
-                          child: Column(
-                            children: [
-                              SizedBox(
-                                height: 10,
-                              ),
-                              CustomTextField(controller: notes,
-                                label:   'notes'.tr(),
-                              maxLines: 7,
-                              ),
-                              SizedBox(
-                                height: size.height * 0.04,
-                              ),
-                              CustomButton(
-                                onTap: () {
-                                  cartController.orderDetails.notes = notes.text;
-                                  notes.clear();
-                                  Navigator.pop(context);
-                                },
-                                height: size.height * 0.07,
-                                width: size.width * 0.2,
-                                color: Constants.mainColor,
-                                title: 'save'.tr(),)
-                            ],
-                          ),
+                        content: Column(
+                          children: [
+                            SizedBox(
+                              height: 10,
+                            ),
+                            CustomTextField(controller: notes,
+                              label:   'notes'.tr(),
+                            maxLines: 7,
+                            ),
+                            SizedBox(
+                              height: size.height * 0.04,
+                            ),
+                            CustomButton(
+                              onTap: () {
+                                cartController.orderDetails.notes = notes.text;
+                                notes.clear();
+                                Navigator.pop(context);
+                              },
+                              height: size.height * 0.07,
+                              width: size.width * 0.2,
+                              color: Constants.mainColor,
+                              title: 'save'.tr(),)
+                          ],
                         )
                     );
               } else {
@@ -118,7 +114,7 @@ class UpperRowState extends ConsumerState {
               onTap: (){
                 ConstantStyles.showPopup(
                     context: context,
-                    height: size.height*0.5,
+                    height: size.height*0.7,
                     title:  'expense'.tr(),
                     content:  ExpenseDialog(
                       onTap: (description,price){

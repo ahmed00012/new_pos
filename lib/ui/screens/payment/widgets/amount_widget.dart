@@ -230,6 +230,17 @@ class _AmountWidgetState extends State<AmountWidget> {
                   controller: amount,
                   label: 'anotherAmount'.tr(),
                   numerical: true,
+                  onChange: (value){
+                    if(value!.isNotEmpty ){
+                      setState(() {
+                        predict1Chosen = false;
+                        predict2Chosen = false;
+                        predict3Chosen = false;
+                        predict4Chosen = false;
+                      });
+
+                    }
+                  },
                 ),
               ),
             ),
@@ -256,19 +267,19 @@ class _AmountWidgetState extends State<AmountWidget> {
               if (predict1Chosen && widget.remainingAmount == null) {
                 Navigator.pop(context, widget.predict1);
               }
-              if (predict2Chosen) {
+              else if (predict2Chosen) {
                 Navigator.pop(context, widget.predict2);
               }
-              if (predict3Chosen) {
+              else  if (predict3Chosen) {
                 Navigator.pop(context, widget.predict3);
               }
-              if (predict4Chosen) {
+              else  if (predict4Chosen) {
                 Navigator.pop(context, widget.predict4);
               }
-              if (amount.text.isNotEmpty) {
+              else  if (amount.text.isNotEmpty) {
                 Navigator.pop(context, amount.text);
               }
-              if (widget.remainingAmount != null) {
+              else  if (widget.remainingAmount != null) {
                 Navigator.pop(context, widget.remainingAmount);
                 amount.text = '';
               }
