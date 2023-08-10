@@ -70,6 +70,7 @@ class OrdersController extends ChangeNotifier {
 
     if(mobileOrders) {
       initPusher();
+      setMobileOrdersCount(0); 
     }
   }
 
@@ -342,7 +343,7 @@ class OrdersController extends ChangeNotifier {
 
   getNewMobileOrders() async {
     var data = await repo.getNewMobileOrdersCount();
-    if (data != false && data != 0) {
+    if (data['status'] != false && data['data'] != 0) {
       playSound();
       setMobileOrdersCount(data);
         getOrders(page: 1 ,mobileOrders: mobileOrders,filter: false);

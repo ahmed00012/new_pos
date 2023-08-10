@@ -1,4 +1,7 @@
 
+import 'dart:async';
+
+import 'package:flutter/animation.dart';
 import 'package:pusher_client/pusher_client.dart';
 import 'package:shormeh_pos_new_28_11_2022/local_storage.dart';
 import '../models/user_model.dart';
@@ -301,23 +304,5 @@ setUserData(UserModel user) {
   LocalStorage.saveData(key: kOfflineOrdersCount, value: 0);
 }
 
-initializePusher(
-    {required String channel,
-    required String event,
-    required Future function}) {
-  PusherEvent? data;
-  PusherOptions options = PusherOptions(
-    cluster: pusherCluster,
-  );
-  PusherClient pusher = PusherClient(pusherAppKey, options,
-      autoConnect: true, enableLogging: true);
 
-  pusher.connect().then((value) {
-    Channel pusherChannel = pusher.subscribe(channel);
-    pusherChannel.bind(event, (PusherEvent? event) {
-       function;
-      data = event!;
-    });
-  });
-  return data;
-}
+

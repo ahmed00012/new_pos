@@ -6,6 +6,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pusher_client/pusher_client.dart';
 import 'package:shormeh_pos_new_28_11_2022/constants/styles.dart';
 import 'package:shormeh_pos_new_28_11_2022/repositories/get_data.dart';
 import 'package:shormeh_pos_new_28_11_2022/models/customer_model.dart';
@@ -37,30 +38,25 @@ class HomeController extends ChangeNotifier {
   List<NotesModel> optionsList = [];
   bool loading = true;
 
-
-  TextEditingController customerName = TextEditingController();
-  TextEditingController customerPhone = TextEditingController();
-  TextEditingController expenseDescription = TextEditingController();
-  TextEditingController cashOutAmount = TextEditingController();
-  TextEditingController anotherOption = TextEditingController();
-  // String lan = 'en';
-
+  //
+  // TextEditingController customerName = TextEditingController();
+  // TextEditingController customerPhone = TextEditingController();
+  // TextEditingController expenseDescription = TextEditingController();
+  // TextEditingController cashOutAmount = TextEditingController();
+  // TextEditingController anotherOption = TextEditingController();
+  //
   List<CustomerModel> paymentCustomers = [];
-  // PusherClient ?pusher;
-  // Channel? pusherChannel;
-  // static int ordersCount = 0;
-  // ProductDetailsModel productDetails = ProductDetailsModel();
   List<Attributes> attributes = [];
   bool changed = false;
-  // String url = 'https://beta2.poss.app/api/';
   GetData allData = GetData();
   bool branchClosed = false;
   Timer ? pusherTimer;
-  Timer ?baseUrlTimer;
+  // Timer ?baseUrlTimer;
   Timer ?branchImagesTimer;
   List<String> branchScreenImages = [];
   int secondScreenDuration = 0;
-
+  StreamController<String> _eventData = StreamController<String>.broadcast();
+  Sink get _inEventData => _eventData.sink;
 
 
   HomeController() {
@@ -134,8 +130,8 @@ class HomeController extends ChangeNotifier {
 
   @override
   void dispose() {
-    if(baseUrlTimer!=null)
-      baseUrlTimer!.cancel();
+    // if(baseUrlTimer!=null)
+    //   baseUrlTimer!.cancel();
     if(pusherTimer!=null)
       pusherTimer!.cancel();
     if(branchImagesTimer!=null)
@@ -143,31 +139,9 @@ class HomeController extends ChangeNotifier {
     super.dispose();
   }
 
-  void initPusher( ) {
-    if(Platform.isWindows) {
-     pusherTimer = Timer.periodic(Duration(seconds: 30), (timer) {
-        getNewMobileOrders();
-      });
-    }
-    else{
-      // PusherOptions options = PusherOptions(
-      //   cluster: pusherCluster,
-      // );
-      // pusher =  PusherClient(pusherAppKey, options,
-      //     autoConnect: true,enableLogging: true);
-      //
-      // pusher!.connect().then((value) {
-      //   channel = pusher!.subscribe(pusherGetOrderCountChannel);
-      //  getMobileOrder();
-      // });
+  PusherClient? pusher;
+  Channel? pusherChannel;
 
-      initializePusher(channel: pusherGetOrderCountChannel,
-          event: pusherGetOrderCountEvent,
-          function: getNewMobileOrders());
-    }
-
-
-  }
 
 
   // refreshList() {
@@ -489,67 +463,48 @@ class HomeController extends ChangeNotifier {
     }
   }
 
+  void initPusher( ) async{
+    if(Platform.isWindows) {
+      pusherTimer = Timer.periodic(Duration(seconds: 30), (timer) {
+        getNewMobileOrders();
+
+      });
+    }
+    else{
+      PusherOptions options = PusherOptions(
+        cluster: pusherCluster,
+      );
+      pusher = new PusherClient(pusherAppKey, options,
+          autoConnect: true, enableLogging: true);
+      pusher!.connect().then((value) {
+        pusherChannel = pusher!.subscribe(pusherGetOrderCountChannel);
+        pusherChannel!.bind(pusherGetOrderCountEvent,
+                (PusherEvent? event) {
+              setMobileOrdersCount(getMobileOrdersCount() + 1);
+              playSound();
+              _inEventData.add(event!.data);
+              notifyListeners();
+            });
+
+      });
+    }
 
 
 
-  // itemCount({required OrderDetails orderDetails,required int value,}){
-  //   orderDetails.textCountController(chosenItem!,value);
-  //   notifyListeners();
-  // }
-
-
-  // updateAttributes( {required OrderDetails orderDetails,
-  //   required int attributeIndex }){
-  //   deleteFromOrder(orderDetails.cart![chosenItem!].rowId!);
-  //   orderDetails.cart![chosenItem!].rowId = null;
-  //
-  //   orderDetails.cart![chosenItem!].updated = true;
-  //   int removeAt = 0;
-  //   orderDetails.cart![chosenItem!].attributes!.removeWhere((element) =>
-  //   attributes[attributeIndex].title!.en == element.title!.en );
-  //   orderDetails.cart![chosenItem!].allAttributesID!.forEach((element) {
-  //     attributes[attributeIndex].values!.forEach((element2) {
-  //       if(element == element2.id)
-  //         removeAt = orderDetails.cart![chosenItem!].allAttributesID!.indexOf(element);
-  //     });
-  //   });
-  //   orderDetails.cart![chosenItem!].allAttributesID!.removeAt(removeAt);
-  //   notifyListeners();
-  // }
-
-
-  // void editAttributes(
-  // {required OrderDetails orderDetails,required int valueIndex,
-  //   required int attributeIndex ,required int productIndex}){
-  //
-  //
-  //   //
-  //   // if(!attributes[attributeIndex].values![valueIndex].chosen!) {
-  //   //
-  //   //
-  //   //   orderDetails.addAttributes(attributes[attributeIndex],
-  //   //       productIndex, attributes[attributeIndex].values![valueIndex]);
-  //   // }
-  //   //
-  //   // else if(attributes[attributeIndex].values![valueIndex].chosen!){
-  //   //   // int attributeIndexInsideCart = orderDetails.cart![productIndex].attributes!.indexOf(attributes[attributeIndex]);
-  //   //   orderDetails.removeAttributes(attributes[attributeIndex], productIndex,
-  //   //       attributes[attributeIndex].values![valueIndex],attributeIndex);
-  //   //
-  //   // }
-  //
-  //   notifyListeners();
-  // }
+  }
 
 
 
-  Future getNewMobileOrders() async{
+   Future getNewMobileOrders() async{
+    try{
       var data = await productsRepo.getNewMobileOrdersCount();
-      if(data['status']!=false && data['data'].toString()!='0'){
+      if (data['status'] != false && data['data'].toString() != '0') {
         setMobileOrdersCount(data['data']);
         playSound();
       }
-      notifyListeners();
+    }
+    catch (e){}
+    notifyListeners();
   }
 
 

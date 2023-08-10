@@ -106,6 +106,7 @@ class OrdersRepository {
         headers: ApiEndPoints.headerWithToken(token:getUserToken() ,language: getLanguage()),
       );
       var data = json.decode(response.body);
+      print(data);
       if (response.statusCode == 200) {
         return data;
       }
@@ -142,12 +143,14 @@ class OrdersRepository {
   Future acceptOrder(int orderID) async {
     try {
       var response = await http.post(Uri.parse(ApiEndPoints.AcceptMobileOrder),
-          body: {
+          body: jsonEncode(
+              {
             'order_id': orderID.toString(),
-          },
+          }),
           headers: ApiEndPoints.headerWithToken(token:getUserToken() ,language: getLanguage()));
 
       var data = json.decode(response.body);
+      print('sdfsdfsd'+data.toString());
 
       return data;
     } catch (e) {

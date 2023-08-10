@@ -106,7 +106,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
               children: [
                 Container(
                   height: size.height,
-                  width: size.width * 0.28,
+                  width: size.width * 0.3,
                   child: Padding(
                     padding: const EdgeInsets.all(10),
                     child: Stack(
@@ -114,10 +114,12 @@ class _OrdersScreenState extends State<OrdersScreen> {
                       children: [
                         if(chosenOrder!=null)
                         Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 5),
+                          padding: const EdgeInsets.all(5),
                           child:  Receipt(order: cartController.editOrder(chosenOrder!),
-                          scr: repaintBoundaryKey,),
+                          repaintRenderKey: repaintBoundaryKey,),
                         ),
+
+                        
                         Card(
                             elevation: 5,
                             clipBehavior: Clip.antiAliasWithSaveLayer,

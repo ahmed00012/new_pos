@@ -21,6 +21,7 @@ class PaymentSummaryTable extends StatelessWidget {
     return  Table(
       border: TableBorder.all(),
       children: [
+        if(paidAmount!=0)
         TableRow(children: [
           Padding(
             padding: const EdgeInsets.all(5.0),
@@ -48,6 +49,7 @@ class PaymentSummaryTable extends StatelessWidget {
             ),
           ),
         ]),
+        if(remainingAmount!=0)
         TableRow(children: [
           Padding(
             padding: const EdgeInsets.all(5.0),
@@ -142,7 +144,7 @@ class PaymentSummaryTable extends StatelessWidget {
               padding: const EdgeInsets.all(5.0),
               child: Center(
                 child: Text(
-                  '$deliveryFee SAR',
+                  '$discount SAR',
                   style: TextStyle(
                       fontSize: size.height*0.022,
                       fontWeight: FontWeight.w500),

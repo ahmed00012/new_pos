@@ -1,12 +1,11 @@
 import 'dart:convert';
 
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shormeh_pos_new_28_11_2022/constants/styles.dart';
 import 'package:shormeh_pos_new_28_11_2022/constants/prefs_utils.dart';
-
-import '../local_storage.dart';
 import '../models/cart_model.dart';
 import '../models/client_model.dart';
 import '../models/coupon_model.dart';
@@ -316,10 +315,11 @@ class CartController extends ChangeNotifier {
   // }
 
   OrderDetails editOrder(OrdersModel order) {
+    print(order.toJson());
     OrderDetails editedOrder = OrderDetails(cart: [], payMethods: []);
     editedOrder.orderUpdatedId = order.id;
     editedOrder.total = order.total!;
-    editedOrder.tax = editedOrder.total * getTax() / 100;
+    editedOrder.tax = double.parse(order.tax!);
     editedOrder.paid = order.paidAmount ?? 0.0;
     editedOrder.paymentStatus = order.paymentStatus;
     editedOrder.orderStatusID = order.orderStatusId;
@@ -422,7 +422,11 @@ class CartController extends ChangeNotifier {
     OrderDetails editedOrder =OrderDetails(cart: [], payMethods: []);
     editedOrder.orderUpdatedId = order.id;
     editedOrder.total = order.total!;
-    editedOrder.tax = order.total! * getTax() / 100;
+    editedOrder.tax = order.tax ?? 0;
+    editedOrder.paid = order.paidAmount ?? 0.0;
+    editedOrder.paymentStatus = order.paymentStatus;
+    editedOrder.orderStatusID = order.orderStatusId;
+
     // orderDetails.amount1 = 0.0;
     // orderDetails.amount2 = 0.0;
 
@@ -470,7 +474,6 @@ class CartController extends ChangeNotifier {
     });
     editedOrder.orderMethod = 'restaurant';
     editedOrder.orderMethodId = 2;
-    editedOrder.orderStatus = order.orderStatusId;
     editedOrder.tableTitle = table.title;
     editedOrder.tableId = table.id;
     editedOrder.department = department.title;
@@ -478,6 +481,8 @@ class CartController extends ChangeNotifier {
     editedOrder.orderMethodModel =
         OrderMethodModel(id: 2, title: OrderMethodTitle(en: 'restaurant'.tr()));
     editedOrder.updateWithCoupon = false;
+    editedOrder.orderNumber = order.uuid;
+    editedOrder.orderTime = order.createdAt;
 
     return editedOrder;
   }
@@ -606,17 +611,20 @@ class CartController extends ChangeNotifier {
   }
 
   Future onSearchClientTextChanged(String text) async {
-    try {
-      clientsLoading = true;
-      final data = await productsRepo.searchClient(text);
-      clients = List<ClientModel>.from(
-          data['data'].map((client) => ClientModel.fromJson(client)));
-      clientsLoading = false;
-    } catch (e) {
-      ConstantStyles.displayToastMessage(e.toString(), true);
+    if(text.isNotEmpty)
+    {
+      try {
+        clientsLoading = true;
+        final data = await productsRepo.searchClient(text);
+        clients = List<ClientModel>.from(
+            data['data'].map((client) => ClientModel.fromJson(client)));
+        clientsLoading = false;
+      } catch (e) {
+        ConstantStyles.displayToastMessage(e.toString(), true);
+      }
+      // notifyListeners();
+      return clients;
     }
-    // notifyListeners();
-    return clients;
   }
 
   Future onSearchClientLocally(String text) async {
@@ -654,7 +662,6 @@ class CartController extends ChangeNotifier {
   chooseClient({required String name, required String phone}) {
     orderDetails.clientPhone = phone;
     orderDetails.clientName = name;
-
     notifyListeners();
   }
 
@@ -668,6 +675,7 @@ class CartController extends ChangeNotifier {
   void checkCoupon(String code) {
     coupons = List<CouponModel>.from(
         json.decode(getCouponsPrefs()).map((e) => CouponModel.fromJson(e)));
+    print(getCouponsPrefs());
 
     CouponModel? couponUse;
     bool inBranch = false;
@@ -678,20 +686,30 @@ class CartController extends ChangeNotifier {
       }
     });
 
+    print(couponUse!.branches!.map((e) => e.title).toList().toString());
+    print(couponUse!.code.toString());
+    print(couponUse!.counter.toString());
+    print(couponUse!.numOfUses.toString());
+    print(couponUse!.isActive.toString());
+    print(couponUse!.timeTo.toString());
+    print(couponUse!.dateTo.toString());
+
     if (couponUse == null) {
       ConstantStyles.displayToastMessage('couponNotFound'.tr(), true);
       valid = false;
-    } else if (couponUse!.branches != null) {
+    }
+     if (couponUse!.branches != null) {
       couponUse!.branches!.forEach((element) {
         if (element.id == getBranch()) inBranch = true;
       });
-    } else if (couponUse!.isActive == 0) {
+    }
+     if (couponUse!.isActive == 0) {
       ConstantStyles.displayToastMessage('couponNotValid'.tr(), true);
       valid = false;
-    } else if (couponUse!.counter! >= couponUse!.numOfUses!) {
+    }  if (couponUse!.counter! >= couponUse!.numOfUses!) {
       ConstantStyles.displayToastMessage('couponHasEnded'.tr(), true);
       valid = false;
-    } else if (!inBranch) {
+    }  if (!inBranch) {
       ConstantStyles.displayToastMessage(
           'couponNotAvailableForThisBranch'.tr(), true);
       valid = false;
@@ -704,7 +722,7 @@ class CartController extends ChangeNotifier {
             'couponStillNotAvailable'.tr(), true);
         valid = false;
       }
-    } else if (couponUse != null && couponUse!.dateTo != null) {
+    }  if (couponUse != null && couponUse!.dateTo != null) {
       if (DateTime.parse('${couponUse!.dateTo} ${couponUse!.timeTo ?? '23:59'}')
           .isBefore(DateTime.now())) {
         ConstantStyles.displayToastMessage('couponHasEnded'.tr(), true);
@@ -713,13 +731,13 @@ class CartController extends ChangeNotifier {
     }
     if (valid) {
       ConstantStyles.displayToastMessage('couponAdded'.tr(), false);
+      orderDetails.coupon = code;
+      orderDetails.couponType = couponUse!.type;
       if (couponUse!.type == 1) {
         orderDetails.discountValue = couponUse!.value!;
-        String discount =
-            (getTotal() - couponUse!.value! - orderDetails.deliveryFee)
-                .toStringAsFixed(2);
-        orderDetails.discount = double.parse(discount);
-        orderDetails.coupon = code;
+
+         orderDetails.discount = couponUse!.value!;
+
         // orderDetails.setDiscount(false, couponUse.value!);
       } else {
         orderDetails.discountValue = couponUse!.value!;
@@ -728,7 +746,9 @@ class CartController extends ChangeNotifier {
                 .toStringAsFixed(2);
         orderDetails.discount = double.parse(discount);
       }
+      getTotal();
     }
+    notifyListeners();
   }
 
   void setPayment(PaymentModel paymentMethod, String total) {

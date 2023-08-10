@@ -91,6 +91,7 @@ class OrderDetails {
   String? orderQr;
   String? orderNumber;
   String? orderTime;
+  int? couponType; // 1=> fixed amount  2=> percentage
 
 
 
@@ -130,12 +131,14 @@ class OrderDetails {
     this.payLater = false,
     this.orderQr,
     this.orderNumber,
-    this.orderTime
+    this.orderTime,
+    this.couponType
   });
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
 
+    print(this.coupon);
     data['phone'] = this.clientPhone;
     data['name'] = this.clientName;
     data['payment_method_id'] = this.customer != null? 2: payMethods.isNotEmpty ? payMethods[0].id : null;
@@ -144,7 +147,7 @@ class OrderDetails {
     data['payment_status'] =  this.payMethods.isEmpty ? 0 : 1;
     data['finish'] = payMethods.isNotEmpty;
     data['table_id'] = this.tableId;
-    data['coupon'] = this.coupon;
+    data['coupon'] = this.coupon ;
     data['hold'] = this.hold;
     data['payment_customer_id'] = this.customer != null? this.customer!.id : null;
     data['clients_count'] = this.tableCount;

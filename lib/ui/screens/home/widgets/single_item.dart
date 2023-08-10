@@ -179,7 +179,7 @@ class SingleItem extends ConsumerWidget {
                           :   ProductItemWidget(
                           onTap: () {
                               cartController.insertOption(
-                                  indexOfProduct: cartController.orderDetails.cart.length - 1,
+                                  indexOfProduct: index,
                                   note: optionList[i]);
 
                           },

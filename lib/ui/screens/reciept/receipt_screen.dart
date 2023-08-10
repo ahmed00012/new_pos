@@ -15,11 +15,12 @@ import '../../../constants/printing_services/printing_service.dart';
 class Receipt extends StatelessWidget {
 
   final OrderDetails order;
+  final GlobalKey ?repaintRenderKey;
 
-  Receipt({required this.order,this.scr});
+  Receipt({required this.order,required this.repaintRenderKey});
 
   // final GlobalKey? imageKey;
-  final GlobalKey ?scr;
+
   // final  ScreenshotController? screenshotController;
 
   // this.screenshotController,
@@ -31,7 +32,7 @@ class Receipt extends StatelessWidget {
     return Scaffold(
       body: SingleChildScrollView(
         child: RepaintBoundary(
-          key: scr,
+          key: repaintRenderKey,
           child: Container(
 
                   decoration: BoxDecoration(

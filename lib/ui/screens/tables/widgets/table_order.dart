@@ -6,9 +6,11 @@ import 'package:shormeh_pos_new_28_11_2022/constants/prefs_utils.dart';
 import 'package:shormeh_pos_new_28_11_2022/data_controller/cart_controller.dart';
 import 'package:shormeh_pos_new_28_11_2022/data_controller/tables_controller.dart';
 import '../../../../constants/colors.dart';
+import '../../../../constants/styles.dart';
 import '../../../../models/cart_model.dart';
 import '../../../../models/tables_model.dart';
 import '../../../widgets/bottom_nav_bar.dart';
+import '../../orders/widgets/cancel_widget.dart';
 import '../../reciept/widgets/products_table.dart';
 
 class TableOrder extends StatelessWidget {
@@ -16,10 +18,11 @@ class TableOrder extends StatelessWidget {
   final CurrentOrder order;
   final Department department;
   final Tables table;
+  final Function(OrderDetails) onScreenshot;
 
 
-
-  TableOrder({super.key, required this.order,required this.department, required this.table});
+  TableOrder({super.key, required this.order,required this.department, required this.table,
+  required this.onScreenshot});
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +33,7 @@ class TableOrder extends StatelessWidget {
       resizeToAvoidBottomInset: false,
       body: Consumer(builder: (context, ref, child) {
         final cartController = ref.watch(cartFuture);
-        final ordersController = ref.watch(tablesFuture);
+        // final ordersController = ref.watch(tablesFuture);
         return Stack(
           children: [
             Container(
@@ -42,7 +45,7 @@ class TableOrder extends StatelessWidget {
                     onTap: () {
                     OrderDetails orderDetails =
                     cartController.editOrderTable(order: order , department: department , table: table );
-
+                    onScreenshot(orderDetails);
                       // PrintingService.printInvoice(
                       //     order: orderDetails,
                       //     table: ProductsTable(cart: orderDetails.cart));
@@ -297,13 +300,27 @@ class TableOrder extends StatelessWidget {
                               height: 5,
                             ),
 
-                              Text(
-                                table.title!,
-                                style: TextStyle(
-                                    fontSize: size.height * 0.02,
-                                    fontWeight: FontWeight.bold,
-                                    color: Constants.mainColor),
-                              ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  department.title!,
+                                  style: TextStyle(
+                                      fontSize: size.height * 0.02,
+                                      fontWeight: FontWeight.bold,
+                                      color: Constants.mainColor),
+                                ),
+
+                                Text(
+                                  table.title!,
+                                  style: TextStyle(
+                                      fontSize: size.height * 0.02,
+                                      fontWeight: FontWeight.bold,
+                                      color: Constants.mainColor),
+                                ),
+
+                              ],
+                            ),
 
                             if (order.discount != 0)
                               Row(
@@ -355,7 +372,10 @@ class TableOrder extends StatelessWidget {
                   ),
                 ),
 
-                if (order.orderStatusId == 1)
+                if (order.orderStatusId != 5 &&
+                    order.orderStatusId != 8 &&
+                    order.orderStatusId != 10
+                    )
                   Container(
                     height: 50,
                     child: Row(
@@ -363,8 +383,11 @@ class TableOrder extends StatelessWidget {
                         Flexible(
                           child: InkWell(
                             onTap: () {
-                              // viewModel.complain( size, context,false, orderId: viewModel
-                              //     .orders[viewModel.chosenOrder!].id!);
+                              ConstantStyles.showPopup(context: context,
+                                content: CancelWidget(orderId: order.id!,
+                                  mobileOrders: false,
+                                ),
+                                title:  'cancelOrder'.tr(),);
                             },
                             child: Container(
                               color: Constants.secondryColor,
@@ -383,13 +406,24 @@ class TableOrder extends StatelessWidget {
                         Flexible(
                           child: InkWell(
                             onTap: () {
-                              // viewModel.acceptOrder();
+
+                              cartController.orderDetails =  cartController.editOrderTable(
+                                order: order,
+                                department: department,
+                                table: table
+                              );
+                              Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => BottomNavBar()),
+                                      (route) => false);
+
                             },
                             child: Container(
                               color: Constants.mainColor,
                               child: Center(
                                 child: Text(
-                                  'acceptOrder'.tr(),
+                                  'editOrder'.tr(),
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: size.height * 0.025,
@@ -403,35 +437,83 @@ class TableOrder extends StatelessWidget {
                     ),
                   ),
 
-                if (order.orderStatusId !=1 &&
-                    order.orderStatusId != 8 &&
-                    order.orderStatusId != 9 &&
-                    order.orderStatusId != 5 &&
-                    order.paymentStatus == 0 &&
-                    order.orderStatusId != 10 )
-                  Container(
-                    height: 50,
-                    child: InkWell(
-                      onTap: () {
-                      cartController.editOrderTable(order: order, table: table, department: department);
-                      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>
-                      BottomNavBar()), (route) => false);
-
-                      },
-                      child: Container(
-                        color: Constants.mainColor,
-                        child: Center(
-                          child: Text(
-                            'editOrder'.tr(),
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: size.height * 0.025,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+                // if (order.orderStatusId == 1)
+                //   Container(
+                //     height: 50,
+                //     child: Row(
+                //       children: [
+                //         Flexible(
+                //           child: InkWell(
+                //             onTap: () {
+                //               // viewModel.complain( size, context,false, orderId: viewModel
+                //               //     .orders[viewModel.chosenOrder!].id!);
+                //             },
+                //             child: Container(
+                //               color: Constants.secondryColor,
+                //               child: Center(
+                //                 child: Text(
+                //                   'cancelOrder'.tr(),
+                //                   style: TextStyle(
+                //                     color: Colors.white,
+                //                     fontSize: size.height * 0.025,
+                //                   ),
+                //                 ),
+                //               ),
+                //             ),
+                //           ),
+                //         ),
+                //         Flexible(
+                //           child: InkWell(
+                //             onTap: () {
+                //               // viewModel.acceptOrder();
+                //             },
+                //             child: Container(
+                //               color: Constants.mainColor,
+                //               child: Center(
+                //                 child: Text(
+                //                   'acceptOrder'.tr(),
+                //                   style: TextStyle(
+                //                     color: Colors.white,
+                //                     fontSize: size.height * 0.025,
+                //                   ),
+                //                 ),
+                //               ),
+                //             ),
+                //           ),
+                //         ),
+                //       ],
+                //     ),
+                //   ),
+                //
+                // if (order.orderStatusId !=1 &&
+                //     order.orderStatusId != 8 &&
+                //     order.orderStatusId != 9 &&
+                //     order.orderStatusId != 5 &&
+                //     order.paymentStatus == 0 &&
+                //     order.orderStatusId != 10 )
+                //   Container(
+                //     height: 50,
+                //     child: InkWell(
+                //       onTap: () {
+                //       cartController.editOrderTable(order: order, table: table, department: department);
+                //       Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>
+                //       BottomNavBar()), (route) => false);
+                //
+                //       },
+                //       child: Container(
+                //         color: Constants.mainColor,
+                //         child: Center(
+                //           child: Text(
+                //             'editOrder'.tr(),
+                //             style: TextStyle(
+                //               color: Colors.white,
+                //               fontSize: size.height * 0.025,
+                //             ),
+                //           ),
+                //         ),
+                //       ),
+                //     ),
+                //   ),
 
 
               ],

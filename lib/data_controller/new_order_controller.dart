@@ -220,6 +220,7 @@ class NewOrderController extends ChangeNotifier {
     String? orderNo;
     if(orderDetails.orderUpdatedId != null){
     orderNo =   await updateOrder(orderDetails);
+    return orderNo;
     }
     else {
       switchLoading(true);
@@ -246,10 +247,11 @@ class NewOrderController extends ChangeNotifier {
           );
         }
         ConstantStyles.displayToastMessage(responseValue['msg'], false);
-
         orderNo = responseValue['data']['uuid'];
+        switchLoading(false);
       } else {
         ConstantStyles.displayToastMessage('${responseValue['msg']}', true);
+        switchLoading(false);
       }
 
       return orderNo;

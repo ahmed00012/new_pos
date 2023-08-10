@@ -1,4 +1,3 @@
-
 import 'package:easy_localization/src/public_ext.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -26,9 +25,7 @@ import '../../../models/cart_model.dart';
 import 'widgets/amount_widget.dart';
 import '../cart/cart_screen.dart';
 
-
 class PaymentScreen extends StatefulWidget {
-
   final OrderDetails order;
   PaymentScreen({required this.order});
 
@@ -37,7 +34,6 @@ class PaymentScreen extends StatefulWidget {
 }
 
 class _PaymentScreenState extends State<PaymentScreen> {
-
   // GlobalKey? imageKey;
   GlobalKey repaintBoundaryKey = GlobalKey();
   TextEditingController coupon = TextEditingController();
@@ -51,10 +47,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
   //   return CaptureResult(data!.buffer.asUint8List(), image.width, image.height);
   // }
 
-
   // Function()
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -116,26 +109,32 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                         shrinkWrap: true,
                                         physics:
                                             const NeverScrollableScrollPhysics(),
-                                        itemCount:
-                                            orderController.paymentMethods.length,
+                                        itemCount: orderController
+                                            .paymentMethods.length,
                                         itemBuilder: (context, i) {
                                           return orderController
-                                                          .paymentMethods[i].id ==
+                                                          .paymentMethods[i]
+                                                          .id ==
                                                       2 ||
                                                   orderController
-                                                          .paymentMethods[i].id ==
+                                                          .paymentMethods[i]
+                                                          .id ==
                                                       7
                                               ? Container()
                                               : PaymentItem(
                                                   index: i,
                                                   title: orderController
-                                                      .paymentMethods[i].title!.en!,
+                                                      .paymentMethods[i]
+                                                      .title!
+                                                      .en!,
                                                   color: orderController
-                                                          .paymentMethods[i].chosen
+                                                          .paymentMethods[i]
+                                                          .chosen
                                                       ? Constants.mainColor
                                                       : Colors.white,
                                                   textColor: orderController
-                                                          .paymentMethods[i].chosen
+                                                          .paymentMethods[i]
+                                                          .chosen
                                                       ? Colors.white
                                                       : Colors.black,
                                                   onTap: () {
@@ -149,21 +148,28 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                                     });
 
                                                     if (orderController
-                                                        .paymentMethods[i].chosen) {
-                                                      orderController.selectPayment(
-                                                          cartController
-                                                              .orderDetails,
-                                                          i,
-                                                          cartController
-                                                              .getTotal());
+                                                        .paymentMethods[i]
+                                                        .chosen &&
+                                                        cartController.orderDetails.paid == 0 ||
+                                                        cartController.orderDetails.paid <
+                                                            cartController.orderDetails.total) {
+                                                      orderController
+                                                          .selectPayment(
+                                                              cartController
+                                                                  .orderDetails,
+                                                              i,
+                                                              cartController
+                                                                  .getTotal());
 
                                                       if (orderController
                                                               .paymentMethods[i]
                                                               .id ==
                                                           1) {
-                                                        ConstantStyles.showPopup(
+                                                        ConstantStyles
+                                                            .showPopup(
                                                           context: context,
-                                                          width: size.width * 0.3,
+                                                          width:
+                                                              size.width * 0.3,
                                                           content: AmountWidget(
                                                             predict1: orderController
                                                                         .predict1 !=
@@ -190,28 +196,31 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                                           title: 'amount'.tr(),
                                                         ).then((value) {
                                                           if (value != null &&
-                                                              double.parse(value) !=
+                                                              double.parse(
+                                                                      value) !=
                                                                   0) {
                                                             cartController.setPayment(
                                                                 orderController
                                                                     .paymentMethods[i],
                                                                 value);
                                                             setState(() {});
-                                                          }
-                                                          else {
+                                                          } else {
                                                             setState(() {
                                                               orderController
-                                                                  .paymentMethods[i]
+                                                                  .paymentMethods[
+                                                                      i]
                                                                   .chosen = false;
                                                             });
                                                           }
                                                         });
-                                                      }
-                                                      else {
-                                                        ConstantStyles.showPopup(
+                                                      } else {
+                                                        ConstantStyles
+                                                            .showPopup(
                                                           context: context,
-                                                          height: size.height * .5,
-                                                          width: size.width * 0.3,
+                                                          height:
+                                                              size.height * .45,
+                                                          width:
+                                                              size.width * 0.3,
                                                           content: AmountWidget(
                                                             predict1: (cartController
                                                                         .getTotal() -
@@ -224,7 +233,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                                           title: 'amount'.tr(),
                                                         ).then((value) {
                                                           if (value != null &&
-                                                              double.parse(value) !=
+                                                              double.parse(
+                                                                      value) !=
                                                                   0) {
                                                             cartController.setPayment(
                                                                 orderController
@@ -234,12 +244,26 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                                           } else
                                                             setState(() {
                                                               orderController
-                                                                  .paymentMethods[i]
+                                                                  .paymentMethods[
+                                                                      i]
                                                                   .chosen = false;
                                                             });
                                                         });
                                                       }
-                                                    } else {
+                                                    }
+                                                    else if(orderController
+                                                        .paymentMethods[i]
+                                                        .chosen &&
+                                                        cartController.orderDetails.paid >=
+                                                            cartController.orderDetails.total){
+                                                      setState(() {
+                                                        orderController
+                                                            .paymentMethods[i]
+                                                            .chosen = false;
+                                                      });
+                                                    }
+
+                                                    else {
                                                       cartController.removePayment(
                                                           paymentModel:
                                                               orderController
@@ -251,56 +275,66 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                         }),
                                   ),
 
-                                  if (cartController.orderDetails.customer ==
+                                  if (cartController
+                                              .orderDetails.customer ==
                                           null &&
-                                      cartController.orderDetails.orderStatusID !=
+                                      cartController
+                                              .orderDetails.orderStatusID !=
                                           4 &&
-                                      cartController.orderDetails.paymentStatus !=
+                                      cartController
+                                              .orderDetails.paymentStatus !=
                                           0)
                                     Padding(
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 10, vertical: 5),
                                       child: Container(
                                         decoration: BoxDecoration(
-                                            color:
-                                                cartController.orderDetails.owner ==
-                                                        null
-                                                    ? Colors.white
-                                                    : Constants.mainColor,
-                                            borderRadius: BorderRadius.circular(10),
-                                            border:
-                                                Border.all(color: Colors.black12)),
+                                            color: cartController
+                                                        .orderDetails.owner ==
+                                                    null
+                                                ? Colors.white
+                                                : Constants.mainColor,
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            border: Border.all(
+                                                color: Colors.black12)),
                                         child: ClipRRect(
-                                          borderRadius: BorderRadius.circular(10),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
                                           child: ExpansionTile(
                                             key: Key(orderController.collapseKey
                                                 .toString()),
-                                            collapsedIconColor:
-                                                cartController.orderDetails.owner !=
-                                                        null
-                                                    ? Colors.white
-                                                    : Colors.black,
-                                            iconColor:
-                                                cartController.orderDetails.owner !=
-                                                        null
-                                                    ? Colors.white
-                                                    : Colors.black,
+                                            collapsedIconColor: cartController
+                                                        .orderDetails.owner !=
+                                                    null
+                                                ? Colors.white
+                                                : Colors.black,
+                                            iconColor: cartController
+                                                        .orderDetails.owner !=
+                                                    null
+                                                ? Colors.white
+                                                : Colors.black,
                                             title: Center(
                                               child: Text(
-                                                cartController.orderDetails.owner ==
+                                                cartController.orderDetails
+                                                            .owner ==
                                                         null
                                                     ? 'others'.tr()
                                                     : cartController
-                                                        .orderDetails.owner!.title!,
+                                                        .orderDetails
+                                                        .owner!
+                                                        .title!,
                                                 style: TextStyle(
-                                                    fontSize: size.height * 0.02,
+                                                    fontSize:
+                                                        size.height * 0.02,
                                                     color: cartController
                                                                 .orderDetails
                                                                 .owner ==
                                                             null
                                                         ? Colors.black
                                                         : Colors.white,
-                                                    fontWeight: FontWeight.w500),
+                                                    fontWeight:
+                                                        FontWeight.w500),
                                               ),
                                             ),
                                             children: orderController.owners
@@ -310,7 +344,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                                   cartController.removePayment(
                                                       clear: true);
                                                   orderController.selectOwner(
-                                                      cartController.orderDetails,
+                                                      cartController
+                                                          .orderDetails,
                                                       element);
                                                 },
                                                 child: Container(
@@ -324,7 +359,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                                       element.title!,
                                                       style: TextStyle(
                                                           fontSize:
-                                                              size.height * 0.02,
+                                                              size.height *
+                                                                  0.02,
                                                           color: Colors.black,
                                                           fontWeight:
                                                               FontWeight.w500),
@@ -346,16 +382,18 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
                                   ////////////////////////////coupon/////////////////////////////////////////////////////
 
-                                  if ((cartController
-                                                  .orderDetails.updateWithCoupon ==
+                                  if ((cartController.orderDetails
+                                                  .updateWithCoupon ==
                                               false ||
-                                          cartController
-                                                  .orderDetails.updateWithCoupon ==
+                                          cartController.orderDetails
+                                                  .updateWithCoupon ==
                                               null) &&
                                       cartController.orderDetails.customer ==
                                           null &&
-                                      cartController.orderDetails.discount == 0 &&
-                                      cartController.orderDetails.orderStatusID !=
+                                      cartController.orderDetails.discount ==
+                                          0 &&
+                                      cartController
+                                              .orderDetails.orderStatusID !=
                                           4)
                                     Padding(
                                       padding: const EdgeInsets.symmetric(
@@ -390,8 +428,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                                     FocusManager
                                                         .instance.primaryFocus
                                                         ?.unfocus();
-                                                    cartController
-                                                        .checkCoupon(coupon.text);
+                                                    cartController.checkCoupon(
+                                                        coupon.text);
+                                                    print(cartController
+                                                        .orderDetails
+                                                        .toJson());
                                                   },
                                                 ))
                                           ],
@@ -399,33 +440,39 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                       ),
                                     ),
                                   if (cartController.orderDetails.discount != 0)
-                                    Container(
-                                      height: size.height * 0.08,
-                                      width: size.width * 0.4,
-                                      decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.circular(5),
-                                          border: Border.all(
-                                              color: Constants.mainColor)),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          Image.asset(
-                                            'assets/images/discount.png',
-                                            color: Constants.mainColor,
-                                            height: 30,
-                                            width: 30,
-                                          ),
-                                          SizedBox(
-                                            width: 20,
-                                          ),
-                                          Text(
-                                            '${'couponDiscount'.tr()}   ${cartController.orderDetails.discount} SAR',
-                                            style: TextStyle(
-                                                color: Constants.mainColor,
-                                                fontSize: size.height * 0.024),
-                                          ),
-                                        ],
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 10),
+                                      child: Container(
+                                        height: size.height * 0.08,
+                                        decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(5),
+                                            border: Border.all(
+                                                color: Constants.mainColor)),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Image.asset(
+                                              'assets/images/discount.png',
+                                              color: Constants.mainColor,
+                                              height: 30,
+                                              width: 30,
+                                            ),
+                                            SizedBox(
+                                              width: 20,
+                                            ),
+                                            Text(
+                                              '${'couponDiscount'.tr()}   ${cartController.orderDetails.discount} SAR',
+                                              style: TextStyle(
+                                                  color: Constants.mainColor,
+                                                  fontSize:
+                                                      size.height * 0.024),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
 
@@ -436,11 +483,12 @@ class _PaymentScreenState extends State<PaymentScreen> {
                               ),
                             ),
                             Expanded(
-                                child: SizedBox(
-                                  height: size.height * 0.9,
-                                  child: Receipt(order: cartController.orderDetails,
-                                  scr: repaintBoundaryKey),
-                                ),
+                              child: SizedBox(
+                                height: size.height * 0.9,
+                                child: Receipt(
+                                    order: cartController.orderDetails,
+                                    repaintRenderKey: repaintBoundaryKey),
+                              ),
                             ),
                             Padding(
                               padding: const EdgeInsets.all(8.0),
@@ -453,7 +501,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                     if (cartController
                                                 .orderDetails.orderUpdatedId !=
                                             null &&
-                                        cartController.orderDetails.paymentStatus ==
+                                        cartController
+                                                .orderDetails.paymentStatus ==
                                             0) {
                                       ConstantStyles.showPopup(
                                         context: context,
@@ -498,7 +547,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                     width: 40,
                                     decoration: BoxDecoration(
                                         color: Colors.red[400],
-                                        borderRadius: BorderRadius.circular(10)),
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
                                     child: const Center(
                                       child: Icon(
                                         Icons.clear,
@@ -526,73 +576,96 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                 child: CustomButton(
                                   title: '${'pay'.tr()}/${'send'.tr()}',
                                   onTap: () {
-                                    if (cartController.orderDetails.remaining !=
-                                        0) {
-                                      ConstantStyles.showPopup(
-                                          context: context,
-                                          height: size.height * 0.3,
-                                          width: size.width * 0.3,
-                                          content: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceEvenly,
-                                            children: [
-                                              Text(
-                                                '${cartController.orderDetails.remaining} SAR',
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: size.height * 0.04),
-                                              ),
-                                              CustomButton(
-                                                  title: 'ok'.tr(),
-                                                  onTap: () {
-                                                    Navigator.pop(context);
-                                                    orderController
-                                                        .confirmOrder(
-                                                            orderDetails:
-                                                                cartController
-                                                                    .orderDetails)
-                                                        .then((value) {
+                                    if(cartController.orderDetails.paid == 0 &&
+                                        cartController.orderDetails.total > 0 &&
+                                    cartController.orderDetails.owner == null &&
+                                    cartController.orderDetails.customer == null)
+                                      ConstantStyles.displayToastMessage('paymentMethodRequired'.tr(), true);
 
-                                                      PrintingService.captureImage(
-                                                        order: cartController.orderDetails,
-                                                        context: context,
-                                                        globalKey: repaintBoundaryKey,
-                                                         orderNo:value
-                                                      );
+                                    else if(cartController.orderDetails.paid <
+                                        cartController.orderDetails.total &&
+                                        cartController.orderDetails.owner == null &&
+                                        cartController.orderDetails.customer == null)
+                                      ConstantStyles.displayToastMessage('paymentNotValid'.tr(), true);
 
-                                                      Navigator.pushAndRemoveUntil(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                              builder: (context) =>
-                                                                  BottomNavBar()),
-                                                          (route) => false);
-                                                      cartController.closeOrder();
-                                                    });
-                                                  })
-                                            ],
-                                          ),
-                                          title: 'remaining'.tr());
-                                    } else {
-                                      orderController
-                                          .confirmOrder(
-                                              orderDetails:
-                                                  cartController.orderDetails)
-                                          .then((value) async {
-                                        PrintingService.captureImage(
-                                            order: cartController.orderDetails,
+                                   else {
+                                      if (cartController
+                                              .orderDetails.remaining !=
+                                          0) {
+                                        ConstantStyles.showPopup(
                                             context: context,
-                                            globalKey: repaintBoundaryKey,
-                                            orderNo:value
-                                        );
+                                            height: size.height * 0.3,
+                                            width: size.width * 0.3,
+                                            content: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceEvenly,
+                                              children: [
+                                                Text(
+                                                  '${cartController.orderDetails.remaining} SAR',
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize:
+                                                          size.height * 0.04),
+                                                ),
+                                                CustomButton(
+                                                    title: 'ok'.tr(),
+                                                    onTap: () {
+                                                      Navigator.pop(context);
+                                                      orderController
+                                                          .confirmOrder(
+                                                              orderDetails:
+                                                                  cartController
+                                                                      .orderDetails)
+                                                          .then((value) {
+                                                        if (value != null) {
+                                                          PrintingService.captureImage(
+                                                              order: cartController
+                                                                  .orderDetails,
+                                                              context: context,
+                                                              globalKey:
+                                                                  repaintBoundaryKey,
+                                                              orderNo: value);
 
-                                        cartController.closeOrder();
-                                        Navigator.pushAndRemoveUntil(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    BottomNavBar()),
-                                            (route) => false);
-                                      });
+                                                          Navigator.pushAndRemoveUntil(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                  builder:
+                                                                      (context) =>
+                                                                          BottomNavBar()),
+                                                              (route) => false);
+                                                          cartController
+                                                              .closeOrder();
+                                                        }
+                                                      });
+                                                    })
+                                              ],
+                                            ),
+                                            title: 'remaining'.tr());
+                                      } else {
+                                        orderController
+                                            .confirmOrder(
+                                                orderDetails:
+                                                    cartController.orderDetails)
+                                            .then((value) async {
+                                          if (value != null) {
+                                            PrintingService.captureImage(
+                                                order:
+                                                    cartController.orderDetails,
+                                                context: context,
+                                                globalKey: repaintBoundaryKey,
+                                                orderNo: value);
+
+                                            cartController.closeOrder();
+                                            Navigator.pushAndRemoveUntil(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        BottomNavBar()),
+                                                (route) => false);
+                                          }
+                                        });
+                                      }
                                     }
                                   },
                                 ),
@@ -614,20 +687,22 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                                 orderDetails:
                                                     cartController.orderDetails)
                                             .then((value) async {
-                                          PrintingService.captureImage(
-                                              order: cartController.orderDetails,
-                                              context: context,
-                                              globalKey: repaintBoundaryKey,
-                                              orderNo:value
-                                          );
+                                          if (value != null) {
+                                            PrintingService.captureImage(
+                                                order:
+                                                    cartController.orderDetails,
+                                                context: context,
+                                                globalKey: repaintBoundaryKey,
+                                                orderNo: value);
 
-                                          cartController.closeOrder();
-                                          Navigator.pushAndRemoveUntil(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      BottomNavBar()),
-                                              (route) => false);
+                                            cartController.closeOrder();
+                                            Navigator.pushAndRemoveUntil(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        BottomNavBar()),
+                                                (route) => false);
+                                          }
                                         });
                                       },
                                     )),
@@ -640,27 +715,30 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                     title: 'payLater'.tr(),
                                     color: Constants.secondryColor,
                                     onTap: () {
-                                      cartController.orderDetails.payLater = true;
+                                      cartController.orderDetails.payLater =
+                                          true;
                                       cartController.removePayment(clear: true);
                                       orderController
                                           .confirmOrder(
                                               orderDetails:
                                                   cartController.orderDetails)
-                                          .then((value) async {
-                                        PrintingService.captureImage(
-                                            order: cartController.orderDetails,
-                                            context: context,
-                                            globalKey: repaintBoundaryKey,
-                                            orderNo:value
-                                        );
+                                          .then((value) {
+                                        if (value != null) {
+                                          PrintingService.captureImage(
+                                              order:
+                                                  cartController.orderDetails,
+                                              context: context,
+                                              globalKey: repaintBoundaryKey,
+                                              orderNo: value);
 
-                                        Navigator.pushAndRemoveUntil(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    BottomNavBar()),
-                                            (route) => false);
-                                        cartController.closeOrder();
+                                          Navigator.pushAndRemoveUntil(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      BottomNavBar()),
+                                              (route) => false);
+                                          cartController.closeOrder();
+                                        }
                                       });
                                     },
                                   ),
@@ -670,7 +748,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         ),
                       ),
 
-                      if (orderController.loading) ConstantStyles.circularLoading()
+                      if (orderController.loading)
+                        ConstantStyles.circularLoading()
                     ],
                   ),
                 )

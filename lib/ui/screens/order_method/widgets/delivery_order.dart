@@ -2,8 +2,7 @@ import 'package:easy_localization/src/public_ext.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
-import 'package:shormeh_pos_new_28_11_2022/data_controller/home_controller.dart';
-import 'package:shormeh_pos_new_28_11_2022/data_controller/order_method_controller.dart';
+
 import 'package:shormeh_pos_new_28_11_2022/models/cart_model.dart';
 import 'package:shormeh_pos_new_28_11_2022/ui/widgets/custom_text_field.dart';
 import '../../../../constants/colors.dart';
@@ -56,6 +55,7 @@ class _DeliveryOrderState extends State<DeliveryOrder> {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
+
                 children: [
                  const SizedBox(
                     height: 30,
@@ -102,7 +102,9 @@ class _DeliveryOrderState extends State<DeliveryOrder> {
                       ),
                     ),
                     suggestionsCallback: (pattern) async {
-                      return await cartController.onSearchClientTextChanged( pattern);
+                      if(pattern.length > 3)
+                      return await cartController.onSearchClientTextChanged(pattern);
+                      else return [];
                     },
                     itemBuilder: (context, suggestion) {
                       return Column(
@@ -117,13 +119,15 @@ class _DeliveryOrderState extends State<DeliveryOrder> {
                       cartController.chooseClient(
                           name: (suggestion as ClientModel).name!,
                           phone: (suggestion as ClientModel).phone!);
-                      customerPhone.text = (suggestion as ClientModel).phone!;
-                      customerName.text = (suggestion as ClientModel).name!;
+                      setState(() {
+                        customerPhone.text = (suggestion as ClientModel).phone!;
+                        customerName.text = (suggestion as ClientModel).name!;
+                      });
                     },
 
                   ),
                   SizedBox(
-                    height: 10,
+                    height: 15,
                   ),
                   CustomTextField(
                     controller: customerName,
@@ -137,7 +141,7 @@ class _DeliveryOrderState extends State<DeliveryOrder> {
                     },
                   ),
                   const SizedBox(
-                    height: 10,
+                    height: 15,
                   ),
                   CustomTextField(
                     controller: deliveryFee,
@@ -177,7 +181,7 @@ class _DeliveryOrderState extends State<DeliveryOrder> {
                     },
                   ),
                   SizedBox(
-                    height: 10,
+                    height: 15,
                   ),
                   if (cartController.orderDetails.discount == 0)
                     Row(

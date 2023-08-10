@@ -126,8 +126,6 @@ class _OrderMethodState extends State<OrderMethod> {
                                                       orderNo:uuid
                                                   );
                                                 });
-
-
                                                 Navigator.pushAndRemoveUntil(
                                                     context,
                                                     MaterialPageRoute(
@@ -139,8 +137,6 @@ class _OrderMethodState extends State<OrderMethod> {
                                             });
                                           }
                                           if (orderMethod.id == 3) {
-
-
 
                                             orderController
                                                 .confirmOrder(cartController
@@ -171,6 +167,8 @@ class _OrderMethodState extends State<OrderMethod> {
                                             // orderController.getClients();
                                             ConstantStyles.showPopup(
                                               context: context,
+                                              height: size.height*0.75,
+
                                               content: DeliveryOrder(
                                                 order: cartController
                                                     .orderDetails,
@@ -211,7 +209,7 @@ class _OrderMethodState extends State<OrderMethod> {
                           Expanded(
                             child: Receipt(
                               order: cartController.orderDetails,
-                              scr: repaintBoundaryKey,
+                              repaintRenderKey: repaintBoundaryKey,
                             ),
                           ),
                           Align(

@@ -96,7 +96,7 @@
   "pleaseSelectReason": "Please Select Reason",
   "complainCreatedOnOrder": "Complain Created On Order",
   "orderComplainedCannotComplete": "Order Complained Can Not Complete",
-  "paymentMethodRequired": "Payment Method Required",
+  "paymentMethodRequired": "Payment method required",
   "pleaseEnterAmount": "Please Enter Amount",
   "wrongAmount": "Wrong Amount",
   "refreshCompleted": "Refresh Completed",
@@ -166,5 +166,6 @@
   "totalTax": "Total Tax",
   "totalAllOrders": "Total All Orders",
   "required": "Field Required",
-  "guests": "Count of guests"
+  "guests": "Count of guests",
+  "paymentNotValid" : "Paid amount less than total amount"
 }

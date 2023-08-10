@@ -167,14 +167,26 @@ class OrderItems extends StatelessWidget {
                                           children: [
                                             Padding(
                                               padding: const EdgeInsets.all(10.0),
-                                              child: Text(
-                                                details[i].quantity.toString() +
-                                                    'X  ' +
-                                                    details[i].title!,
-                                                style: TextStyle(
-                                                    fontSize: size.height * 0.022,
-                                                    color: Constants.mainColor,
-                                                    fontWeight: FontWeight.bold),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    details[i].quantity.toString() +
+                                                        'X  ' +
+                                                        details[i].title!,
+                                                    style: TextStyle(
+                                                        fontSize: size.height * 0.022,
+                                                        color: Constants.mainColor,
+                                                        fontWeight: FontWeight.bold),
+                                                  ),
+                                                  Text(
+                                                    details[i].total! +' SAR',
+                                                    style: TextStyle(
+                                                        fontSize: size.height * 0.022,
+                                                        color: Constants.mainColor,
+                                                        fontWeight: FontWeight.bold),
+                                                  ),
+                                                ],
                                               ),
                                             ),
                                             ListView.separated(
@@ -497,6 +509,7 @@ class OrderItems extends StatelessWidget {
                       // viewModel
                       //         .orders[viewModel.chosenOrder!].orderStatusId !=
                       //     4 &&
+
                       order.paymentStatus == 0 &&
                       order.orderStatusId != 8 &&
                       order.orderStatusId != 10 &&
@@ -558,89 +571,102 @@ class OrderItems extends StatelessWidget {
                       ),
                     ),
 
-                  // // if (order.orderStatusId == 1 && mobileOrders)
-                  //   Container(
-                  //     height: 50,
-                  //     child: Row(
-                  //       children: [
-                  //         Flexible(
-                  //           child: InkWell(
-                  //             onTap: () {
-                  //
-                  //
-                  //
-                  //               // viewModel.complain( size, context,false, orderId: viewModel
-                  //               //     .orders[viewModel.chosenOrder!].id!);
-                  //             },
-                  //             child: Container(
-                  //               color: Constants.secondryColor,
-                  //               child: Center(
-                  //                 child: Text(
-                  //                   'cancelOrder'.tr(),
-                  //                   style: TextStyle(
-                  //                     color: Colors.white,
-                  //                     fontSize: size.height * 0.025,
-                  //                   ),
-                  //                 ),
-                  //               ),
-                  //             ),
-                  //           ),
-                  //         ),
-                  //         Flexible(
-                  //           child: InkWell(
-                  //             onTap: () {
-                  //               ordersController.acceptOrder(order.id!);
-                  //             },
-                  //             child: Container(
-                  //               color: Constants.mainColor,
-                  //               child: Center(
-                  //                 child: Text(
-                  //                   'acceptOrder'.tr(),
-                  //                   style: TextStyle(
-                  //                     color: Colors.white,
-                  //                     fontSize: size.height * 0.025,
-                  //                   ),
-                  //                 ),
-                  //               ),
-                  //             ),
-                  //           ),
-                  //         ),
-                  //       ],
-                  //     ),
-                  //   ),
+                  if(mobileOrders &&
+                      order.orderStatusId == 1 &&
+                      order.paymentStatus == 0
+                       )
+                  Container(
+                    height: 50,
+                    child: Row(
+                      children: [
+                        Flexible(
+                          child: InkWell(
+                            onTap: () {
 
-                  if (order.orderStatusId !=1 &&
-                      order.orderStatusId != 8 &&
-                      order.orderStatusId != 9 &&
-                      order.orderStatusId != 5 &&
-                      order.paymentStatus == 0 &&
-                      order.orderStatusId != 10 &&
-                      mobileOrders)
-                    Container(
-                      height: 50,
-                      child: InkWell(
-                        onTap: () {
-                          cartController.orderDetails =  cartController.editOrder(order);
-                          Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => BottomNavBar()),
-                                  (route) => false);
-                        },
-                        child: Container(
-                          color: Constants.mainColor,
-                          child: Center(
-                            child: Text(
-                              'editOrder'.tr(),
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: size.height * 0.025,
+
+
+                              // viewModel.complain( size, context,false, orderId: viewModel
+                              //     .orders[viewModel.chosenOrder!].id!);
+                            },
+                            child: Container(
+                              color: Constants.secondryColor,
+                              child: Center(
+                                child: Text(
+                                  'cancelOrder'.tr(),
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: size.height * 0.025,
+                                  ),
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
+                        Flexible(
+                          child: InkWell(
+                            onTap: () {
+                              ordersController.acceptOrder(order.id!);
+                            },
+                            child: Container(
+                              color: Constants.mainColor,
+                              child: Center(
+                                child: Text(
+                                  'acceptOrder'.tr(),
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: size.height * 0.025,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
+                  ),
+
+                  // if (order.orderStatusId !=1 &&
+                  //     order.orderStatusId != 8 &&
+                  //     order.orderStatusId != 9 &&
+                  //     order.orderStatusId != 5 &&
+                  //     order.paymentStatus == 0 &&
+                  //     order.orderStatusId != 10 &&
+                  //     mobileOrders)
+                  //   Row(
+                  //     children: [
+                  //       Container(
+                  //         height: 50,
+                  //         child: InkWell(
+                  //           onTap: () {
+                  //             cartController.orderDetails =  cartController.editOrder(order);
+                  //             Navigator.pushAndRemoveUntil(
+                  //                 context,
+                  //                 MaterialPageRoute(
+                  //                     builder: (context) => BottomNavBar()),
+                  //                     (route) => false);
+                  //           },
+                  //           child: Container(
+                  //             color: Constants.mainColor,
+                  //             child: Center(
+                  //               child: Text(
+                  //                 'editOrder'.tr(),
+                  //                 style: TextStyle(
+                  //                   color: Colors.white,
+                  //                   fontSize: size.height * 0.025,
+                  //                 ),
+                  //               ),
+                  //             ),
+                  //           ),
+                  //         ),
+                  //       ),
+                  //       // if (order.orderStatusId == 1 && mobileOrders)
+                  //
+                  //     ],
+                  //   ),
+
+
+
+
 
 
                 ],
