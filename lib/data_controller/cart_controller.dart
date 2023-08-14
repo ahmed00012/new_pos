@@ -615,14 +615,17 @@ class CartController extends ChangeNotifier {
     {
       try {
         clientsLoading = true;
+        notifyListeners();
         final data = await productsRepo.searchClient(text);
         clients = List<ClientModel>.from(
             data['data'].map((client) => ClientModel.fromJson(client)));
-        clientsLoading = false;
+
       } catch (e) {
         ConstantStyles.displayToastMessage(e.toString(), true);
       }
-      // notifyListeners();
+      print(clients.length);
+      clientsLoading = false;
+      notifyListeners();
       return clients;
     }
   }

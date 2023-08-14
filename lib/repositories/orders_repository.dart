@@ -41,7 +41,7 @@ class OrdersRepository {
           headers: ApiEndPoints.headerWithToken(token:getUserToken() ,language: getLanguage()));
 
       var data = json.decode(response.body);
-      log(data['data'].toString());
+      // log(data['data'].toString());
       return data;
     } catch (e) {
       return e.toString();
@@ -150,12 +150,43 @@ class OrdersRepository {
           headers: ApiEndPoints.headerWithToken(token:getUserToken() ,language: getLanguage()));
 
       var data = json.decode(response.body);
-      print('sdfsdfsd'+data.toString());
-
       return data;
     } catch (e) {
       return e.toString();
     }
   }
 
+  Future changeOrderStatus({required int orderID,required int statusId , int? driverId}) async {
+    try {
+      var response = await http.post(Uri.parse(ApiEndPoints.EditOrderStatus),
+          body: jsonEncode(
+              {
+                'order_id': orderID.toString(),
+                'order_status_id': statusId.toString(),
+                'driver_id': driverId,
+              }),
+          headers: ApiEndPoints.headerWithToken(token:getUserToken() ,language: getLanguage()));
+      var data = json.decode(response.body);
+      print(data);
+      print( {
+        'order_id': orderID.toString(),
+        'order_status_id': statusId.toString(),
+        'driver_id': driverId,
+      });
+      return data;
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
+  Future getDrivers() async {
+    try {
+        var response = await http.get(Uri.parse(ApiEndPoints.GetDrivers),
+            headers: ApiEndPoints.headerWithToken(token:getUserToken() ,language: getLanguage()));
+        var data = json.decode(response.body);
+        return data;
+    } catch (e) {
+      return e.toString();
+    }
+  }
 }

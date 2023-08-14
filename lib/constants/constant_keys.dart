@@ -13,6 +13,7 @@ const String kCoupons ='coupons';
 const String kBranch ='branch';
 const String kOrderMethods ='orderMethods';
 const String kReasons ='reasons';
+const String kOrderStatusPos ='orderStatusPos';
 const String kOrderStatus ='orderStatus';
 const String kPrinters ='printers';
 const String kOptions ='options';
@@ -24,6 +25,7 @@ const String kProducts ='products';
 const String kProductDetails ='productDetails';
 
 const String kUserName ='username';
+const String kUserUpdateStatus ='isUpdateStatus';
 const String kShowMobileOrders ='showMobileOrders';
 const String kBranchCode ='branchCode';
 const String kTaxNumber ='taxNumber';

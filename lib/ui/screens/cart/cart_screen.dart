@@ -68,7 +68,6 @@ class CartState extends ConsumerState<Cart> {
         clientName: cartController.orderDetails.clientName,
         tableTitle: cartController.orderDetails.tableTitle,
         onTapChooseClient: (){
-          cartController.getAllClients();
         ConstantStyles.showPopup(context: context,
         content:  ChooseClientWidget(),
         title: 'clients'.tr(), );

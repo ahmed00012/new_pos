@@ -169,7 +169,11 @@
   "totalAllOrders": "اجمالي الطلبات",
   "required": "الحقل مطلوب",
   "guests": "عدد العملاء",
-  "paymentNotValid" : "المبلغ المستحق اقل من المبلغ المدفوع"
+  "paymentNotValid" : "المبلغ المستحق اقل من المبلغ المدفوع",
+  "chooseDriver": "اختيار سائق",
+  "orderNotPaid": "الطلب غير مدفوع",
+  "changeStatus": "تغيير الحالة",
+  "addNew": "اضافة عميل"
 
 
 

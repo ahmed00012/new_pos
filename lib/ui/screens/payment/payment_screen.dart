@@ -50,6 +50,13 @@ class _PaymentScreenState extends State<PaymentScreen> {
   // Function()
 
   @override
+  void initState() {
+    // TODO: implement initState
+    print(getPrintersPrefs());
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(

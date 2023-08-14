@@ -34,6 +34,7 @@ class ApiEndPoints{
   static String Coupons =  '${baseURL}coupons';
   static String OrderMethods =  '${baseURL}pos/orderMethods/';
   static String ComplainReasons =  '${baseURL}pos/complainReasons';
+  static String OrderStatusPos =  '${baseURL}pos/orderPosStatus';
   static String OrderStatus =  '${baseURL}pos/orderStatus';
   static String Printers =  '${baseURL}branch/${getBranch()}/printers';
   static String GetNotes =  '${baseURL}pos/notes';
@@ -55,6 +56,8 @@ class ApiEndPoints{
   static String BranchTables =  '${baseURL}branch/${getBranch()}/tables';
   static String ConfirmOrder =  '${baseURL}pos/orders';
   static String EditOrder =  '${baseURL}pos/order/';
+  static String EditOrderStatus =  '${baseURL}pos/updateOrderStatus';
+  static String GetDrivers =  '${baseURL}driver/getByBranchLocation/${getBranch()}';
   static String PayIntegration =  'http://c-miras.dyndns.org:2048/BC140_WS/WS/MIRAS/Codeunit/POSIntegrationV3';
   static String PayIntegrationClosingTags = '</pos:requestTxt><pos:reponseTxt></pos:reponseTxt></pos:SendPOSData></x:Body></x:Envelope>';
   static String PayIntegrationOpeningTags = '<x:Envelope xmlns:x="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pos="urn:microsoft-dynamics-schemas/codeunit/POSIntegrationV3"><x:Header/><x:Body><pos:SendPOSData><pos:requestTxt>';

@@ -105,16 +105,28 @@ getComplainReasonsPrefs() {
   return LocalStorage.getData(key: kReasons) ?? '';
 }
 
+setOrderStatusPosPrefs(String orderStatusPos) {
+  LocalStorage.saveData(
+    key: kOrderStatusPos,
+    value: orderStatusPos,
+  );
+}
+getOrderStatusPosPrefs() {
+  return LocalStorage.getData(key: kOrderStatusPos) ?? '';
+}
+
+
 setOrderStatusPrefs(String orderStatus) {
   LocalStorage.saveData(
     key: kOrderStatus,
     value: orderStatus,
   );
 }
-
 getOrderStatusPrefs() {
   return LocalStorage.getData(key: kOrderStatus) ?? '';
 }
+
+
 
 setPrintersPrefs(String printers) {
   LocalStorage.saveData(
@@ -238,6 +250,10 @@ getLoginDate() {
   return LocalStorage.getData(key: kLoginDate) ?? '';
 }
 
+getUpdateStatusPermission() {
+  return LocalStorage.getData(key: kUserUpdateStatus) ?? 0;
+}
+
 syncAppData() {
   LocalStorage.removeData(key: kPaymentMethods);
   LocalStorage.removeData(key: kOwners);
@@ -245,6 +261,8 @@ syncAppData() {
   LocalStorage.removeData(key: kOrderMethods);
   LocalStorage.removeData(key: kReasons);
   LocalStorage.removeData(key: kPrinters);
+  LocalStorage.removeData(key: kOrderStatus);
+  LocalStorage.removeData(key: kOrderStatusPos);
   LocalStorage.removeData(key: kOptions);
   LocalStorage.removeData(key: kPaymentCustomers);
   LocalStorage.removeData(key: kAllCategories);
@@ -267,6 +285,14 @@ setUserData(UserModel user) {
     key: kUserName,
     value: user.employee!.name,
   );
+
+
+  LocalStorage.saveData(
+    key: kUserUpdateStatus,
+    value: user.employee!.isUpdateStatus,
+  );
+
+
   LocalStorage.saveData(
     key: kShowMobileOrders,
     value: user.employee!.showMobileOrders,

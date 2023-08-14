@@ -15,6 +15,7 @@ import 'package:shormeh_pos_new_28_11_2022/repositories/orders_repository.dart';
 import 'package:soundpool/soundpool.dart';
 import '../constants/constant_keys.dart';
 import '../models/complain_reasons.dart';
+import '../models/driver_model.dart';
 import '../models/order_status_model.dart';
 import '../models/owner_model.dart';
 
@@ -30,12 +31,15 @@ class OrdersController extends ChangeNotifier {
   List<PaymentModel> paymentMethods = [];
   List<OrderMethodModel> orderMethods = [];
   List<OrderStatusModel> orderStatus = [];
+  List<OrderStatusModel> orderStatusToChange = [];
   List<ComplainReasons> reasons = [];
   List<CustomerModel> paymentCustomer = [];
   List<OwnerModel> owners = [];
+  List<DriverModel> drivers = [];
+  bool driversLoading = false;
 
   bool loading = false;
-  bool isVisible = true;
+  // bool isVisible = true;
   StreamController<String> _eventData = StreamController<String>.broadcast();
   Sink get _inEventData => _eventData.sink;
   PusherClient? pusher;
@@ -59,10 +63,12 @@ class OrdersController extends ChangeNotifier {
 
 
 
+
   OrdersController(this.mobileOrders) {
     getOrders(page: 1,mobileOrders: mobileOrders,filter: false);
     getOrderMethods();
     getPaymentMethods();
+    getOrderStatusPos();
     getOrderStatus();
     getPaymentCustomers();
     getReasons();
@@ -101,48 +107,49 @@ class OrdersController extends ChangeNotifier {
       int? ownerId,
       bool? paid,
       bool? notPaid}) async {
-    print(page.toString()+'pppppage');
-    print(client);
-    if (page == 1) {
-      switchLoading(true);
-      orders= [];
-
-    }
-
-    var data = await repo.getOrders(page,
-        mobileOrders: mobileOrders,
-        paymentMethod: paymentMethod,
-        orderMethod: orderMethod,
-        orderStatus: orderStatus,
-        orderId: orderId,
-        owner: ownerId,
-        customer: customer,
-        client: client);
-    if (!data['status']) {
-      ConstantStyles.displayToastMessage(data['msg'], true);
-    } else {
-
-      if (page <= data['data']['meta']['last_page']) {
-        List list = List<OrdersModel>.from(
-            data['data']['data'].map((order) => OrdersModel.fromJson(order)));
-        list.forEach((element) {
-          if (element.ownerId != null) {
-            owners.forEach((owner) {
-              if (owner.id == element.ownerId) {
-                element.ownerName = owner.titleEn;
-              }
-            });
-          }
-          orders.add(element);
-        });
-        list = [];
-        currentPage = data['data']['meta']['current_page'];
-        lastPage = data['data']['meta']['last_page'];
-        print(currentPage.toString()+'sfsdfsd');
-        print(lastPage.toString()+'sfsdfsd');
+  try  {
+      if (page == 1) {
+        switchLoading(true);
+        orders = [];
       }
+
+      var data = await repo.getOrders(page,
+          mobileOrders: mobileOrders,
+          paymentMethod: paymentMethod,
+          orderMethod: orderMethod,
+          orderStatus: orderStatus,
+          orderId: orderId,
+          owner: ownerId,
+          customer: customer,
+          client: client);
+      if (!data['status']) {
+        ConstantStyles.displayToastMessage(data['msg'], true);
+      } else {
+        if (page <= data['data']['meta']['last_page']) {
+          List list = List<OrdersModel>.from(
+              data['data']['data'].map((order) => OrdersModel.fromJson(order)));
+          list.forEach((element) {
+            if (element.ownerId != null) {
+              owners.forEach((owner) {
+                if (owner.id == element.ownerId) {
+                  element.ownerName = owner.titleEn;
+                }
+              });
+            }
+            orders.add(element);
+          });
+          list = [];
+          currentPage = data['data']['meta']['current_page'];
+          lastPage = data['data']['meta']['last_page'];
+          print(currentPage.toString() + 'sfsdfsd');
+          print(lastPage.toString() + 'sfsdfsd');
+        }
+      }
+      switchLoading(false);
     }
-    switchLoading(false);
+    catch(e){
+    ConstantStyles.displayToastMessage(e.toString(), true);
+    }
     notifyListeners();
   }
 
@@ -160,16 +167,45 @@ class OrdersController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void getOrderStatus() async {
-    orderStatus = List<OrderStatusModel>.from(json
-        .decode(getOrderStatusPrefs())
-        .map((e) => OrderStatusModel.fromJson(e)));
+  Future getDrivers() async {
+    drivers = [];
+    driversLoading = true;
+    notifyListeners();
+    try{
 
-    orderStatus.insert(
-        0,
+      var data = await repo.getDrivers();
+      if(data['status']){
+        drivers = List<DriverModel>.from(data['data'].map((e)=> DriverModel.fromJson(e)));
+      }
+      else{
+        ConstantStyles.displayToastMessage(data['msg'], true);
+      }
+    }
+    catch(e){
+      ConstantStyles.displayToastMessage(e.toString(), true);
+    }
+    driversLoading = false;
+    notifyListeners();
+    return drivers;
+  }
+
+  void getOrderStatusPos() async {
+    orderStatus = List<OrderStatusModel>.from(json
+        .decode(getOrderStatusPosPrefs())
+        .map((e) => OrderStatusModel.fromJson(e)));
+    orderStatus.insert(0,
         OrderStatusModel(
             id: 0, chosen: true, title: StatusTitle(en: 'All', ar: 'الكل')));
 
+    notifyListeners();
+  }
+
+  void getOrderStatus() async {
+    orderStatusToChange.clear();
+    orderStatusToChange = List<OrderStatusModel>.from(json
+        .decode(getOrderStatusPrefs())
+        .map((e) => OrderStatusModel.fromJson(e)));
+    orderStatusToChange.removeWhere((element) => element.id == 10);
     notifyListeners();
   }
 
@@ -367,6 +403,34 @@ class OrdersController extends ChangeNotifier {
     else{
       ConstantStyles.displayToastMessage( data['msg'], true);
     }
+  }
+
+
+  Future changeOrderStatus({required int id ,required int statusId , int? driverId}) async {
+
+   try {
+
+      var data = await repo.changeOrderStatus(
+          orderID: id, statusId: statusId, driverId: driverId);
+      if (data['status']) {
+        ConstantStyles.displayToastMessage(data['msg'], false);
+        orders.forEach((element) {
+          if (element.id == id) {
+            element.orderStatusId = statusId;
+            element.orderStatus = orderStatus
+                .firstWhere((element) => element.id == statusId)
+                .title!
+                .en!;
+          }
+        });
+      } else {
+        ConstantStyles.displayToastMessage(data['msg'], true);
+      }
+   }
+      catch(e){
+    ConstantStyles.displayToastMessage(e.toString(), true);
+    }
+
   }
 
   // void complain(Size size,BuildContext context,bool complainOrder,{int? orderId}){

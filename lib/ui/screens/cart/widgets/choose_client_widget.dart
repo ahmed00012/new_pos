@@ -10,6 +10,9 @@ import '../../../../constants/colors.dart';
 import '../../../../data_controller/cart_controller.dart';
 
 class ChooseClientWidget extends ConsumerWidget {
+   ChooseClientWidget({super.key});
+  final TextEditingController searchText = TextEditingController();
+
   @override
   Widget build(BuildContext context, ref) {
     final cartController = ref.watch(cartFuture);
@@ -21,14 +24,17 @@ class ChooseClientWidget extends ConsumerWidget {
           children: [
             Expanded(
               child: CustomTextField(
-                controller: TextEditingController(),
+                controller: searchText,
                 label: 'searchHere'.tr(),
                 suffixIcon: Icon(
                   Icons.search,
                   color: Colors.black45,
                 ),
                 onChange: (text) {
-                  cartController.onSearchClientLocally(text!);
+                  print(text);
+                  if(text!.length>3) {
+                    cartController.onSearchClientTextChanged(text);
+                  }
                 },
               ),
             ),
@@ -139,9 +145,9 @@ class ChooseClientWidget extends ConsumerWidget {
                   color: Constants.mainColor,
                 ))
               : ListView.separated(
-                  itemCount: cartController.clientsFiltered.length,
+                  itemCount: cartController.clients.length,
                   itemBuilder: (context, i) {
-                    ClientModel client = cartController.clientsFiltered[i];
+                    ClientModel client = cartController.clients[i];
                     return InkWell(
                       onTap: () {
                         cartController.chooseClient(

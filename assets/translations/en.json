@@ -167,5 +167,9 @@
   "totalAllOrders": "Total All Orders",
   "required": "Field Required",
   "guests": "Count of guests",
-  "paymentNotValid" : "Paid amount less than total amount"
+  "paymentNotValid" : "Paid amount less than total amount",
+  "chooseDriver": "Choose driver",
+  "orderNotPaid": "Order not paid",
+  "changeStatus": "Change status",
+  "addNew": "Add client"
 }

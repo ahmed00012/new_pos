@@ -86,6 +86,7 @@ class Employee {
   String? updatedAt;
   int? showMobileOrders;
   int? isPreparingUser;
+  int? isUpdateStatus;
 
   Employee(
       {this.id,
@@ -100,7 +101,8 @@ class Employee {
         this.createdAt,
         this.updatedAt,
         this.showMobileOrders,
-        this.isPreparingUser});
+        this.isPreparingUser,
+      this.isUpdateStatus});
 
   Employee.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -116,6 +118,7 @@ class Employee {
     updatedAt = json['updated_at'];
     showMobileOrders = json['show_mobile_orders'];
     isPreparingUser = json['is_preparing_user'];
+    isUpdateStatus = json['is_update_status'];
   }
 
   Map<String, dynamic> toJson() {

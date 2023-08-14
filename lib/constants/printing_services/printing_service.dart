@@ -45,6 +45,7 @@ class PrintingService{
 
 
 
+
     productsImage = img.decodePng(pic);
    //  logoImage = img.decodePng(logoList);
    // logoImage = img.copyResize(logoImage!, width: 250);

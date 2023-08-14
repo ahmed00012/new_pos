@@ -13,6 +13,7 @@ class GetData {
    await getCoupons();
    await getOrderMethods();
    await getReasons();
+   await  getOrderStatusPos();
    await  getOrderStatus();
    await  getPrinters();
    }
@@ -101,6 +102,21 @@ class GetData {
       return e.toString();
     }
   }
+
+  Future getOrderStatusPos() async {
+    try {
+      String data = getOrderStatusPosPrefs();
+      if (data.isEmpty) {
+        var response = await http.get(Uri.parse(ApiEndPoints.OrderStatusPos),
+            headers: ApiEndPoints.headerWithToken(token:getUserToken() ,language: getLanguage()));
+        var data = json.decode(response.body);
+        setOrderStatusPosPrefs(json.encode(data['data']));
+      }
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
 
   Future getOrderStatus() async {
     try {

@@ -6,11 +6,14 @@ import 'package:shormeh_pos_new_28_11_2022/constants/styles.dart';
 import 'package:shormeh_pos_new_28_11_2022/data_controller/cart_controller.dart';
 import 'package:shormeh_pos_new_28_11_2022/data_controller/orders_controller.dart';
 import 'package:shormeh_pos_new_28_11_2022/ui/screens/orders/widgets/cancel_widget.dart';
+import 'package:shormeh_pos_new_28_11_2022/ui/screens/orders/widgets/change_status_widget.dart';
+import 'package:shormeh_pos_new_28_11_2022/ui/screens/orders/widgets/choose_driver_widget.dart';
 import 'package:shormeh_pos_new_28_11_2022/ui/screens/orders/widgets/complain_widget.dart';
 import '../../../../constants/colors.dart';
 import '../../../../models/cart_model.dart';
 import '../../../../models/orders_model.dart';
 import '../../../widgets/bottom_nav_bar.dart';
+import 'order_status_widget.dart';
 
 
 class OrderItems extends StatelessWidget {
@@ -29,31 +32,118 @@ class OrderItems extends StatelessWidget {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       resizeToAvoidBottomInset: false,
+      backgroundColor: Colors.white,
       body: Consumer(builder: (context, ref, child) {
         final cartController = ref.watch(cartFuture);
         final ordersController = ref.watch(ordersFuture(mobileOrders));
           return Stack(
             children: [
-              Container(
-                color: Colors.white,
-                alignment: Alignment.topLeft,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: InkWell(
-                      onTap: () {
-                        OrderDetails orderDetails =
-                        cartController.editOrder(order);
-                        onScreenshot(orderDetails);
-                        // PrintingService.printInvoice(
-                        //     order: orderDetails,
-                        // table: ProductsTable(cart: orderDetails.cart));
-                      },
-                      child: Icon(
-                        Icons.print,
-                        color: Constants.mainColor,
-                        size: 30,
-                      )),
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    color: Colors.white,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: InkWell(
+                          onTap: () {
+                            OrderDetails orderDetails =
+                            cartController.editOrder(order);
+                            onScreenshot(orderDetails);
+                            // PrintingService.printInvoice(
+                            //     order: orderDetails,
+                            // table: ProductsTable(cart: orderDetails.cart));
+                          },
+                          child: Icon(
+                            Icons.print,
+                            color: Constants.mainColor,
+                            size: 30,
+                          )),
+                    ),
+                  ),
+                   if(getUpdateStatusPermission() == 1 &&
+                   order.orderStatusId!= 4 && order.orderStatusId!= 5 && order.orderStatusId!= 7 )
+                  Container(
+                    color: Colors.white,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: InkWell(
+                          onTap: () {
+                            ConstantStyles.showPopup(context: context,
+
+                                content: GridView.builder(
+                                    shrinkWrap: true,
+                                    itemCount: ordersController.orderStatusToChange.length,
+                                    gridDelegate:const SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 3,
+                                        childAspectRatio: 1.7
+                                    ),
+                                    itemBuilder: (context , index ){
+                                      return ChangeStatusWidget(
+                                          title: ordersController.orderStatusToChange[index].title!.en!,
+
+                                          onTap: (){
+
+                                            print(ordersController.orderStatusToChange[index].id);
+                                            if(ordersController.orderStatusToChange[index].id == 7
+                                                && order.paymentStatus == 0 && order.ownerId == null &&
+                                                order.paymentCustomerId == null) {
+                                              ConstantStyles.displayToastMessage(
+                                                  'orderNotPaid'.tr(), true);
+                                            }
+                                            else if(ordersController.orderStatusToChange[index].id == 4){
+                                              ordersController.getDrivers().then((drivers) {
+                                                ConstantStyles.showPopup(context: context,
+                                                    height: size.height*0.6,
+                                                    content: GridView.builder(
+                                                        shrinkWrap: true,
+                                                        itemCount: drivers.length,
+                                                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                                            crossAxisCount: 4,
+                                                            childAspectRatio: 1.2
+                                                        ),
+                                                        itemBuilder: (context,index){
+                                                          return ChooseDriverWidget(
+                                                              title: ordersController.drivers[index].name!,
+                                                              distance: ordersController.drivers[index].distance!,
+                                                              onTap: (){
+                                                                ordersController.changeOrderStatus(
+                                                                    id: order.id!,
+                                                                    statusId: 4,
+                                                                driverId: ordersController.drivers[index].id!).then((value){
+                                                                  Navigator.pop(context);
+                                                                  Navigator.pop(context);
+                                                                });
+                                                              });
+                                                        }),
+                                                    title: 'chooseDriver'.tr());
+
+                                              });
+
+
+                                            }
+                                            else {
+                                              ordersController
+                                                  .changeOrderStatus(
+                                                  id: order.id!,
+                                                  statusId: ordersController
+                                                      .orderStatus[index].id!)
+                                                  .then((value) {
+                                                Navigator.pop(context);
+                                              });
+                                            }
+                                          });
+                                    }),
+                                title: 'changeStatus'.tr());
+                          },
+                          child: Icon(
+                            Icons.edit_rounded,
+                            color: Constants.mainColor,
+                            size: 30,
+                          )),
+                    ),
+                  ),
+                ],
               ),
               Column(
                 children: [
