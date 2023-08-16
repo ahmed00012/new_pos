@@ -74,16 +74,18 @@ class UpperRowState extends ConsumerState {
               if (cartController.orderDetails.cart.isNotEmpty) {
                 ConstantStyles.showPopup(
                         context: context,
-                        height: size.height*0.65,
+                        height: size.height*0.6,
                         title: 'notes'.tr(),
                         content: Column(
                           children: [
                             SizedBox(
                               height: 10,
                             ),
-                            CustomTextField(controller: notes,
+                            CustomTextField(
+                              controller: notes,
                               label:   'notes'.tr(),
                             maxLines: 7,
+
                             ),
                             SizedBox(
                               height: size.height * 0.04,

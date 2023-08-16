@@ -586,13 +586,15 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                     if(cartController.orderDetails.paid == 0 &&
                                         cartController.orderDetails.total > 0 &&
                                     cartController.orderDetails.owner == null &&
-                                    cartController.orderDetails.customer == null)
+                                    cartController.orderDetails.customer == null&&
+                                        cartController.orderDetails.orderUpdatedId == null)
                                       ConstantStyles.displayToastMessage('paymentMethodRequired'.tr(), true);
 
                                     else if(cartController.orderDetails.paid <
                                         cartController.orderDetails.total &&
                                         cartController.orderDetails.owner == null &&
-                                        cartController.orderDetails.customer == null)
+                                        cartController.orderDetails.customer == null &&
+                                        cartController.orderDetails.orderUpdatedId == null)
                                       ConstantStyles.displayToastMessage('paymentNotValid'.tr(), true);
 
                                    else {

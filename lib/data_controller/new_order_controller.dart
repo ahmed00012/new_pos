@@ -277,6 +277,7 @@ class NewOrderController extends ChangeNotifier {
     });
 
     orderDetails.finalOrder = details;
+    print('fsdsdf'+orderDetails.toJson().toString());
 
     var responseValue = await repo.updateFromOrder(
         orderDetails.orderUpdatedId!, orderDetails.toJson());

@@ -47,6 +47,7 @@ class OrdersModel {
   int? clientsCount;
   double deliveryFee = 0.0;
   Car? car;
+  Driver? driver;
 
 
   OrdersModel(
@@ -73,7 +74,8 @@ class OrdersModel {
       this.tableId,this.clientsCount,this.couponId,
       this.discountId,this.finished,this.updatedAt,this.ownerName,
         this.deliveryFee = 0.0,
-        this.car
+        this.car,
+        this.driver
      });
 
  String checkCurrentTimeZone(String time){
@@ -131,6 +133,7 @@ class OrdersModel {
     discountId = json['discount_id'];
     clientsCount = json['clients_count'];
     car =json['car']!=null? Car.fromJson(json['car']):null;
+    driver =json['driver']!=null? Driver.fromJson(json['driver']):null;
 
     if (json['payment_methods']!=null) {
       paymentMethods = <OrderPaymentMethods>[];
@@ -378,6 +381,24 @@ class Car {
     model = json['car_model'].toString();
     number = json['plate_number'].toString();
     color = json['car_color'].toString();
+
+  }
+
+}
+
+class Driver {
+  int? id;
+  String? name;
+  String? phone;
+
+
+  Driver({this.id,this.name,this.phone});
+
+  Driver.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'].toString();
+    phone = json['phone'].toString();
+
 
   }
 

@@ -13,7 +13,7 @@ import '../../../../constants/colors.dart';
 import '../../../../models/cart_model.dart';
 import '../../../../models/orders_model.dart';
 import '../../../widgets/bottom_nav_bar.dart';
-import 'order_status_widget.dart';
+
 
 
 class OrderItems extends StatelessWidget {
@@ -227,6 +227,17 @@ class OrderItems extends StatelessWidget {
                           ),
                           Text(
                             order.orderStatus!,
+                            style: TextStyle(
+                                fontSize: size.height * 0.02,
+                                fontWeight: FontWeight.bold,
+                                color: Constants.mainColor),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          if(order.driver!=null)
+                          Text(
+                           "${"driver".tr()} : ${order.driver!.name!}",
                             style: TextStyle(
                                 fontSize: size.height * 0.02,
                                 fontWeight: FontWeight.bold,
@@ -483,12 +494,24 @@ class OrderItems extends StatelessWidget {
                               //   ],
                               // ),
                               if (order.table != null)
-                                Text(
-                                  'table'.tr() + order.table!,
-                                  style: TextStyle(
-                                      fontSize: size.height * 0.02,
-                                      fontWeight: FontWeight.bold,
-                                      color: Constants.mainColor),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'table'.tr() ,
+                                      style: TextStyle(
+                                          fontSize: size.height * 0.02,
+                                          fontWeight: FontWeight.bold,
+                                          color: Constants.mainColor),
+                                    ),
+                                    Text(
+                                     order.table!,
+                                      style: TextStyle(
+                                          fontSize: size.height * 0.02,
+                                          fontWeight: FontWeight.bold,
+                                          color: Constants.mainColor),
+                                    ),
+                                  ],
                                 ),
                               Column(
                                   children: order.paymentMethods!
