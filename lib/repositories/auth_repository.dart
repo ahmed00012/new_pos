@@ -73,7 +73,7 @@ class AuthRepository {
   Future productsZReport() async {
     try{
     var response = await http.post(Uri.parse(ApiEndPoints.ProductsZReport),
-      body: {'login_date':getLoginDate(), 'logout_date': DateTime.now().toUtc().toString()},
+      body: {'login_date':getLoginDate(), 'logout_date': DateTime.now().toUtc().toString().substring(0,19)},
       headers:  ApiEndPoints.headerWithToken(token:getUserToken() ,language: getLanguage()),);
     var data = json.decode(response.body);
     return data;
@@ -115,8 +115,8 @@ class AuthRepository {
           body: jsonEncode({
             'status': '2',
             'cash': cash,
-            'login_date': getLoginDate(),
-            'logout_date': DateTime.now().toUtc().toString(),
+            'login_date': getLoginDate().toString().substring(0,19),
+            'logout_date': DateTime.now().toUtc().toString().substring(0,19),
           }),
           headers: ApiEndPoints.headerWithToken(token:getUserToken() ,language: getLanguage()));
       debugPrint(response.body.toString()+'FDSFSDF');

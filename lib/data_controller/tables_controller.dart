@@ -68,6 +68,7 @@ class TablesController extends ChangeNotifier {
     order.department = departments[i].title;
     order.orderMethod = 'restaurant';
     order.orderMethodId = 2;
+    order.tableCount = count;
      confirmOrder(order);
   }
 

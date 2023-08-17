@@ -327,7 +327,8 @@ class OrderItems extends StatelessWidget {
                                                       ),
                                                       Container(
                                                         width: size.width * 0.12,
-                                                        alignment:
+                                                        alignment: getLanguage() =='ar'?
+                                                        Alignment.centerLeft:
                                                         Alignment.centerRight,
                                                         child: Text(
                                                           details[i]
